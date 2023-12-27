@@ -27,39 +27,94 @@ class HomePage extends StatelessWidget {
 
   final String title;
 
+  //void _footballPage() {
+  //  var x = 1;
+  //}
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
         home: Scaffold(
-            backgroundColor: Colors.red,
             appBar: AppBar(
               title: Text(title),
+              backgroundColor: Colors.red,
             ),
             body: const Center(
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  ElevatedButton(
-                    onPressed: { 
-                      Navigator.pushNamed(context, '/first');
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Image(
-                          image: AssetImage('assets/CC.jpeg'),
-                          width: 50.0,
-                          height: 50.0,
-                        ),
-                        SizedBox(height: 8.0),
-                        Text('Premi il pulsante'),
-                      ],
-                    ),
-                  )
+                  ClubButton(),
+                  FootballButton(),
                 ],
               ),
             )
-          )
-        );
+        )
+    );
+  }
+}
+
+class ClubButton extends StatefulWidget {
+  const ClubButton({super.key});
+
+  @override
+  State<ClubButton> createState() => ClubButtonState();
+}
+
+class ClubButtonState extends State<ClubButton> {
+  //bool _active = false;
+  void _clubPage() {
+    setState(() {
+      //_active = !_active;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: _clubPage,
+      child: Column(
+        children: <Widget>[
+          Image(
+            image: AssetImage('images/CC.jpeg'),
+            width: 200,
+            height: 200,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class FootballButton extends StatefulWidget {
+  const FootballButton({super.key});
+
+  @override
+  State<FootballButton> createState() => FootballButtonState();
+}
+
+class FootballButtonState extends State<FootballButton> {
+  //bool _active = false;
+  void _footballPage() {
+    setState(() {
+      //_active = !_active;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: _footballPage,
+      child: Column(
+        children: <Widget>[
+          Image(
+            image: AssetImage('images/Tiber.jpg'),
+            width: 200,
+            height: 200,
+          ),
+        ],
+      ),
+    );
   }
 }
