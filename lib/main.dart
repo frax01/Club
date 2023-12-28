@@ -1,5 +1,7 @@
+import 'package:club/pages/football.dart';
 import 'package:flutter/material.dart';
-//import 'route.dart';
+import 'functions/button.dart';
+import 'pages/club.dart';
 
 void main() {
   runApp(const MyApp());
@@ -8,7 +10,6 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -17,7 +18,12 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         useMaterial3: true,
       ),
-      home: const HomePage(title: 'Club Demo Home Page'),
+      home: const HomePage(title: 'Home Page'),
+      initialRoute: '/',
+      routes: {
+        '/club': (context) => const ClubPage(title: 'Tiber Club'),
+        '/football': (context) => const FootballPage(title: 'ASD Tiber Club'),
+      },
     );
   }
 }
@@ -27,18 +33,13 @@ class HomePage extends StatelessWidget {
 
   final String title;
 
-  //void _footballPage() {
-  //  var x = 1;
-  //}
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        home: Scaffold(
+    return Scaffold(
             appBar: AppBar(
-              title: Text(title),
-              backgroundColor: Colors.red,
+              title: Text(title, style: const TextStyle(color: Colors.white)),
+              backgroundColor: const Color.fromARGB(255, 130, 16, 8),
+              centerTitle: true,
             ),
             body: const Center(
               child: Column(
@@ -49,72 +50,6 @@ class HomePage extends StatelessWidget {
                   FootballButton(),
                 ],
               ),
-            )
-        )
-    );
-  }
-}
-
-class ClubButton extends StatefulWidget {
-  const ClubButton({super.key});
-
-  @override
-  State<ClubButton> createState() => ClubButtonState();
-}
-
-class ClubButtonState extends State<ClubButton> {
-  //bool _active = false;
-  void _clubPage() {
-    setState(() {
-      //_active = !_active;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: _clubPage,
-      child: Column(
-        children: <Widget>[
-          Image(
-            image: AssetImage('images/CC.jpeg'),
-            width: 200,
-            height: 200,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class FootballButton extends StatefulWidget {
-  const FootballButton({super.key});
-
-  @override
-  State<FootballButton> createState() => FootballButtonState();
-}
-
-class FootballButtonState extends State<FootballButton> {
-  //bool _active = false;
-  void _footballPage() {
-    setState(() {
-      //_active = !_active;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: _footballPage,
-      child: Column(
-        children: <Widget>[
-          Image(
-            image: AssetImage('images/Tiber.jpg'),
-            width: 200,
-            height: 200,
-          ),
-        ],
-      ),
-    );
+            ));
   }
 }
