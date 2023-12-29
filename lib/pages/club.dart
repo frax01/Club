@@ -60,6 +60,12 @@ class _ClubPageState extends State<ClubPage> {
                   section = value.toString();
                 });
               },
+              alignment: AlignmentDirectional.center,
+              padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+              underline: Container(
+                height: 0.5,
+                color: Colors.black,
+              ),
               items: [
                 DropdownMenuItem(
                   value: 'CLUB',
@@ -73,19 +79,100 @@ class _ClubPageState extends State<ClubPage> {
             ),
             ListTile(
               leading: const Icon(
-                Icons.home,
+                Icons.home_filled,
               ),
               title: const Text('Home Page'),
-              subtitle: const Text('Club'),
+              subtitle: Text('Club', style: TextStyle(fontSize: width>700? 12 : width>500? 14 : width>400? 11 : width>330? 12 : 10)),
               onTap: () {
                 Navigator.pop(context);
               },
             ),
             ListTile(
               leading: const Icon(
-                Icons.train,
+                Icons.calendar_month_outlined,
               ),
-              title: const Text('Trains'),
+              title: const Text('Saturday'),
+              subtitle: Text('Look at the program', style: TextStyle(fontSize: width>700? 12 : width>500? 14 : width>400? 11 : width>330? 12 : 10)),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(
+                Icons.holiday_village_outlined,
+              ),
+              title: const Text('Trips'),
+              subtitle: Text('Where does your class go?', style: TextStyle(fontSize: width>700? 12 : width>500? 14 : width>400? 11 : width>330? 12 : 10)),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(
+                Icons.sunny,
+              ),
+              title: const Text('Summer'),
+              subtitle: Text('The best period of the year', style: TextStyle(fontSize: width>700? 12 : width>500? 14 : width>400? 11 : width>330? 12 : 10)),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(
+                Icons.plus_one_outlined,
+              ),
+              title: const Text('Extra'),
+              subtitle: Text('What are you waiting for?', style: TextStyle(fontSize: width>700? 12 : width>500? 14 : width>400? 11 : width>330? 12 : 10)),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(
+                Icons.chat,
+              ),
+              title: const Text('Chat & Contacts'),
+              subtitle: Text('Do you need more information?', style: TextStyle(fontSize: width>700? 12 : width>500? 14 : width>400? 11 : width>330? 12 : 10)),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(
+                Icons.settings,
+              ),
+              title: const Text('Settings'),
+              subtitle: Text('Account management', style: TextStyle(fontSize: width>700? 12 : width>500? 14 : width>400? 11 : width>330? 12 : 10)),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(
+                Icons.code,
+              ),
+              title: const Text('Code generation'),
+              subtitle: Text('Accept new users', style: TextStyle(fontSize: width>700? 12 : width>500? 14 : width>400? 11 : width>330? 12 : 10)),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(
+                Icons.mode,
+              ),
+              title: const Text('Page modifier'),
+              subtitle: Text('Create a new program!', style: TextStyle(fontSize: width>700? 12 : width>500? 14 : width>400? 11 : width>330? 12 : 10)),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(
+                Icons.logout,
+              ),
+              title: const Text('Logout'),
+              subtitle: Text('We will miss you...', style: TextStyle(fontSize: width>700? 12 : width>500? 14 : width>400? 11 : width>330? 12 : 10)),
               onTap: () {
                 Navigator.pop(context);
               },
