@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ClubPage extends StatefulWidget {
   const ClubPage({super.key, required this.title});
@@ -11,6 +13,38 @@ class ClubPage extends StatefulWidget {
 
 class _ClubPageState extends State<ClubPage> {
   var section = 'CLUB';
+
+  Future<void> _logout() async {
+    setState(() {
+      Navigator.pushNamed(context, '/login');
+    });
+  }
+
+  Future<List<String>> getUserData() async {
+    List<String> userData = [];
+
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        CollectionReference users =
+            FirebaseFirestore.instance.collection('user');
+        QuerySnapshot querySnapshot =
+            await users.where('email', isEqualTo: user.email).get();
+
+        if (querySnapshot.docs.isNotEmpty) {
+          var name = querySnapshot.docs.first['name'];
+          var surname = querySnapshot.docs.first['surname'];
+          var email = querySnapshot.docs.first['email'];
+
+          userData = [name, surname, email];
+        }
+      }
+    } catch (e) {
+      print('Error getting user data: $e');
+    }
+
+    return userData;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,18 +59,20 @@ class _ClubPageState extends State<ClubPage> {
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       drawer: Drawer(
-        width: width>700? width/3 : width>400? width/2 : width/1.5,
+        width: width > 700
+            ? width / 3
+            : width > 400
+                ? width / 2
+                : width / 1.5,
         backgroundColor: const Color.fromARGB(255, 255, 255, 255),
         child: ListView(
           children: [
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Flexible(
-                child: Image(
-                  image: const AssetImage('images/photo.jpg'),
-                  width: width/4,
-                  height: height/4,
-                ),
+              child: Image(
+                image: const AssetImage('images/photo.jpg'),
+                width: width > 700 ? width / 4 : width / 8,
+                height: height / 4,
               ),
             ),
             Padding(
@@ -44,20 +80,48 @@ class _ClubPageState extends State<ClubPage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('Francesco ', style: TextStyle(fontSize: width>300? 18 : 14)),
-                  Text('Martignoni', style: TextStyle(fontSize: width>300? 18 : 14)),
+                  FutureBuilder<List<String>>(
+                      future: getUserData(),
+                      builder: (context, snapshot) {
+                        var userName = snapshot.data?[0] ?? '';
+                        return Text('$userName ',
+                            style: TextStyle(fontSize: width > 300 ? 18 : 14));
+                      }),
+                  FutureBuilder<List<String>>(
+                      future: getUserData(),
+                      builder: (context, snapshot) {
+                        var userSurname = snapshot.data?[1] ?? '';
+                        return Text('$userSurname',
+                            style: TextStyle(fontSize: width > 300 ? 18 : 14));
+                      }),
                 ],
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
-              child: Text('francescomartignoni1@gmail.com', textAlign: TextAlign.center, style: TextStyle(fontSize: width>500? 14 : width>300? 10 : 8)),
+              padding:
+                  const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
+              child: FutureBuilder<List<String>>(
+                  future: getUserData(),
+                  builder: (context, snapshot) {
+                    var userEmail = snapshot.data?[2] ?? '';
+                    return Text('$userEmail',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontSize: width > 500
+                                ? 14
+                                : width > 300
+                                    ? 10
+                                    : 8));
+                  }),
             ),
             DropdownButton(
               value: section,
               onChanged: (value) {
                 setState(() {
                   section = value.toString();
+                  if (section == 'FOOTBALL') {
+                    Navigator.pushNamed(context, '/football');
+                  }
                 });
               },
               alignment: AlignmentDirectional.center,
@@ -79,22 +143,22 @@ class _ClubPageState extends State<ClubPage> {
             ),
             ListTile(
               leading: const Icon(
-                Icons.home_filled,
-              ),
-              title: const Text('Home Page'),
-              subtitle: Text('Club', style: TextStyle(fontSize: width>700? 12 : width>500? 14 : width>400? 11 : width>330? 12 : 10)),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(
                 Icons.calendar_month_outlined,
               ),
-              title: const Text('Saturday'),
-              subtitle: Text('Look at the program', style: TextStyle(fontSize: width>700? 12 : width>500? 14 : width>400? 11 : width>330? 12 : 10)),
+              title: const Text('Weekend'),
+              subtitle: Text('Look at the program',
+                  style: TextStyle(
+                      fontSize: width > 700
+                          ? 12
+                          : width > 500
+                              ? 14
+                              : width > 400
+                                  ? 11
+                                  : width > 330
+                                      ? 12
+                                      : 10)),
               onTap: () {
-                Navigator.pop(context);
+                Navigator.pushNamed(context, '/weekend');
               },
             ),
             ListTile(
@@ -102,9 +166,19 @@ class _ClubPageState extends State<ClubPage> {
                 Icons.holiday_village_outlined,
               ),
               title: const Text('Trips'),
-              subtitle: Text('Where does your class go?', style: TextStyle(fontSize: width>700? 12 : width>500? 14 : width>400? 11 : width>330? 12 : 10)),
+              subtitle: Text('Where does your class go?',
+                  style: TextStyle(
+                      fontSize: width > 700
+                          ? 12
+                          : width > 500
+                              ? 14
+                              : width > 400
+                                  ? 11
+                                  : width > 330
+                                      ? 12
+                                      : 10)),
               onTap: () {
-                Navigator.pop(context);
+                Navigator.pushNamed(context, '/trip');
               },
             ),
             ListTile(
@@ -112,9 +186,19 @@ class _ClubPageState extends State<ClubPage> {
                 Icons.sunny,
               ),
               title: const Text('Summer'),
-              subtitle: Text('The best period of the year', style: TextStyle(fontSize: width>700? 12 : width>500? 14 : width>400? 11 : width>330? 12 : 10)),
+              subtitle: Text('The best period of the year',
+                  style: TextStyle(
+                      fontSize: width > 700
+                          ? 12
+                          : width > 500
+                              ? 14
+                              : width > 400
+                                  ? 11
+                                  : width > 330
+                                      ? 12
+                                      : 10)),
               onTap: () {
-                Navigator.pop(context);
+                Navigator.pushNamed(context, '/summer');
               },
             ),
             ListTile(
@@ -122,9 +206,19 @@ class _ClubPageState extends State<ClubPage> {
                 Icons.plus_one_outlined,
               ),
               title: const Text('Extra'),
-              subtitle: Text('What are you waiting for?', style: TextStyle(fontSize: width>700? 12 : width>500? 14 : width>400? 11 : width>330? 12 : 10)),
+              subtitle: Text('What are you waiting for?',
+                  style: TextStyle(
+                      fontSize: width > 700
+                          ? 12
+                          : width > 500
+                              ? 14
+                              : width > 400
+                                  ? 11
+                                  : width > 330
+                                      ? 12
+                                      : 10)),
               onTap: () {
-                Navigator.pop(context);
+                Navigator.pushNamed(context, '/extra');
               },
             ),
             ListTile(
@@ -132,7 +226,17 @@ class _ClubPageState extends State<ClubPage> {
                 Icons.chat,
               ),
               title: const Text('Chat & Contacts'),
-              subtitle: Text('Do you need more information?', style: TextStyle(fontSize: width>700? 12 : width>500? 14 : width>400? 11 : width>330? 12 : 10)),
+              subtitle: Text('Do you need more information?',
+                  style: TextStyle(
+                      fontSize: width > 700
+                          ? 12
+                          : width > 500
+                              ? 14
+                              : width > 400
+                                  ? 11
+                                  : width > 330
+                                      ? 12
+                                      : 10)),
               onTap: () {
                 Navigator.pop(context);
               },
@@ -142,7 +246,17 @@ class _ClubPageState extends State<ClubPage> {
                 Icons.settings,
               ),
               title: const Text('Settings'),
-              subtitle: Text('Account management', style: TextStyle(fontSize: width>700? 12 : width>500? 14 : width>400? 11 : width>330? 12 : 10)),
+              subtitle: Text('Account management',
+                  style: TextStyle(
+                      fontSize: width > 700
+                          ? 12
+                          : width > 500
+                              ? 14
+                              : width > 400
+                                  ? 11
+                                  : width > 330
+                                      ? 12
+                                      : 10)),
               onTap: () {
                 Navigator.pop(context);
               },
@@ -152,9 +266,19 @@ class _ClubPageState extends State<ClubPage> {
                 Icons.code,
               ),
               title: const Text('Code generation'),
-              subtitle: Text('Accept new users', style: TextStyle(fontSize: width>700? 12 : width>500? 14 : width>400? 11 : width>330? 12 : 10)),
+              subtitle: Text('Accept new users',
+                  style: TextStyle(
+                      fontSize: width > 700
+                          ? 12
+                          : width > 500
+                              ? 14
+                              : width > 400
+                                  ? 11
+                                  : width > 330
+                                      ? 12
+                                      : 10)),
               onTap: () {
-                Navigator.pop(context);
+                Navigator.pushNamed(context, '/acceptance');
               },
             ),
             ListTile(
@@ -162,9 +286,19 @@ class _ClubPageState extends State<ClubPage> {
                 Icons.mode,
               ),
               title: const Text('Page modifier'),
-              subtitle: Text('Create a new program!', style: TextStyle(fontSize: width>700? 12 : width>500? 14 : width>400? 11 : width>330? 12 : 10)),
+              subtitle: Text('Create a new program!',
+                  style: TextStyle(
+                      fontSize: width > 700
+                          ? 12
+                          : width > 500
+                              ? 14
+                              : width > 400
+                                  ? 11
+                                  : width > 330
+                                      ? 12
+                                      : 10)),
               onTap: () {
-                Navigator.pop(context);
+                Navigator.pushNamed(context, '/event');
               },
             ),
             ListTile(
@@ -172,9 +306,19 @@ class _ClubPageState extends State<ClubPage> {
                 Icons.logout,
               ),
               title: const Text('Logout'),
-              subtitle: Text('We will miss you...', style: TextStyle(fontSize: width>700? 12 : width>500? 14 : width>400? 11 : width>330? 12 : 10)),
-              onTap: () {
-                Navigator.pop(context);
+              subtitle: Text('We will miss you...',
+                  style: TextStyle(
+                      fontSize: width > 700
+                          ? 12
+                          : width > 500
+                              ? 14
+                              : width > 400
+                                  ? 11
+                                  : width > 330
+                                      ? 12
+                                      : 10)),
+              onTap: () async {
+                await _logout();
               },
             ),
           ],
