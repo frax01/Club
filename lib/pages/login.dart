@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Login extends StatefulWidget {
-  const Login({super.key, required this.title});
+  const Login({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
@@ -15,6 +15,8 @@ class _LoginState extends State<Login> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  bool rememberMe = false;
 
   Future<void> _handleLogin() async {
     try {
@@ -31,8 +33,6 @@ class _LoginState extends State<Login> {
       CollectionReference users = FirebaseFirestore.instance.collection('user');
       QuerySnapshot querySnapshot = await users.where('email', isEqualTo: userEmail).get();
       var role = querySnapshot.docs.first['role'];
-
-      print('Login successful: ${userCredential.user?.email}, Role: $role');
 
       setState(() {
         if (role == "") {
@@ -52,6 +52,11 @@ class _LoginState extends State<Login> {
     });
   }
 
+  void _handleForgotPassword() {
+    // Implementa la logica per il ripristino della password qui
+    print('Forgot Password tapped');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,36 +67,91 @@ class _LoginState extends State<Login> {
         automaticallyImplyLeading: false,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            TextField(
-              controller: emailController,
-              decoration: InputDecoration(labelText: 'Email'),
-              onSubmitted: (_) => _handleLogin(),
+        padding: const EdgeInsets.all(30.0),
+          child: Card(
+            color: Colors.white,
+            elevation: 30.0,
+            shadowColor: Colors.black,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5.0), // Regola il raggio per ottenere bordi arrotondati
+              //side: BorderSide(
+              //  color: Colors.black,
+              //  width: 0.5,
+              //),
             ),
-            SizedBox(height: 16.0),
-            TextField(
-              controller: passwordController,
-              obscureText: true,
-              decoration: InputDecoration(labelText: 'Password'),
-              onSubmitted: (_) => _handleLogin(),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Center(
+                  child: Column(
+                    children: [
+                      Text('Log In', style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold)),
+                      Text('Complete the fields below', style: TextStyle(fontSize: 14.0)),
+                    ],
+                  ),
+                ),
+                TextField(
+                  controller: emailController,
+                  decoration: const InputDecoration(labelText: 'Email'),
+                  onSubmitted: (_) => _handleLogin(),
+                ),
+                SizedBox(height: 16.0),
+                TextField(
+                  controller: passwordController,
+                  obscureText: true,
+                  decoration: const InputDecoration(labelText: 'Password'),
+                  onSubmitted: (_) => _handleLogin(),
+                ),
+                SizedBox(height: 16.0),
+                Row(
+                  children: [
+                    Checkbox(
+                      value: rememberMe,
+                      onChanged: (value) {
+                        setState(() {
+                          rememberMe = value ?? false;
+                        });
+                      },
+                    ),
+                    Text('Ricordami'),
+                  ],
+                ),
+                SizedBox(height: 16.0),
+                ElevatedButton(
+                  onPressed: _handleLogin,
+                  child: const Text('Login', style: TextStyle(color: Colors.black)),
+                  style: ButtonStyle(
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5.0), // Imposta il raggio per ottenere bordi arrotondati
+                        //side: BorderSide(color: Colors.black, width: 1.0), // Imposta il colore e lo spessore del bordo
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 8.0),
+                ElevatedButton(
+                  onPressed: _handleSignUp,
+                  style: ButtonStyle(
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5.0),
+                      ),
+                    ),
+                  ),
+                  child: const Text('Sign Up', style: TextStyle(color: Colors.black)),
+                ),
+                TextButton(
+                  onPressed: _handleForgotPassword,
+                  child: const Text('Password dimenticata?', style: TextStyle(color: Colors.black),),
+                ),
+              ],
             ),
-            SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: _handleLogin,
-              child: Text('Login'),
-            ),
-            SizedBox(height: 8.0), // Aggiunto spazio tra i pulsanti
-            TextButton(
-              onPressed: _handleSignUp,
-              child: Text('Sign Up'),
-            ),
-          ],
+          ),
         ),
-      ),
+      )
     );
   }
 }
