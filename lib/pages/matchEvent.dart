@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MatchEventPage extends StatefulWidget {
-  const MatchEventPage({super.key, required this.title});
+  const MatchEventPage({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
@@ -12,10 +13,8 @@ class MatchEventPage extends StatefulWidget {
 class _MatchEventPageState extends State<MatchEventPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String? _selectedTeam;
-  String _matchType = 'Casa';
-  String _selectedLocation = '';
-
-  TextEditingController _teamController = TextEditingController();
+  String? _matchType;
+  TextEditingController _opponentController = TextEditingController();
   TextEditingController _locationController = TextEditingController();
   TimeOfDay _selectedTime = TimeOfDay.now();
 
@@ -37,9 +36,11 @@ class _MatchEventPageState extends State<MatchEventPage> {
                 onChanged: (value) {
                   setState(() {
                     _selectedTeam = value;
+                    // Aggiorna il valore del controller in base alla selezione del team
+                    //_locationController.text = _selectedTeam == 'Casa' ? 'CASA' : '';
                   });
                 },
-                items: ['beginner', 'intermediate', 'advanced', 'expert']
+                items: ['beginner', 'intermediate', 'advanced']
                     .map<DropdownMenuItem<String>>(
                       (String value) => DropdownMenuItem<String>(
                         value: value,
@@ -50,6 +51,7 @@ class _MatchEventPageState extends State<MatchEventPage> {
                 decoration: InputDecoration(labelText: 'Select Team'),
               ),
               TextFormField(
+                controller: _opponentController,
                 decoration: InputDecoration(labelText: 'Enter String'),
               ),
               DropdownButtonFormField<String>(
@@ -59,6 +61,9 @@ class _MatchEventPageState extends State<MatchEventPage> {
                     _matchType = value!;
                     if (_matchType == 'Fuori casa') {
                       _locationController.text = '';
+                    }
+                    if (_matchType == 'Casa') {
+                      _locationController.text = 'CASA';
                     }
                   });
                 },
@@ -78,20 +83,59 @@ class _MatchEventPageState extends State<MatchEventPage> {
                 readOnly: _matchType == 'Casa',
                 decoration: InputDecoration(
                   labelText: 'Location',
-                  hintText: _matchType == 'Casa' ? 'CASA' : 'Fuori casa',
+                  hintText: _matchType == 'Casa' ? 'CASA' : 'Inserisci indirizzo',
                 ),
               ),
               SizedBox(height: 16.0),
+              Row(
+                children: [
+                  Text('Select Time: '),
+                  ElevatedButton(
+                    onPressed: () async {
+                      final selectedTime = await showTimePicker(
+                        context: context,
+                        initialTime: _selectedTime,
+                      );
+
+                      if (selectedTime != null && selectedTime != _selectedTime) {
+                        setState(() {
+                          _selectedTime = selectedTime;
+                        });
+                      }
+                    },
+                    child: Text(_selectedTime.format(context)),
+                  ),
+                ],
+              ),
+              SizedBox(height: 16.0),
               ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   if (_formKey.currentState!.validate()) {
-                    // Effettua l'aggiornamento o l'inserimento nel database
-                    // Aggiorna la tabella football_match con i dati inseriti
-                    // Usa _selectedTeam, il valore del text field, _matchType, _selectedLocation e _selectedTime
-                    // Puoi usare FirebaseFirestore per interagire con Firestore
+                    // Ottieni un riferimento al documento nella collezione 'football_match'
+                    FirebaseFirestore firestore = FirebaseFirestore.instance;
+                    QuerySnapshot querySnapshot = await firestore.collection('football_match').where('team', isEqualTo: _selectedTeam).get();
+                    String documentId = querySnapshot.docs.first.id;
+                        //.doc(_selectedTeam);
+
+                    // Aggiorna i dati nel documento
+                    await FirebaseFirestore.instance
+                    .collection('football_match')
+                    .doc(documentId).update({
+                      'team': _selectedTeam,
+                      'opponent': _opponentController.text,
+                      'place': _locationController.text,
+                      'time': _selectedTime.format(context),
+                    });
+
+                    // Mostra un messaggio di successo o effettua altre azioni post-aggiornamento
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Dati aggiornati con successo'),
+                      ),
+                    );
                   }
                 },
-                child: Text('Insert Data'),
+                child: Text('Update Data'),
               ),
             ],
           ),

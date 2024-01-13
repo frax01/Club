@@ -25,7 +25,7 @@ class FootballEventPage extends StatelessWidget {
           ElevatedButton(
             onPressed: () {
               // Naviga alla pagina UpdateCalendars
-              Navigator.pushNamed(context, '/update_calendars');
+              Navigator.pushNamed(context, '/calendarEvent');
             },
             child: Text('Update Calendars'),
           ),

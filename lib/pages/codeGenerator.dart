@@ -35,7 +35,6 @@ class _UserDetailsPageState extends State<UserDetailsPage> {
     "Beginner",
     "Intermediate",
     "Advanced",
-    "Expert"
   ];
   final List<String> statusOptions = ["", "User", "Admin"];
 

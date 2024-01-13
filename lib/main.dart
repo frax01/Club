@@ -1,3 +1,4 @@
+import 'package:club/pages/newCalendarEvent.dart';
 import 'package:club/pages/football.dart';
 import 'package:club/pages/footballEvent.dart';
 import 'package:club/pages/signup.dart';
@@ -6,6 +7,9 @@ import 'package:club/pages/trip.dart';
 import 'package:club/pages/summer.dart';
 import 'package:club/pages/extra.dart';
 import 'package:club/pages/matchEvent.dart';
+import 'package:club/pages/calendarEvent.dart';
+import 'package:club/pages/updateEvent.dart';
+import 'package:club/pages/deleteCalendarEvent.dart';
 import 'package:flutter/material.dart';
 import 'functions/button.dart';
 import 'pages/club.dart';
@@ -68,10 +72,13 @@ class MyApp extends StatelessWidget {
         '/trip': (context) => const TripPage(title: 'Tiber Club'),
         '/summer': (context) => const SummerPage(title: 'Tiber Club'),
         '/extra': (context) => const ExtraPage(title: 'Tiber Club'),
-        '/footballEvent': (context) =>
-            const FootballEventPage(title: 'ASD Tiber Club'),
-        '/matchEvent': (context) =>
-            const MatchEventPage(title: 'ASD Tiber Club'),
+        //'/football_extra': (context) => const ExtraPage(title: 'Tiber Club'),
+        '/footballEvent': (context) => const FootballEventPage(title: 'ASD Tiber Club'),
+        '/matchEvent': (context) => const MatchEventPage(title: 'ASD Tiber Club'),
+        '/calendarEvent': (context) => const CalendarEventPage(title: 'ASD Tiber Club'),
+        '/newCalendarEvent': (context) => const NewCalendarEventPage(title: 'ASD Tiber Club'),
+        '/updateEvent': (context) => const UpdateEvent(),
+        '/deleteEvent': (context) => const DeleteCalendarEventPage(),
       },
     );
   }

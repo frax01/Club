@@ -12,7 +12,7 @@ class Waiting extends StatelessWidget {
         title: Text(title, style: const TextStyle(color: Colors.white)),
         backgroundColor: const Color.fromARGB(255, 130, 16, 8),
         centerTitle: true,
-        automaticallyImplyLeading: false,
+        //automaticallyImplyLeading: false,
       ),
       body: const Center(
         child: Text(
