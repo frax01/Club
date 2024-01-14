@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'tabMatch.dart';
 import 'tabCalendar.dart';
+import 'tabRanking.dart';
 
 class FootballPage extends StatefulWidget {
   const FootballPage({super.key, required this.title});
@@ -109,7 +110,10 @@ class _FootballPageState extends State<FootballPage> {
               TabCalendarPage(),
               //Icon(Icons.directions_transit, size: 150, color: Colors.brown),
               // Contenuto per il Tab 3
-              Icon(Icons.directions_bike, size: 150, color: Colors.teal),
+              TabCalendarPage(),
+              //TabRanking(),
+
+              //Icon(Icons.directions_bike, size: 150, color: Colors.teal),
               // Contenuto per il Tab 4
               Icon(Icons.directions_bike, size: 150, color: Colors.teal),
             ],

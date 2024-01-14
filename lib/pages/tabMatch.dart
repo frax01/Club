@@ -40,14 +40,14 @@ class _TabMatchPageState extends State<TabMatchPage> {
       body: Column(
         children: [
           Container(
-            height: heightScreen,
+            height: heightScreen/2,
             child: _matchesData.isNotEmpty
             ? PageView.builder(
               controller: _pageController,
               itemCount: _matchesData.length,
               itemBuilder: (context, index) {
                 return Padding(
-                  padding: EdgeInsets.all(0.0),
+                  padding: EdgeInsets.all(16.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -63,7 +63,7 @@ class _TabMatchPageState extends State<TabMatchPage> {
                           ),
                         ),
                       ),
-                      Image.asset(_matchesData[index]['image'], width: widthScreen/1.75, height: heightScreen/1.75,),
+                      Image.asset(_matchesData[index]['image'], width: widthScreen/5, height: heightScreen/5,),
                       Container(
                         width: widthScreen/2,
                         height: heightScreen/8,

@@ -32,14 +32,14 @@ class FootballEventPage extends StatelessWidget {
           ElevatedButton(
             onPressed: () {
               // Naviga alla pagina UpdateRankings
-              Navigator.pushNamed(context, '/update_rankings');
+              Navigator.pushNamed(context, '/rankingEvent');
             },
             child: Text('Update Rankings'),
           ),
           ElevatedButton(
             onPressed: () {
               // Naviga alla pagina UpdateScorers
-              Navigator.pushNamed(context, '/update_scorers');
+              Navigator.pushNamed(context, '/scorerEvent');
             },
             child: Text('Update Scorers'),
           ),
