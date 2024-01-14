@@ -9,6 +9,10 @@ import 'package:club/pages/club/extra.dart';
 import 'package:club/pages/football/match/matchEvent.dart';
 import 'package:club/pages/football/calendar/calendarEvent.dart';
 import 'package:club/pages/football/scorer/scorerEvent.dart';
+import 'package:club/pages/football/tournaments.dart';
+import 'package:club/pages/football/extra.dart';
+import 'package:club/pages/football/event.dart';
+import 'package:club/pages/main/setting.dart';
 import 'package:flutter/material.dart';
 import 'functions/button.dart';
 import 'pages/club/club.dart';
@@ -63,15 +67,18 @@ class MyApp extends StatelessWidget {
         '/signup': (context) => const SignUp(title: 'Phoenix United'),
         '/waiting': (context) => const Waiting(title: 'Phoenix United'),
         '/homepage': (context) => const HomePage(title: 'Phoenix United'),
+        '/settings': (context) => const SettingsPage(),
         '/club': (context) => const ClubPage(title: 'Phoenix Club'),
         '/football': (context) => const FootballPage(title: 'Phoenix United'),
         '/acceptance': (context) => const AcceptancePage(title: 'Phoenix United'),
         '/event': (context) => const EventPage(title: 'Phoenix Club'),
         '/weekend': (context) => const WeekendPage(title: 'Phoenix Club'),
+        '/new': (context) => const NewEventPage(title: 'Phoenix Club'),
         '/trip': (context) => const TripPage(title: 'Phoenix Club'),
         '/summer': (context) => const SummerPage(title: 'Phoenix Club'),
         '/extra': (context) => const ExtraPage(title: 'Phoenix Club'),
-        //'/football_extra': (context) => const ExtraPage(title: 'Tiber Club'),
+        '/football_extra': (context) => const FootballExtraPage(title: 'Tiber Club'),
+        '/football_tournaments': (context) => const TournamentPage(title: 'Tiber Club'),
         '/footballEvent': (context) => const FootballEventPage(title: 'Phoenix United'),
         '/matchEvent': (context) => const MatchEventPage(title: 'Phoenix United'),
         '/calendarEvent': (context) => const CalendarEventPage(title: 'Phoenix United'),

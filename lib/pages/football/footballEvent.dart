@@ -43,6 +43,13 @@ class FootballEventPage extends StatelessWidget {
             },
             child: Text('Update Scorers'),
           ),
+          ElevatedButton(
+            onPressed: () {
+              // Naviga alla pagina NewEvent
+              Navigator.pushNamed(context, '/new');
+            },
+            child: Text('New Event'),
+          ),
         ],
       ),
     );

@@ -143,8 +143,53 @@ class _LoginState extends State<Login> {
                   ),
                   child: const Text('Sign Up', style: TextStyle(color: Colors.black)),
                 ),
-                TextButton(
-                  onPressed: _handleForgotPassword,
+                SizedBox(height: 16.0),
+TextButton(
+  onPressed: () {
+    showDialog(
+      context: context,
+      builder: (context) {
+        TextEditingController resetEmailController = TextEditingController();
+        return AlertDialog(
+          title: Text('Recupero password'),
+          content: TextField(
+            controller: resetEmailController,
+            decoration: const InputDecoration(labelText: 'Email'),
+          ),
+          actions: [
+            TextButton(
+              child: Text('Annulla'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Invia'),
+              onPressed: () async {
+                if (resetEmailController.text.isNotEmpty) {
+                  try {
+                    await FirebaseAuth.instance.sendPasswordResetEmail(email: resetEmailController.text);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Email di recupero password inviata.')),
+                    );
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Errore durante l\'invio dell\'email di recupero password.')),
+                    );
+                  }
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Inserisci un\'email.')),
+                  );
+                }
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  },
                   child: const Text('Password dimenticata?', style: TextStyle(color: Colors.black),),
                 ),
               ],

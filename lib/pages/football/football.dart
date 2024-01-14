@@ -211,7 +211,7 @@ class _FootballPageState extends State<FootballPage> {
                   title: const Text('Tournaments'),
                   subtitle: Text('Just do it', style: TextStyle(fontSize: width > 700? 12 : width > 500? 14 : width > 400? 11 : width > 330? 12 : 10)),
                   onTap: () {
-                    Navigator.pushNamed(context, '/tournaments');
+                    Navigator.pushNamed(context, '/football_tournaments');
                   },
                 ),
                 ListTile(
@@ -249,19 +249,9 @@ class _FootballPageState extends State<FootballPage> {
                     Icons.settings,
                   ),
                   title: const Text('Settings'),
-                  subtitle: Text('Account management',
-                      style: TextStyle(
-                          fontSize: width > 700
-                              ? 12
-                              : width > 500
-                                  ? 14
-                                  : width > 400
-                                      ? 11
-                                      : width > 330
-                                          ? 12
-                                          : 10)),
+                  subtitle: Text('Account management', style: TextStyle(fontSize: width > 700? 12 : width > 500? 14 : width > 400? 11 : width > 330? 12 : 10)),
                   onTap: () {
-                    Navigator.pop(context);
+                    Navigator.pushNamed(context, '/settings');
                   },
                 ),
                 ListTile(
