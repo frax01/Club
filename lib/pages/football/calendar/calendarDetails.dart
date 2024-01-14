@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class EventDetailsPage extends StatefulWidget {
+  EventDetailsPage({super.key, required this.title, required this.level});
   final String level;
-
-  EventDetailsPage(this.level);
+  final String title;
 
   @override
   _EventDetailsPageState createState() => _EventDetailsPageState();
@@ -30,7 +30,8 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                 setState(() {
                   numberOfMatches = int.tryParse(value) ?? 1;
                   matchDetails = Map.fromEntries(
-                    List.generate(numberOfMatches, (index) => MapEntry(index, {})),
+                    List.generate(
+                        numberOfMatches, (index) => MapEntry(index, {})),
                   );
                 });
               },

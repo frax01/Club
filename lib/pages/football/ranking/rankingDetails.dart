@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class RankingDetailsPage extends StatefulWidget {
   final String level;
 
-  RankingDetailsPage(this.level);
+  RankingDetailsPage({super.key, required this.level});
 
   @override
   _RankingDetailsPageState createState() => _RankingDetailsPageState();
@@ -25,7 +25,8 @@ class _RankingDetailsPageState extends State<RankingDetailsPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text('Team: ${widget.level}', style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),
+            Text('Team: ${widget.level}',
+                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),
             SizedBox(height: 16.0),
             TextField(
               keyboardType: TextInputType.number,
@@ -33,7 +34,8 @@ class _RankingDetailsPageState extends State<RankingDetailsPage> {
               onChanged: (value) {
                 setState(() {
                   numberOfTeams = int.tryParse(value) ?? 0;
-                  teamsData = List.generate(numberOfTeams, (index) => {'name': '', 'score': 0});
+                  teamsData = List.generate(
+                      numberOfTeams, (index) => {'name': '', 'score': 0});
                 });
               },
             ),
@@ -82,7 +84,8 @@ class _RankingDetailsPageState extends State<RankingDetailsPage> {
                   teamData['score'] = int.tryParse(value) ?? 0;
                 });
               },
-              decoration: InputDecoration(labelText: 'Punteggio', hintText: '0'),
+              decoration:
+                  InputDecoration(labelText: 'Punteggio', hintText: '0'),
             ),
           ),
         ],
@@ -92,7 +95,10 @@ class _RankingDetailsPageState extends State<RankingDetailsPage> {
 
   Future<void> _confirmChanges() async {
     // Update the document in Firebase
-    await FirebaseFirestore.instance.collection('football_ranking').doc(widget.level).set({
+    await FirebaseFirestore.instance
+        .collection('football_ranking')
+        .doc(widget.level)
+        .set({
       'team': widget.level,
       'ranking': teamsData,
     });

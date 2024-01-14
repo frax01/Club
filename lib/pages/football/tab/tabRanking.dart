@@ -3,8 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 
 class TabRanking extends StatefulWidget {
-  const TabRanking({super.key});
-  
+  const TabRanking({Key? key}) : super(key: key);
+
   @override
   _TabRankingState createState() => _TabRankingState();
 }
@@ -44,11 +44,15 @@ class _TabRankingState extends State<TabRanking> {
                 child: PageView.builder(
                   controller: _pageController,
                   itemCount: rankings.length,
+                  onPageChanged: (page) {
+                    setState(() {
+                      _currentPage = page;
+                    });
+                  },
                   itemBuilder: (context, index) {
                     Map<String, dynamic> rankingData =
-                        rankings[index].data() as Map<String, dynamic>;
-                    List<MapEntry<String, dynamic>> rankingEntries =
-                        rankingData['ranking'].entries.toList();
+                        rankings[_currentPage].data() as Map<String, dynamic>;
+                    List<Map<String, dynamic>> rankingList =List<Map<String, dynamic>>.from(rankingData['ranking']);
 
                     return Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -59,36 +63,41 @@ class _TabRankingState extends State<TabRanking> {
                         SizedBox(height: 16.0),
                         Expanded(
                           child: ListView.builder(
-                            itemCount: rankingEntries.length,
-                            itemBuilder: (context, index) {
-                              MapEntry<String, dynamic> entry =
-                                  rankingEntries[index];
+                            itemCount: rankingList.length,
+                            itemBuilder: (context, listViewIndex) {
                               return ListTile(
-                                title: Text(entry.key),
-                                subtitle: Text('Punteggio: ${entry.value}'),
+                                title:
+                                    Text('Name: ${rankingList[listViewIndex]['name']}'),
+                                subtitle: Text(
+                                    'Score: ${rankingList[listViewIndex]['score']}'),
                               );
                             },
                           ),
                         ),
+                        DotsIndicator(
+                          dotsCount: rankings.length,
+                          position: _currentPage.toDouble(),
+                          decorator: DotsDecorator(
+                            size: const Size.square(9.0),
+                            activeSize: const Size(18.0, 9.0),
+                            color: Colors.black26,
+                            activeColor: Colors.black,
+                            spacing: const EdgeInsets.all(3.0),
+                          ),
+                          onTap: (position) {
+                            _pageController.animateToPage(
+                              position.toInt(),
+                              duration: Duration(milliseconds: 300), // Imposta la durata dell'animazione
+                              curve: Curves.easeInOut, // Imposta la curva di animazione desiderata
+                            );
+                            setState(() {
+                              _currentPage = position.toInt();
+                            });
+                          },
+                        ),
                       ],
                     );
                   },
-                  onPageChanged: (int page) {
-                    setState(() {
-                      _currentPage = page;
-                    });
-                  },
-                ),
-              ),
-              DotsIndicator(
-                dotsCount: rankings.length,
-                position: _currentPage.toDouble(),
-                decorator: DotsDecorator(
-                  size: const Size.square(9.0),
-                  activeSize: const Size(18.0, 9.0),
-                  color: Colors.black26,
-                  activeColor: Colors.black,
-                  spacing: const EdgeInsets.all(3.0),
                 ),
               ),
             ],

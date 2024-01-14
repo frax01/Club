@@ -1,27 +1,22 @@
-import 'package:club/pages/newCalendarEvent.dart';
-import 'package:club/pages/football.dart';
-import 'package:club/pages/footballEvent.dart';
-import 'package:club/pages/rankingEvent.dart';
-import 'package:club/pages/signup.dart';
-import 'package:club/pages/weekend.dart';
-import 'package:club/pages/trip.dart';
-import 'package:club/pages/summer.dart';
-import 'package:club/pages/extra.dart';
-import 'package:club/pages/matchEvent.dart';
-import 'package:club/pages/calendarEvent.dart';
-import 'package:club/pages/updateEvent.dart';
-import 'package:club/pages/deleteCalendarEvent.dart';
-import 'package:club/pages/deleteRankingEvent.dart';
-import 'package:club/pages/newRankingEvent.dart';
-import 'package:club/pages/scorerEvent.dart';
+import 'package:club/pages/football/football.dart';
+import 'package:club/pages/football/footballEvent.dart';
+import 'package:club/pages/football/ranking/rankingEvent.dart';
+import 'package:club/pages/main/signup.dart';
+import 'package:club/pages/club/weekend.dart';
+import 'package:club/pages/club/trip.dart';
+import 'package:club/pages/main/summer.dart';
+import 'package:club/pages/club/extra.dart';
+import 'package:club/pages/football/match/matchEvent.dart';
+import 'package:club/pages/football/calendar/calendarEvent.dart';
+import 'package:club/pages/football/scorer/scorerEvent.dart';
 import 'package:flutter/material.dart';
 import 'functions/button.dart';
-import 'pages/club.dart';
-import 'pages/login.dart';
-import 'pages/waiting.dart';
-import 'pages/acceptance.dart';
+import 'pages/club/club.dart';
+import 'pages/main/login.dart';
+import 'pages/main/waiting.dart';
+import 'pages/main/acceptance.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'pages/event.dart';
+import 'pages/club/event.dart';
 import 'config.dart';
 
 //import 'package:firebase_auth/firebase_auth.dart';
@@ -62,7 +57,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: const Login(title: 'Phoenix United'),
-      initialRoute: '/',
+      initialRoute: '/footballEvent',
       routes: {
         '/login': (context) => const Login(title: 'Phoenix United'),
         '/signup': (context) => const SignUp(title: 'Phoenix United'),
@@ -80,11 +75,6 @@ class MyApp extends StatelessWidget {
         '/footballEvent': (context) => const FootballEventPage(title: 'Phoenix United'),
         '/matchEvent': (context) => const MatchEventPage(title: 'Phoenix United'),
         '/calendarEvent': (context) => const CalendarEventPage(title: 'Phoenix United'),
-        '/newCalendarEvent': (context) => const NewCalendarEventPage(title: 'Phoenix United'),
-        '/updateEvent': (context) => const UpdateEvent(),
-        '/deleteEvent': (context) => const DeleteCalendarEventPage(),
-        '/deleteRankingEvent': (context) => const DeleteRankingEventPage(),
-        '/newRankingEvent': (context) => const NewRankingEventPage(title: 'Phoenix United'),
         '/rankingEvent': (context) => const RankingEventPage(title: 'Phoenix United'),
         '/scorerEvent': (context) => const ScorerEventPage(title: 'Phoenix United'),
       },
