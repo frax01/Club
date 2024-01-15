@@ -33,11 +33,11 @@ void main() async {
   await Firebase.initializeApp(
     options: const FirebaseOptions(
       apiKey: Config.apiKey,
-      authDomain: 'YOUR_AUTH_DOMAIN',
+      authDomain: 'club-60d94.firebaseapp.com',
       projectId: 'club-60d94',
       storageBucket: 'club-60d94.appspot.com',
-      messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-      appId: 'YOUR_APP_ID',
+      messagingSenderId: '53952636966',
+      appId: '1:53952636966:android:4913f93f8c6e0fc8959ee7',
     ),
   );
 

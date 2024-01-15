@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:club/pages/main/notifications.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:club/pages/main/notifications.dart';
 
 class TripPage extends StatefulWidget {
   const TripPage({super.key, required this.title});
@@ -11,6 +15,39 @@ class TripPage extends StatefulWidget {
 }
 
 class _TripPageState extends State<TripPage> {
+  NotificationHandler notificationHandler = NotificationHandler();
+  final FirebaseMessaging messaging = FirebaseMessaging.instance;
+  String? token;
+//
+  @override
+  void initState() {
+    super.initState();
+    getToken();
+  }
+
+//
+  void getToken() async {
+    token = await messaging.getToken();
+    print('User token: $token');
+
+    User? user = FirebaseAuth.instance.currentUser;
+    String? email = user?.email;
+
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('user')
+        .where('email', isEqualTo: email)
+        .get();
+
+    print(token);
+
+    if (querySnapshot.docs.isNotEmpty) {
+      DocumentSnapshot documentSnapshot = querySnapshot.docs.first;
+      documentSnapshot.reference.update({'token': token});
+    }
+    await notificationHandler.sendNotification(
+        token, 'Login successful', 'You have logged in successfully');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,14 +58,13 @@ class _TripPageState extends State<TripPage> {
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: StreamBuilder(
-        stream:
-            FirebaseFirestore.instance.collection('club_trip').snapshots(),
-            builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            if (!snapshot.hasData) {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            }
+        stream: FirebaseFirestore.instance.collection('club_trip').snapshots(),
+        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (!snapshot.hasData) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
 
           // Estrai la lista dei documenti da Firestore
           List<DocumentSnapshot> documents = snapshot.data!.docs;

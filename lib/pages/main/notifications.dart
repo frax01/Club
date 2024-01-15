@@ -2,6 +2,17 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
+final FirebaseMessaging messaging = FirebaseMessaging.instance;
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+const AndroidNotificationChannel channel = AndroidNotificationChannel(
+  'high_importance_channel', // id
+  'High Importance Notifications', // title
+  'This channel is used for important notifications.', // description
+  importance: Importance.high,
+);
 
 class NotificationHandler extends StatelessWidget {
   NotificationHandler({Key? key}) : super(key: key);
@@ -10,7 +21,26 @@ class NotificationHandler extends StatelessWidget {
 
   Future<void> initialize() async {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      // Gestisci la notifica quando l'app è in primo piano
+      RemoteNotification? notification = message.notification;
+  AndroidNotification? android = message.notification?.android;
+
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+  if (notification != null && android != null) {
+    flutterLocalNotificationsPlugin.show(
+        notification.hashCode,
+        notification.title,
+        notification.body,
+        NotificationDetails(
+          android: AndroidNotificationDetails(
+            channel.id,
+            channel.name,
+            channel.description,
+            icon: android.smallIcon,
+            // other properties...
+          ),
+        ));
+  }
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
