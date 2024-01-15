@@ -9,7 +9,9 @@ import 'package:club/pages/club/extra.dart';
 import 'package:club/pages/football/match/matchEvent.dart';
 import 'package:club/pages/football/calendar/calendarEvent.dart';
 import 'package:club/pages/football/scorer/scorerEvent.dart';
+import 'package:club/pages/club/clubEventManagement.dart';
 import 'package:club/pages/football/tournaments.dart';
+import 'package:club/pages/football/footballEventManagement.dart';
 import 'package:club/pages/football/extra.dart';
 import 'package:club/pages/football/event.dart';
 import 'package:club/pages/main/setting.dart';
@@ -61,7 +63,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: const Login(title: 'Phoenix United'),
-      initialRoute: '/footballEvent',
+      initialRoute: '/',
       routes: {
         '/login': (context) => const Login(title: 'Phoenix United'),
         '/signup': (context) => const SignUp(title: 'Phoenix United'),
@@ -71,6 +73,7 @@ class MyApp extends StatelessWidget {
         '/club': (context) => const ClubPage(title: 'Phoenix Club'),
         '/football': (context) => const FootballPage(title: 'Phoenix United'),
         '/acceptance': (context) => const AcceptancePage(title: 'Phoenix United'),
+        '/club_event': (context) => const ClubNewEventPage(title: 'Phoenix Club'),
         '/event': (context) => const EventPage(title: 'Phoenix Club'),
         '/weekend': (context) => const WeekendPage(title: 'Phoenix Club'),
         '/new': (context) => const NewEventPage(title: 'Phoenix Club'),
@@ -79,6 +82,7 @@ class MyApp extends StatelessWidget {
         '/extra': (context) => const ExtraPage(title: 'Phoenix Club'),
         '/football_extra': (context) => const FootballExtraPage(title: 'Tiber Club'),
         '/football_tournaments': (context) => const TournamentPage(title: 'Tiber Club'),
+        '/football_management_event': (context) => const FootballEventManagementPage(title: 'Phoenix United'),
         '/footballEvent': (context) => const FootballEventPage(title: 'Phoenix United'),
         '/matchEvent': (context) => const MatchEventPage(title: 'Phoenix United'),
         '/calendarEvent': (context) => const CalendarEventPage(title: 'Phoenix United'),

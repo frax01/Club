@@ -1,49 +1,51 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-//import 'package:image_picker/image_picker.dart';
-//import 'dart:io';
-//import 'package:firebase_storage/firebase_storage.dart';
 
-//Future<String> uploadImage() async {
-//  try {
-//    // Ottieni un'immagine dall'utente (puoi scegliere tra galleria o fotocamera)
-//    XFile? pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
-//
-//    if (pickedFile != null) {
-//      // Carica l'immagine su Firebase Storage
-//      Reference storageReference = FirebaseStorage.instance.ref().child('club_weekend/${DateTime.now().toIso8601String()}');
-//      UploadTask uploadTask = storageReference.putFile(File(pickedFile.path));
-//      await uploadTask.whenComplete(() => null);
-//
-//      // Ottieni l'URL dell'immagine appena caricata
-//      String imageUrl = await storageReference.getDownloadURL();
-//      return imageUrl;
-//    } else {
-//      throw Exception('Nessuna immagine selezionata.');
-//    }
-//  } catch (e) {
-//    throw Exception('Errore durante il caricamento dell\'immagine: $e');
-//  }
-//}
+class FootballEventEditPage extends StatefulWidget {
+  const FootballEventEditPage(
+      {Key? key, required this.documentId, required this.Option})
+      : super(key: key);
 
-class EventPage extends StatefulWidget {
-  const EventPage({super.key, required this.title});
-
-  final String title;
+  final String documentId;
+  final String Option;
+  //final String title = 'Club Event';
 
   @override
-  _EventPageState createState() => _EventPageState();
+  _FootballEventEditPageState createState() => _FootballEventEditPageState();
 }
 
-class _EventPageState extends State<EventPage> {
+class _FootballEventEditPageState extends State<FootballEventEditPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController titleController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
   String title = '';
-  String selectedOption='';
+  String selectedOption = '';
   String imagePath = '';
-  String selectedClass='';
+  String selectedClass = '';
   String description = '';
 
-  Future<void> createEvent() async {
+  @override
+  void initState() {
+    super.initState();
+    loadInitialData();
+  }
+
+  Future<void> loadInitialData() async {
+    DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
+        .collection('football_${widget.Option}')
+        .doc(widget.documentId)
+        .get();
+
+    Map<String, dynamic> data = documentSnapshot.data() as Map<String, dynamic>;
+    setState(() {
+      titleController.text = data['title'];
+      selectedOption = data['selectedOption'];
+      selectedClass = data['selectedClass'];
+      descriptionController.text = data['description'];
+    });
+  }
+
+  Future<void> updateClubDetails() async {
     try {
       if (title == "") {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -61,30 +63,33 @@ class _EventPageState extends State<EventPage> {
         return;
       }
 
-      FirebaseFirestore firestore = FirebaseFirestore.instance;
-      await firestore.collection('club_$selectedOption').add({
+      //FirebaseFirestore firestore = FirebaseFirestore.instance;
+      //QuerySnapshot querySnapshot = await firestore.collection('club_$selectedOption').where('title', isEqualTo: title).get();
+      //String documentId = querySnapshot.docs.first.id;
+      //.doc(_selected
+      // Aggiorna i dati nel documento
+      await FirebaseFirestore.instance
+          .collection('football_${widget.Option}')
+          .doc(widget.documentId)
+          .delete();
+          
+      await FirebaseFirestore.instance
+          .collection('football_$selectedOption')
+          .add({
         'title': title,
         'selectedOption': selectedOption,
-        'imagePath': imagePath,
         'selectedClass': selectedClass,
         'description': description,
       });
-      print('Evento creato con successo!');
       Navigator.pop(context);
     } catch (e) {
-      print('Errore durante la creazione dell\'evento: $e');
+      print('Error updating user details: $e');
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title, style: const TextStyle(color: Colors.white)),
-        backgroundColor: const Color.fromARGB(255, 130, 16, 8),
-        centerTitle: true,
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -93,6 +98,7 @@ class _EventPageState extends State<EventPage> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               TextFormField(
+                controller: titleController,
                 onChanged: (value) {
                   title = value;
                 },
@@ -106,8 +112,7 @@ class _EventPageState extends State<EventPage> {
                     selectedOption = value!;
                   });
                 },
-                items: ['', 'weekend', 'trip', 'summer', 'extra']
-                    .map((String option) {
+                items: ['', 'extra', 'tournaments'].map((String option) {
                   return DropdownMenuItem<String>(
                     value: option,
                     child: Text(option),
@@ -158,6 +163,7 @@ class _EventPageState extends State<EventPage> {
               ),
               SizedBox(height: 16.0),
               TextFormField(
+                controller: descriptionController,
                 onChanged: (value) {
                   description = value;
                 },
@@ -168,7 +174,7 @@ class _EventPageState extends State<EventPage> {
               ElevatedButton(
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
-                    await createEvent();
+                    await updateClubDetails();
                   }
                 },
                 child: Text('Crea'),

@@ -4,29 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 //import 'dart:io';
 //import 'package:firebase_storage/firebase_storage.dart';
 
-class NewEvent {
-  String title = '';
-  String selectedOption = '';
-  String imagePath = '';
-  String selectedClass = '';
-  String description = '';
-
-  Future<void> createEvent() async {
-    try {
-      FirebaseFirestore firestore = FirebaseFirestore.instance;
-      await firestore.collection('football_$selectedOption').add({
-        'title': title,
-        'selectedOption': selectedOption,
-        'imagePath': imagePath,
-        'selectedClass': selectedClass,
-        'description': description,
-      });
-      print('Evento creato con successo!');
-    } catch (e) {
-      print('Errore durante la creazione dell\'evento: $e');
-    }
-  }
-
   //Future<String> uploadImage() async {
   //  try {
   //    // Ottieni un'immagine dall'utente (puoi scegliere tra galleria o fotocamera)
@@ -48,7 +25,6 @@ class NewEvent {
   //    throw Exception('Errore durante il caricamento dell\'immagine: $e');
   //  }
   //}
-}
 
 class NewEventPage extends StatefulWidget {
   const NewEventPage({super.key, required this.title});
@@ -60,7 +36,50 @@ class NewEventPage extends StatefulWidget {
 }
 
 class _EventPageState extends State<NewEventPage> {
-  NewEvent event = NewEvent();
+  String title = '';
+  String selectedOption = '';
+  String imagePath = '';
+  String selectedClass = '';
+  String description = '';
+
+  Future<void> createEvent() async {
+    try {
+
+      if (title == "") {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Please select a title')));
+        return;
+      }
+      if (selectedOption == "") {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Please select an option')));
+        return;
+      }
+      if (selectedClass == "") {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Please select a class')));
+        return;
+      }
+      if (description == "") {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Please select a description')));
+        return;
+      }
+
+      FirebaseFirestore firestore = FirebaseFirestore.instance;
+      await firestore.collection('football_$selectedOption').add({
+        'title': title,
+        'selectedOption': selectedOption,
+        'imagePath': imagePath,
+        'selectedClass': selectedClass,
+        'description': description,
+      });
+      print('Evento creato con successo!');
+      Navigator.pop(context);
+    } catch (e) {
+      print('Errore durante la creazione dell\'evento: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,16 +97,16 @@ class _EventPageState extends State<NewEventPage> {
           children: [
             TextFormField(
               onChanged: (value) {
-                event.title = value;
+                title = value;
               },
               decoration: InputDecoration(labelText: 'Titolo'),
             ),
             SizedBox(height: 16.0),
             DropdownButton<String>(
-              value: event.selectedOption,
+              value: selectedOption,
               onChanged: (value) {
                 setState(() {
-                  event.selectedOption = value!;
+                  selectedOption = value!;
                 });
               },
               items: ['', 'tournaments', 'extra']
@@ -116,10 +135,10 @@ class _EventPageState extends State<NewEventPage> {
             ),
             SizedBox(height: 16.0),
             DropdownButton<String>(
-              value: event.selectedClass,
+              value: selectedClass,
               onChanged: (value) {
                 setState(() {
-                  event.selectedClass = value!;
+                  selectedClass = value!;
                 });
               },
               items: ['', '1st', '2nd', '3rd', '1st hs', '2nd hs', '3rd hs', '4th hs', '5th hs']
@@ -134,7 +153,7 @@ class _EventPageState extends State<NewEventPage> {
             SizedBox(height: 16.0),
             TextFormField(
               onChanged: (value) {
-                event.description = value;
+                description = value;
               },
               decoration: InputDecoration(labelText: 'Testo'),
               maxLines: null,
@@ -142,8 +161,7 @@ class _EventPageState extends State<NewEventPage> {
             SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: () async {
-                await event.createEvent();
-                Navigator.pop(context);
+                await createEvent();
               },
               child: Text('Crea'),
             ),

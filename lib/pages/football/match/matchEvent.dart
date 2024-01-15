@@ -12,11 +12,54 @@ class MatchEventPage extends StatefulWidget {
 
 class _MatchEventPageState extends State<MatchEventPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  String? _selectedTeam;
-  String? _matchType;
-  TextEditingController _opponentController = TextEditingController();
-  TextEditingController _locationController = TextEditingController();
-  TimeOfDay _selectedTime = TimeOfDay.now();
+  String selectedTeam='';
+  String matchType='';
+  String opponentController = '';
+  String locationController = '';
+  TimeOfDay selectedTime = TimeOfDay.now();
+
+  void updateMatchDetails() async {
+    try {
+      if (selectedTeam == "") {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Please select a team')));
+        return;
+      }
+      if (opponentController == "") {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Please select an apponent')));
+        return;
+      }
+      if (matchType == "") {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Please select a match')));
+        return;
+      }
+      if (locationController == "") {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Please select a location')));
+        return;
+      }
+
+      FirebaseFirestore firestore = FirebaseFirestore.instance;
+      QuerySnapshot querySnapshot = await firestore.collection('football_match').where('team', isEqualTo: selectedTeam).get();
+      String documentId = querySnapshot.docs.first.id;
+          //.doc(_selected
+      // Aggiorna i dati nel documento
+      await FirebaseFirestore.instance
+      .collection('football_match')
+      .doc(documentId).update({
+        'team': selectedTeam,
+        'opponent': opponentController,
+        'place': locationController,
+        'time': selectedTime.format(context),
+      });
+      Navigator.pop(context);
+    } catch (e) {
+      print('Error updating user details: $e');
+    }
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,15 +75,15 @@ class _MatchEventPageState extends State<MatchEventPage> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               DropdownButtonFormField<String>(
-                value: _selectedTeam,
+                value: selectedTeam,
                 onChanged: (value) {
                   setState(() {
-                    _selectedTeam = value;
+                    selectedTeam = value!;
                     // Aggiorna il valore del controller in base alla selezione del team
                     //_locationController.text = _selectedTeam == 'Casa' ? 'CASA' : '';
                   });
                 },
-                items: ['beginner', 'intermediate', 'advanced']
+                items: ['', 'beginner', 'intermediate', 'advanced']
                     .map<DropdownMenuItem<String>>(
                       (String value) => DropdownMenuItem<String>(
                         value: value,
@@ -51,23 +94,19 @@ class _MatchEventPageState extends State<MatchEventPage> {
                 decoration: InputDecoration(labelText: 'Select Team'),
               ),
               TextFormField(
-                controller: _opponentController,
+                onChanged: (value) {
+                  opponentController = value;
+                },
                 decoration: InputDecoration(labelText: 'Enter String'),
               ),
               DropdownButtonFormField<String>(
-                value: _matchType,
+                value: matchType,
                 onChanged: (value) {
                   setState(() {
-                    _matchType = value!;
-                    if (_matchType == 'Fuori casa') {
-                      _locationController.text = '';
-                    }
-                    if (_matchType == 'Casa') {
-                      _locationController.text = 'CASA';
-                    }
+                    matchType = value!;
                   });
                 },
-                items: ['Casa', 'Fuori casa']
+                items: ['', 'Casa', 'Fuori casa']
                     .map<DropdownMenuItem<String>>(
                       (String value) => DropdownMenuItem<String>(
                         value: value,
@@ -78,13 +117,10 @@ class _MatchEventPageState extends State<MatchEventPage> {
                 decoration: InputDecoration(labelText: 'Match Type'),
               ),
               TextFormField(
-                controller: _locationController,
-                enabled: _matchType == 'Fuori casa',
-                readOnly: _matchType == 'Casa',
-                decoration: InputDecoration(
-                  labelText: 'Location',
-                  hintText: _matchType == 'Casa' ? 'CASA' : 'Inserisci indirizzo',
-                ),
+                onChanged: (value) {
+                  locationController = value;
+                },
+                decoration: InputDecoration(labelText: 'Enter location'),
               ),
               SizedBox(height: 16.0),
               Row(
@@ -92,49 +128,26 @@ class _MatchEventPageState extends State<MatchEventPage> {
                   Text('Select Time: '),
                   ElevatedButton(
                     onPressed: () async {
-                      final selectedTime = await showTimePicker(
+                      final selectedTimeNew = await showTimePicker(
                         context: context,
-                        initialTime: _selectedTime,
+                        initialTime: selectedTime,
                       );
 
-                      if (selectedTime != null && selectedTime != _selectedTime) {
+                      if (selectedTimeNew != null && selectedTimeNew != selectedTime) {
                         setState(() {
-                          _selectedTime = selectedTime;
+                          selectedTime = selectedTimeNew;
                         });
                       }
                     },
-                    child: Text(_selectedTime.format(context)),
+                    child: Text(selectedTime.format(context)),
                   ),
                 ],
               ),
               SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    // Ottieni un riferimento al documento nella collezione 'football_match'
-                    FirebaseFirestore firestore = FirebaseFirestore.instance;
-                    QuerySnapshot querySnapshot = await firestore.collection('football_match').where('team', isEqualTo: _selectedTeam).get();
-                    String documentId = querySnapshot.docs.first.id;
-                        //.doc(_selectedTeam);
-
-                    // Aggiorna i dati nel documento
-                    await FirebaseFirestore.instance
-                    .collection('football_match')
-                    .doc(documentId).update({
-                      'team': _selectedTeam,
-                      'opponent': _opponentController.text,
-                      'place': _locationController.text,
-                      'time': _selectedTime.format(context),
-                    });
-
-                    // Mostra un messaggio di successo o effettua altre azioni post-aggiornamento
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Dati aggiornati con successo'),
-                      ),
-                    );
-                  }
-                },
+                  updateMatchDetails();
+                  },
                 child: Text('Update Data'),
               ),
             ],

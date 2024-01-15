@@ -223,26 +223,6 @@ class _ClubPageState extends State<ClubPage> {
             ),
             ListTile(
               leading: const Icon(
-                Icons.chat,
-              ),
-              title: const Text('Chat & Contacts'),
-              subtitle: Text('Do you need more information?',
-                  style: TextStyle(
-                      fontSize: width > 700
-                          ? 12
-                          : width > 500
-                              ? 14
-                              : width > 400
-                                  ? 11
-                                  : width > 330
-                                      ? 12
-                                      : 10)),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(
                 Icons.settings,
               ),
               title: const Text('Settings'),
@@ -298,7 +278,7 @@ class _ClubPageState extends State<ClubPage> {
                                       ? 12
                                       : 10)),
               onTap: () {
-                Navigator.pushNamed(context, '/event');
+                Navigator.pushNamed(context, '/club_event');
               },
             ),
             ListTile(
@@ -306,20 +286,32 @@ class _ClubPageState extends State<ClubPage> {
                 Icons.logout,
               ),
               title: const Text('Logout'),
-              subtitle: Text('We will miss you...',
-                  style: TextStyle(
-                      fontSize: width > 700
-                          ? 12
-                          : width > 500
-                              ? 14
-                              : width > 400
-                                  ? 11
-                                  : width > 330
-                                      ? 12
-                                      : 10)),
-              onTap: () async {
-                await _logout();
-              },
+              subtitle: Text('We will miss you...', style: TextStyle(fontSize: width > 700? 12 : width > 500? 14 : width > 400? 11: width > 330? 12 : 10)),
+              onTap: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text('Logout'),
+                    content: Text('Are you sure you want to logout?'),
+                    actions: <Widget>[
+                      TextButton(
+                        child: Text('Cancel'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      TextButton(
+                        child: Text('Yes'),
+                        onPressed: () async {
+                          await _logout();
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
             ),
           ],
         ),

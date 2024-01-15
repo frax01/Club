@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key, required this.title}) : super(key: key);
@@ -17,6 +18,34 @@ class _LoginState extends State<Login> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   bool rememberMe = false;
+  List<String> emailSuggestions = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLoginInfo();
+  }
+
+  _loadLoginInfo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      emailController.text = (prefs.getString('email') ?? '');
+      passwordController.text = (prefs.getString('password') ?? '');
+      rememberMe = (prefs.getBool('rememberMe') ?? false);
+      emailSuggestions = (prefs.getStringList('emailSuggestions') ?? []);
+    });
+  }
+
+  _saveLoginInfo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('email', emailController.text);
+    prefs.setString('password', passwordController.text);
+    prefs.setBool('rememberMe', rememberMe);
+    if (!emailSuggestions.contains(emailController.text)) {
+      emailSuggestions.add(emailController.text);
+      prefs.setStringList('emailSuggestions', emailSuggestions);
+    }
+  }
 
   Future<void> _handleLogin() async {
     try {
@@ -41,6 +70,9 @@ class _LoginState extends State<Login> {
           Navigator.pushNamed(context, '/homepage');
         }
       });
+      if (rememberMe) {
+        _saveLoginInfo();
+      }
     } catch (e) {
       print('Error during login: $e');
     }
@@ -105,18 +137,14 @@ class _LoginState extends State<Login> {
                   onSubmitted: (_) => _handleLogin(),
                 ),
                 SizedBox(height: 16.0),
-                Row(
-                  children: [
-                    Checkbox(
-                      value: rememberMe,
-                      onChanged: (value) {
-                        setState(() {
-                          rememberMe = value ?? false;
-                        });
-                      },
-                    ),
-                    Text('Ricordami'),
-                  ],
+                CheckboxListTile(
+                  title: Text('Remember me'),
+                  value: rememberMe,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      rememberMe = value!;
+                    });
+                  },
                 ),
                 SizedBox(height: 16.0),
                 ElevatedButton(
@@ -144,52 +172,52 @@ class _LoginState extends State<Login> {
                   child: const Text('Sign Up', style: TextStyle(color: Colors.black)),
                 ),
                 SizedBox(height: 16.0),
-TextButton(
-  onPressed: () {
-    showDialog(
-      context: context,
-      builder: (context) {
-        TextEditingController resetEmailController = TextEditingController();
-        return AlertDialog(
-          title: Text('Recupero password'),
-          content: TextField(
-            controller: resetEmailController,
-            decoration: const InputDecoration(labelText: 'Email'),
-          ),
-          actions: [
-            TextButton(
-              child: Text('Annulla'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: Text('Invia'),
-              onPressed: () async {
-                if (resetEmailController.text.isNotEmpty) {
-                  try {
-                    await FirebaseAuth.instance.sendPasswordResetEmail(email: resetEmailController.text);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Email di recupero password inviata.')),
+                TextButton(
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        TextEditingController resetEmailController = TextEditingController();
+                        return AlertDialog(
+                          title: Text('Recupero password'),
+                          content: TextField(
+                            controller: resetEmailController,
+                            decoration: const InputDecoration(labelText: 'Email'),
+                          ),
+                          actions: [
+                            TextButton(
+                              child: Text('Annulla'),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                            TextButton(
+                              child: Text('Invia'),
+                              onPressed: () async {
+                                if (resetEmailController.text.isNotEmpty) {
+                                  try {
+                                    await FirebaseAuth.instance.sendPasswordResetEmail(email: resetEmailController.text);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text('Email di recupero password inviata.')),
+                                    );
+                                  } catch (e) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text('Errore durante l\'invio dell\'email di recupero password.')),
+                                    );
+                                  }
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Inserisci un\'email.')),
+                                  );
+                                }
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ],
+                        );
+                      },
                     );
-                  } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Errore durante l\'invio dell\'email di recupero password.')),
-                    );
-                  }
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Inserisci un\'email.')),
-                  );
-                }
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  },
+                  },
                   child: const Text('Password dimenticata?', style: TextStyle(color: Colors.black),),
                 ),
               ],
