@@ -22,7 +22,7 @@ class _TournamentPageState extends State<TournamentPage> {
       ),
       body: StreamBuilder(
         stream:
-            FirebaseFirestore.instance.collection('football_tournaments').snapshots(),
+            FirebaseFirestore.instance.collection('football_tournament').snapshots(),
             builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (!snapshot.hasData) {
               return Center(

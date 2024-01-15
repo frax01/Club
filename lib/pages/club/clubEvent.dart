@@ -39,6 +39,7 @@ class _ClubEventPageState extends State<ClubEventPage> {
     Map<String, dynamic> data = documentSnapshot.data() as Map<String, dynamic>;
     setState(() {
       titleController.text = data['title'];
+      title = titleController.text;
       selectedOption = data['selectedOption'];
       selectedClass = data['selectedClass'];
       descriptionController.text = data['description'];

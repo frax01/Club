@@ -13,7 +13,7 @@ class FootballEventManagementPage extends StatefulWidget {
 
 class _FootballEventManagementPageState extends State<FootballEventManagementPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final List<String> collections = ['football_extra', 'football_tournaments'];
+  final List<String> collections = ['football_extra', 'football_tournament'];
 
   Future<void> deleteDocument(String collection, String docId) async {
     await _firestore.collection(collection).doc(docId).delete();

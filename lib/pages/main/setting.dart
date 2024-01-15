@@ -28,13 +28,19 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   Future<Map<String, dynamic>> getUserData() async {
-    DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('user').doc(_currentUser!.uid).get();
+    DocumentSnapshot userDoc = await FirebaseFirestore.instance
+        .collection('user')
+        .doc(_currentUser!.uid)
+        .get();
     return userDoc.data() as Map<String, dynamic>;
   }
 
   Future<void> updateUserData(Map<String, String> updatedData) async {
-  await FirebaseFirestore.instance.collection('user').doc(_currentUser!.uid).update(updatedData);
-}
+    await FirebaseFirestore.instance
+        .collection('user')
+        .doc(_currentUser!.uid)
+        .update(updatedData);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,69 +56,127 @@ class _SettingsPageState extends State<SettingsPage> {
             _buildTextFieldWithUpdateButton('Name', _nameController),
             _buildTextFieldWithUpdateButton('Surname', _surnameController),
             _buildTextFieldWithUpdateButton('Birthdate', _birthdateController),
+            ElevatedButton(
+              onPressed: () async {
+                bool? confirm = await showDialog<bool>(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('Conferma'),
+                      content: Text(
+                          'Sei sicuro di voler eliminare definitivamente il tuo account?'),
+                      actions: <Widget>[
+                        TextButton(
+                          child: Text('Annulla'),
+                          onPressed: () {
+                            Navigator.of(context).pop(false);
+                          },
+                        ),
+                        TextButton(
+                          child: Text('Elimina'),
+                          onPressed: () {
+                            Navigator.of(context).pop(true);
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+                if (confirm == true) {
+                  User? user = FirebaseAuth.instance.currentUser;
+                  if (user != null) {
+                    try {
+                      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+                      .collection('user')
+                      .where('email', isEqualTo: user.email)
+                      .get();
+
+                      if (querySnapshot.docs.isNotEmpty) {
+                        DocumentSnapshot documentSnapshot = querySnapshot.docs.first;
+                        DocumentReference userDoc = documentSnapshot.reference;
+                        // Ora puoi utilizzare userDoc per eliminare il documento
+                        await userDoc.delete();
+                      }
+                      // Elimina il documento dell'utente
+                      await user.delete();
+                      // Dopo l'eliminazione dell'account, reindirizza l'utente alla pagina di login
+                      Navigator.of(context).pushReplacementNamed('/login');
+                    } catch (e) {
+                      print('Errore durante l\'eliminazione dell\'account: $e');
+                    }
+                  }
+                }
+                ;
+              },
+              child: Text('Elimina account'),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildTextFieldWithUpdateButton(String label, TextEditingController controller) {
-  return Row(
-    children: [
-      Expanded(
-        child: label == 'Birthdate' ? _buildDateField(label, controller) : _buildTextField(label, controller),
-      ),
-      TextButton(
-        child: Text('Update'),
-        onPressed: () {
-          if (_formKey.currentState!.validate()) {
-            updateUserData({label.toLowerCase(): controller.text});
-          }
-        },
-      ),
-    ],
-  );
-}
+  Widget _buildTextFieldWithUpdateButton(
+      String label, TextEditingController controller) {
+    return Row(
+      children: [
+        Expanded(
+          child: label == 'Birthdate'
+              ? _buildDateField(label, controller)
+              : _buildTextField(label, controller),
+        ),
+        TextButton(
+          child: Text('Update'),
+          onPressed: () {
+            if (_formKey.currentState!.validate()) {
+              updateUserData({label.toLowerCase(): controller.text});
+            }
+          },
+        ),
+      ],
+    );
+  }
 
-Widget _buildTextField(String label, TextEditingController controller) {
-  return TextFormField(
-    controller: controller,
-    decoration: InputDecoration(
-      labelText: label,
-      hintText: 'Enter your $label',
-    ),
-    validator: (value) {
-      if (value == null || value.isEmpty) {
-        return 'Please enter your $label';
-      }
-      return null;
-    },
-  );
-}
+  Widget _buildTextField(String label, TextEditingController controller) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        hintText: 'Enter your $label',
+      ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter your $label';
+        }
+        return null;
+      },
+    );
+  }
 
-Widget _buildDateField(String label, TextEditingController controller) {
-  return TextFormField(
-    controller: controller,
-    decoration: InputDecoration(
-      labelText: label,
-    ),
-    readOnly: true,
-    onTap: () async {
-      FocusScope.of(context).requestFocus(new FocusNode());
-      final String birthdate = _birthdateController.text;
-final DateTime initialDate = birthdate.isEmpty 
-  ? DateTime.now() 
-  : DateTime.parse('${birthdate.substring(6,10)}-${birthdate.substring(3,5)}-${birthdate.substring(0,2)}');
-      final DateTime? picked = await showDatePicker(
-        context: context,
-        initialDate: initialDate,
-        firstDate: DateTime(1900),
-        lastDate: DateTime.now(),
-      );
-      if (picked != null) {
-        _birthdateController.text = picked.toIso8601String();
-      }
-    },
-  );
-}
+  Widget _buildDateField(String label, TextEditingController controller) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+      ),
+      readOnly: true,
+      onTap: () async {
+        FocusScope.of(context).requestFocus(new FocusNode());
+        final String birthdate = _birthdateController.text;
+        final DateTime initialDate = birthdate.isEmpty
+            ? DateTime.now()
+            : DateTime.parse(
+                '${birthdate.substring(6, 10)}-${birthdate.substring(3, 5)}-${birthdate.substring(0, 2)}');
+        final DateTime? picked = await showDatePicker(
+          context: context,
+          initialDate: initialDate,
+          firstDate: DateTime(1900),
+          lastDate: DateTime.now(),
+        );
+        if (picked != null) {
+          _birthdateController.text = picked.toIso8601String();
+        }
+      },
+    );
+  }
 }

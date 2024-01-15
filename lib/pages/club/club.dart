@@ -238,7 +238,7 @@ class _ClubPageState extends State<ClubPage> {
                                       ? 12
                                       : 10)),
               onTap: () {
-                Navigator.pop(context);
+                Navigator.pushNamed(context, '/settings');
               },
             ),
             ListTile(

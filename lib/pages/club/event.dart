@@ -1,30 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-//import 'package:image_picker/image_picker.dart';
-//import 'dart:io';
-//import 'package:firebase_storage/firebase_storage.dart';
-
-//Future<String> uploadImage() async {
-//  try {
-//    // Ottieni un'immagine dall'utente (puoi scegliere tra galleria o fotocamera)
-//    XFile? pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
-//
-//    if (pickedFile != null) {
-//      // Carica l'immagine su Firebase Storage
-//      Reference storageReference = FirebaseStorage.instance.ref().child('club_weekend/${DateTime.now().toIso8601String()}');
-//      UploadTask uploadTask = storageReference.putFile(File(pickedFile.path));
-//      await uploadTask.whenComplete(() => null);
-//
-//      // Ottieni l'URL dell'immagine appena caricata
-//      String imageUrl = await storageReference.getDownloadURL();
-//      return imageUrl;
-//    } else {
-//      throw Exception('Nessuna immagine selezionata.');
-//    }
-//  } catch (e) {
-//    throw Exception('Errore durante il caricamento dell\'immagine: $e');
-//  }
-//}
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class EventPage extends StatefulWidget {
   const EventPage({super.key, required this.title});
@@ -36,11 +13,56 @@ class EventPage extends StatefulWidget {
 }
 
 class _EventPageState extends State<EventPage> {
+
+  bool imageUploaded = false;
+
+  Future<String> uploadImage() async {
+    final ImagePicker _picker = ImagePicker();
+    // Seleziona un'immagine dalla galleria
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+
+    if (image == null) {
+      throw Exception('No image selected');
+    }
+
+    // Crea un riferimento a Firebase Storage
+    final Reference ref = FirebaseStorage.instance.ref().child('club_image/${DateTime.now().toIso8601String()}');
+
+    // Carica l'immagine su Firebase Storage
+    final UploadTask uploadTask = ref.putData(await image.readAsBytes());
+
+    // Attendi il completamento del caricamento
+    final TaskSnapshot snapshot = await uploadTask.whenComplete(() => null);
+
+    // Ottieni l'URL dell'immagine caricata
+    final String imageUrl = await snapshot.ref.getDownloadURL();
+
+    print(imageUrl);
+
+    setState(() {
+      imageUploaded = true;
+    });
+
+    return imageUrl;
+  }
+
+  Future<void> deleteImage() async {
+    // Ottieni il riferimento all'immagine
+    final Reference ref = FirebaseStorage.instance.ref().child(imagePath);
+    // Elimina l'immagine
+    await ref.delete();
+    // Imposta imageUploaded a false e imagePath a stringa vuota
+    setState(() {
+      imageUploaded = false;
+      imagePath = '';
+    });
+  }
+
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String title = '';
-  String selectedOption='';
+  String selectedOption = '';
   String imagePath = '';
-  String selectedClass='';
+  String selectedClass = '';
   String description = '';
 
   Future<void> createEvent() async {
@@ -117,19 +139,48 @@ class _EventPageState extends State<EventPage> {
               ),
               SizedBox(height: 16.0),
               ElevatedButton(
-                onPressed: () async {
-                  //String imageUrl = await event.uploadImage();
-                  //// Aggiorna il percorso dell'immagine nel tuo oggetto evento
-                  //setState(() {
-                  //  event.imagePath = imageUrl;
-                  //});
-                  // Implementa la logica per caricare un'immagine
-                  // Puoi utilizzare il pacchetto image_picker per questo
-                  // https://pub.dev/packages/image_picker
-                  // Aggiorna il percorso dell'immagine nel tuo oggetto evento
+                onPressed: imageUploaded ? null : () async {
+                  String imageUrl = await uploadImage();
+                  setState(() {
+                    imagePath = imageUrl;
+                  });
                 },
-                child: Text('Carica Immagine'),
+                child: Text(imageUploaded ? 'Immagine caricata' : 'Carica Immagine'),
               ),
+              if (imageUploaded) ...[
+                ElevatedButton(
+                  onPressed: () async {
+                    // Mostra un dialogo di conferma prima di eliminare l'immagine
+                    bool? confirm = await showDialog<bool>(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('Conferma'),
+                          content: Text('Sei sicuro di voler eliminare l\'immagine?'),
+                          actions: <Widget>[
+                            TextButton(
+                              child: Text('Annulla'),
+                              onPressed: () {
+                                Navigator.of(context).pop(false);
+                              },
+                            ),
+                            TextButton(
+                              child: Text('Elimina'),
+                              onPressed: () {
+                                Navigator.of(context).pop(true);
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                    if (confirm == true) {
+                      await deleteImage();
+                    }
+                  },
+                  child: Text('Elimina Immagine'),
+                ),
+              ],
               SizedBox(height: 16.0),
               DropdownButtonFormField<String>(
                 value: selectedClass,
