@@ -62,21 +62,21 @@ class _LoginState extends State<Login> {
       NotificationHandler notificationHandler = NotificationHandler();
       final FirebaseMessaging messaging = FirebaseMessaging.instance;
       String? token = await messaging.getToken();
-      //QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-      //    .collection('user')
-      //    .where('email', isEqualTo: email)
-      //    .get();
-//
-      //print(token);
-//
-      //if (querySnapshot.docs.isNotEmpty) {
-      //  DocumentSnapshot documentSnapshot = querySnapshot.docs.first;
-      //  documentSnapshot.reference.update({'token': token});
-      //}
-      //await notificationHandler.sendNotification(
-      //    token,
-      //    'Login successful',
-      //    'You have logged in successfully');
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('user')
+          .where('email', isEqualTo: email)
+          .get();
+
+      print(token);
+
+      if (querySnapshot.docs.isNotEmpty) {
+        DocumentSnapshot documentSnapshot = querySnapshot.docs.first;
+        documentSnapshot.reference.update({'token': token});
+      }
+      await notificationHandler.sendNotification(
+          token,
+          'Login successful',
+          'You have logged in successfully');
 
       String userEmail = userCredential.user?.email ?? '';
 
