@@ -102,7 +102,7 @@ class _SignUpFormState extends State<SignUp> {
       lastDate: DateTime(2101),
     );
     if (picked != null && picked != DateTime.now()) {
-      String formattedDate = DateFormat('yyyy-MM-dd').format(picked);
+      String formattedDate = DateFormat('dd-MM-yyyy').format(picked);
       setState(() {
         birthdateController.text = formattedDate;
       });

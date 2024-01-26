@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:intl/intl.dart';
 
 class EventPage extends StatefulWidget {
   const EventPage({super.key, required this.title, required this.level});
@@ -66,6 +67,42 @@ class _EventPageState extends State<EventPage> {
   String imagePath = '';
   String selectedClass = '';
   String description = '';
+  String startDate = '';
+  String endDate = '';
+
+  Future<void> _startDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+    );
+    if (picked != null && picked != DateTime.now()) {
+      setState(() {
+        startDate = DateFormat('dd-MM-yyyy').format(picked);
+      });
+    }
+  }
+
+  Future<void> _endDate(BuildContext context) async {
+    if (startDate == "") {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please select the startDate first')));
+      return;
+    } else {
+      final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: DateTime.parse(startDate),
+        firstDate: DateTime.parse(startDate),
+        lastDate: DateTime.parse(startDate).add(const Duration(days: 365)),
+      );
+      if (picked != null && picked != DateTime.now()) {
+        setState(() {
+          endDate = DateFormat('dd-MM-yyyy').format(picked);
+        });
+      }
+    }
+  }
 
   Future<void> createEvent() async {
     try {
@@ -84,6 +121,18 @@ class _EventPageState extends State<EventPage> {
             const SnackBar(content: Text('Please select a class')));
         return;
       }
+      if ((widget.level == 'weekend' || widget.level == 'extra') &&
+          startDate == "") {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Please select a date')));
+        return;
+      }
+      if ((widget.level == 'trip' || widget.level == 'summer') &&
+          (startDate == "" || endDate == "")) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('Please select the start and the end date')));
+        return;
+      }
 
       FirebaseFirestore firestore = FirebaseFirestore.instance;
       await firestore.collection('club_${widget.level}').add({
@@ -92,6 +141,8 @@ class _EventPageState extends State<EventPage> {
         'imagePath': imagePath,
         'selectedClass': selectedClass,
         'description': description,
+        'startDate': startDate,
+        'endDate': endDate,
       });
       print('Evento creato con successo!');
       Navigator.pop(context);
@@ -202,6 +253,25 @@ class _EventPageState extends State<EventPage> {
                 }).toList(),
                 hint: Text('Seleziona un\'opzione'),
               ),
+              ...(widget.level == 'weekend' || widget.level == 'extra')
+                  ? [
+                      ElevatedButton(
+                        onPressed: () => _startDate(context),
+                        child: Text('Date'),
+                      ),
+                    ]
+                  : (widget.level == 'trip' || widget.level == 'summer')
+                      ? [
+                          ElevatedButton(
+                            onPressed: () => _startDate(context),
+                            child: Text('Start date'),
+                          ),
+                          ElevatedButton(
+                            onPressed: () => _endDate(context),
+                            child: Text('End date'),
+                          ),
+                        ]
+                      : [],
               SizedBox(height: 16.0),
               TextFormField(
                 onChanged: (value) {
