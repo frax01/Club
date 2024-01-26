@@ -1,7 +1,6 @@
 import 'package:club/pages/football/updateFootballEvent/updateEvent.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:club/pages/club/addClubEvent/event.dart';
 import 'package:club/pages/football/addFootballEvent/event.dart';
 
 class TournamentUpdatePage extends StatefulWidget {

@@ -74,8 +74,6 @@ class _UpdateCalendarPageState extends State<UpdateCalendarPage> {
       body: ListView.builder(
         itemCount: calendarData.length,
         itemBuilder: (context, index) {
-          String key = calendarData[index].keys.first;
-          String value = calendarData[index].values.first;
           return Row(
             children: [
               Expanded(

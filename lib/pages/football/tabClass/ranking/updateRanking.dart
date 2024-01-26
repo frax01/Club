@@ -73,8 +73,6 @@ class _UpdateRankingPageState extends State<UpdateRankingPage> {
       body: ListView.builder(
         itemCount: rankingData.length,
         itemBuilder: (context, index) {
-          String key = rankingData[index].keys.first;
-          String value = rankingData[index].values.first.toString();
           return Row(
             children: [
               Expanded(

@@ -45,11 +45,11 @@ class NotificationHandler extends StatelessWidget {
       // Gestisci la notifica quando l'utente tocca la notifica nell'area di notifica del sistema
     });
 
-    NotificationSettings settings = await messaging.requestPermission(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
+    //NotificationSettings settings = await messaging.requestPermission(
+    //  alert: true,
+    //  badge: true,
+    //  sound: true,
+    //);
 
     String? token = await messaging.getToken();
     print('User token: $token');

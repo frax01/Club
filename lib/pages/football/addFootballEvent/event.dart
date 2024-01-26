@@ -60,7 +60,6 @@ class _EventPageState extends State<NewEventPage> {
     });
   }
 
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String title = '';
   String selectedOption = '';
   String imagePath = '';
