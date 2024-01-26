@@ -1,8 +1,8 @@
 // Importa il pacchetto per il dialog di conferma
-import 'package:club/pages/football/calendar/calendarDetails.dart';
+import 'package:club/pages/football/tabClass/calendar/newCalendar.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'updateCalendarEvent.dart';
+import 'updateCalendar.dart';
 //import 'newCalendarEvent.dart';
 
 class CalendarEventPage extends StatefulWidget {
@@ -64,7 +64,7 @@ class _CalendarEventState extends State<CalendarEventPage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => UpdateCalendarEventPage(teamName: '${eventData['team']}'),
+                                builder: (context) => UpdateCalendarPage(teamName: '${eventData['team']}'),
                               ),
                             );
                           },
@@ -117,7 +117,7 @@ class _CalendarEventState extends State<CalendarEventPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => EventDetailsPage(title: 'Phoenix United', level: team),
+                            builder: (context) => NewCalendarPage(title: 'Phoenix United', level: team),
                           ),
                         );
                       },

@@ -67,9 +67,9 @@ class _TabRankingState extends State<TabRanking> {
                             itemBuilder: (context, listViewIndex) {
                               return ListTile(
                                 title:
-                                    Text('Name: ${rankingList[listViewIndex]['name']}'),
+                                    Text('Name: ${rankingList[listViewIndex].keys.first}'),
                                 subtitle: Text(
-                                    'Score: ${rankingList[listViewIndex]['score']}'),
+                                    'Score: ${rankingList[listViewIndex].values.first}'),
                               );
                             },
                           ),

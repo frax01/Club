@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:club/pages/main/pageFolder.dart';
 
 class ClubPage extends StatefulWidget {
   const ClubPage({super.key, required this.title});
@@ -130,7 +131,7 @@ class _ClubPageState extends State<ClubPage> {
                 height: 0.5,
                 color: Colors.black,
               ),
-              items: [
+              items: const [
                 DropdownMenuItem(
                   value: 'CLUB',
                   child: Text('CLUB'),
@@ -158,7 +159,10 @@ class _ClubPageState extends State<ClubPage> {
                                       ? 12
                                       : 10)),
               onTap: () {
-                Navigator.pushNamed(context, '/weekend');
+                Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => PageFolder(title: 'Tiber Club', level: 'weekend', option: 'club')));
               },
             ),
             ListTile(
@@ -178,7 +182,10 @@ class _ClubPageState extends State<ClubPage> {
                                       ? 12
                                       : 10)),
               onTap: () {
-                Navigator.pushNamed(context, '/trip');
+                Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => PageFolder(title: 'Tiber Club', level: 'trip', option: 'club')));
               },
             ),
             ListTile(
@@ -198,7 +205,10 @@ class _ClubPageState extends State<ClubPage> {
                                       ? 12
                                       : 10)),
               onTap: () {
-                Navigator.pushNamed(context, '/summer');
+                Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => PageFolder(title: 'Tiber Club', level: 'summer', option: 'club')));
               },
             ),
             ListTile(
@@ -218,7 +228,10 @@ class _ClubPageState extends State<ClubPage> {
                                       ? 12
                                       : 10)),
               onTap: () {
-                Navigator.pushNamed(context, '/extra');
+                Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => PageFolder(title: 'Tiber Club', level: 'extra', option: 'club')));
               },
             ),
             ListTile(
@@ -278,7 +291,7 @@ class _ClubPageState extends State<ClubPage> {
                                       ? 12
                                       : 10)),
               onTap: () {
-                Navigator.pushNamed(context, '/club_event');
+                Navigator.pushNamed(context, '/club_modifier');
               },
             ),
             ListTile(
@@ -292,17 +305,17 @@ class _ClubPageState extends State<ClubPage> {
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
-                    title: Text('Logout'),
-                    content: Text('Are you sure you want to logout?'),
+                    title: const Text('Logout'),
+                    content: const Text('Are you sure you want to logout?'),
                     actions: <Widget>[
                       TextButton(
-                        child: Text('Cancel'),
+                        child: const Text('Cancel'),
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
                       ),
                       TextButton(
-                        child: Text('Yes'),
+                        child: const Text('Yes'),
                         onPressed: () async {
                           await _logout();
                         },

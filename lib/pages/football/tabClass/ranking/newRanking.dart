@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class RankingDetailsPage extends StatefulWidget {
+class NewRankingPage extends StatefulWidget {
   final String level;
 
-  RankingDetailsPage({super.key, required this.level});
+  NewRankingPage({super.key, required this.level});
 
   @override
-  _RankingDetailsPageState createState() => _RankingDetailsPageState();
+  _NewRankingPageState createState() => _NewRankingPageState();
 }
 
-class _RankingDetailsPageState extends State<RankingDetailsPage> {
+class _NewRankingPageState extends State<NewRankingPage> {
   int numberOfTeams = 0;
   List<Map<String, dynamic>> teamsData = [];
 
@@ -35,7 +35,7 @@ class _RankingDetailsPageState extends State<RankingDetailsPage> {
                 setState(() {
                   numberOfTeams = int.tryParse(value) ?? 0;
                   teamsData = List.generate(
-                      numberOfTeams, (index) => {'name': '', 'score': 0});
+                      numberOfTeams, (index) => {'': 0});
                 });
               },
             ),
@@ -59,6 +59,9 @@ class _RankingDetailsPageState extends State<RankingDetailsPage> {
   }
 
   Widget _buildTeamRow(int teamNumber, Map<String, dynamic> teamData) {
+    String teamName = teamData.keys.first;
+    int teamScore = teamData.values.first;
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -69,7 +72,9 @@ class _RankingDetailsPageState extends State<RankingDetailsPage> {
             child: TextField(
               onChanged: (value) {
                 setState(() {
-                  teamData['name'] = value;
+                  teamData.remove(teamName);
+                  teamName = value;
+                  teamData[teamName] = teamScore;
                 });
               },
               decoration: InputDecoration(labelText: 'Nome squadra'),
@@ -81,7 +86,8 @@ class _RankingDetailsPageState extends State<RankingDetailsPage> {
               keyboardType: TextInputType.number,
               onChanged: (value) {
                 setState(() {
-                  teamData['score'] = int.tryParse(value) ?? 0;
+                  teamScore = int.tryParse(value) ?? 0;
+                  teamData[teamName] = teamScore;
                 });
               },
               decoration:

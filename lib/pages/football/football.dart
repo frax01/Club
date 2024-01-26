@@ -5,6 +5,7 @@ import 'tab/tabMatch.dart';
 import 'tab/tabCalendar.dart';
 import 'tab/tabRanking.dart';
 import 'tab/tabScorer.dart';
+import 'package:club/pages/main/pageFolder.dart';
 
 class FootballPage extends StatefulWidget {
   const FootballPage({super.key, required this.title});
@@ -211,7 +212,10 @@ class _FootballPageState extends State<FootballPage> {
                   title: const Text('Tournaments'),
                   subtitle: Text('Just do it', style: TextStyle(fontSize: width > 700? 12 : width > 500? 14 : width > 400? 11 : width > 330? 12 : 10)),
                   onTap: () {
-                    Navigator.pushNamed(context, '/football_tournaments');
+                    Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => PageFolder(title: 'ASD Tiber Club', level: 'tournament', option: 'football')));
                   },
                 ),
                 ListTile(
@@ -221,7 +225,10 @@ class _FootballPageState extends State<FootballPage> {
                   title: const Text('Extra'),
                   subtitle: Text('What are you waiting for?', style: TextStyle(fontSize: width > 700? 12 : width > 500? 14 : width > 400? 11 : width > 330? 12 : 10)),
                   onTap: () {
-                    Navigator.pushNamed(context, '/football_extra');
+                    Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => PageFolder(title: 'ASD Tiber Club', level: 'extra', option: 'football')));
                   },
                 ),
                 ListTile(
@@ -271,7 +278,7 @@ class _FootballPageState extends State<FootballPage> {
                                           ? 12
                                           : 10)),
                   onTap: () {
-                    Navigator.pushNamed(context, '/footballEvent');
+                    Navigator.pushNamed(context, '/football_modifier');
                   },
                 ),
                 ListTile(

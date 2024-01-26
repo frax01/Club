@@ -4,8 +4,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class EventPage extends StatefulWidget {
-  const EventPage({super.key, required this.title});
+  const EventPage({super.key, required this.title, required this.level});
 
+  final String level;
   final String title;
 
   @override
@@ -13,7 +14,6 @@ class EventPage extends StatefulWidget {
 }
 
 class _EventPageState extends State<EventPage> {
-
   bool imageUploaded = false;
 
   Future<String> uploadImage() async {
@@ -26,7 +26,9 @@ class _EventPageState extends State<EventPage> {
     }
 
     // Crea un riferimento a Firebase Storage
-    final Reference ref = FirebaseStorage.instance.ref().child('club_image/${DateTime.now().toIso8601String()}');
+    final Reference ref = FirebaseStorage.instance
+        .ref()
+        .child('club_image/${DateTime.now().toIso8601String()}');
 
     // Carica l'immagine su Firebase Storage
     final UploadTask uploadTask = ref.putData(await image.readAsBytes());
@@ -72,11 +74,11 @@ class _EventPageState extends State<EventPage> {
             const SnackBar(content: Text('Please select a title')));
         return;
       }
-      if (selectedOption == "") {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Please select an option')));
-        return;
-      }
+      //if (selectedOption == "") {
+      //  ScaffoldMessenger.of(context).showSnackBar(
+      //      const SnackBar(content: Text('Please select an option')));
+      //  return;
+      //}
       if (selectedClass == "") {
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Please select a class')));
@@ -84,9 +86,9 @@ class _EventPageState extends State<EventPage> {
       }
 
       FirebaseFirestore firestore = FirebaseFirestore.instance;
-      await firestore.collection('club_$selectedOption').add({
+      await firestore.collection('club_${widget.level}').add({
         'title': title,
-        'selectedOption': selectedOption,
+        'selectedOption': widget.level,
         'imagePath': imagePath,
         'selectedClass': selectedClass,
         'description': description,
@@ -121,31 +123,23 @@ class _EventPageState extends State<EventPage> {
                 decoration: InputDecoration(labelText: 'Titolo'),
               ),
               SizedBox(height: 16.0),
-              DropdownButtonFormField<String>(
-                value: selectedOption,
-                onChanged: (value) {
-                  setState(() {
-                    selectedOption = value!;
-                  });
-                },
-                items: ['', 'weekend', 'trip', 'summer', 'extra']
-                    .map((String option) {
-                  return DropdownMenuItem<String>(
-                    value: option,
-                    child: Text(option),
-                  );
-                }).toList(),
-                hint: Text('Seleziona un\'opzione'),
+              TextField(
+                controller: TextEditingController(text: widget.level),
+                decoration: InputDecoration(hintText: 'Seleziona un\'opzione'),
+                enabled: false, // This makes the TextField not editable
               ),
               SizedBox(height: 16.0),
               ElevatedButton(
-                onPressed: imageUploaded ? null : () async {
-                  String imageUrl = await uploadImage();
-                  setState(() {
-                    imagePath = imageUrl;
-                  });
-                },
-                child: Text(imageUploaded ? 'Immagine caricata' : 'Carica Immagine'),
+                onPressed: imageUploaded
+                    ? null
+                    : () async {
+                        String imageUrl = await uploadImage();
+                        setState(() {
+                          imagePath = imageUrl;
+                        });
+                      },
+                child: Text(
+                    imageUploaded ? 'Immagine caricata' : 'Carica Immagine'),
               ),
               if (imageUploaded) ...[
                 ElevatedButton(
@@ -156,7 +150,8 @@ class _EventPageState extends State<EventPage> {
                       builder: (BuildContext context) {
                         return AlertDialog(
                           title: Text('Conferma'),
-                          content: Text('Sei sicuro di voler eliminare l\'immagine?'),
+                          content: Text(
+                              'Sei sicuro di voler eliminare l\'immagine?'),
                           actions: <Widget>[
                             TextButton(
                               child: Text('Annulla'),

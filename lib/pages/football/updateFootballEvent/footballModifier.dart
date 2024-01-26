@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:club/pages/football/drawerClass/tournament/tournamentDetails.dart';
+import 'package:club/pages/football/drawerClass/extra/extraDetails.dart';
 
-class FootballEventPage extends StatelessWidget {
-  const FootballEventPage({super.key, required this.title});
+class FootballModifier extends StatelessWidget {
+  const FootballModifier({super.key, required this.title});
 
   final String title;
 
@@ -9,7 +11,7 @@ class FootballEventPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Football Event'),
+        title: Text('Football Modifier'),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -46,9 +48,22 @@ class FootballEventPage extends StatelessWidget {
           ElevatedButton(
             onPressed: () {
               // Naviga alla pagina NewEvent
-              Navigator.pushNamed(context, '/football_management_event');
+              Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => TournamentUpdatePage(level: 'tournament')));
             },
-            child: Text('New Event'),
+            child: Text('Update Tournament'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // Naviga alla pagina NewEvent
+              Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ExtraUpdatePage(level: 'extra')));
+            },
+            child: Text('Updated Extra'),
           ),
         ],
       ),

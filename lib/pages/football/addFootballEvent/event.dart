@@ -4,8 +4,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class NewEventPage extends StatefulWidget {
-  const NewEventPage({super.key, required this.title});
+  const NewEventPage({super.key, required this.title, required this.level});
 
+  final String level;
   final String title;
 
   @override
@@ -13,7 +14,6 @@ class NewEventPage extends StatefulWidget {
 }
 
 class _EventPageState extends State<NewEventPage> {
-
   bool imageUploaded = false;
 
   Future<String> uploadImage() async {
@@ -26,7 +26,9 @@ class _EventPageState extends State<NewEventPage> {
     }
 
     // Crea un riferimento a Firebase Storage
-    final Reference ref = FirebaseStorage.instance.ref().child('football_image/${DateTime.now().toIso8601String()}');
+    final Reference ref = FirebaseStorage.instance
+        .ref()
+        .child('football_image/${DateTime.now().toIso8601String()}');
 
     // Carica l'immagine su Firebase Storage
     final UploadTask uploadTask = ref.putData(await image.readAsBytes());
@@ -67,17 +69,16 @@ class _EventPageState extends State<NewEventPage> {
 
   Future<void> createEvent() async {
     try {
-
       if (title == "") {
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Please select a title')));
         return;
       }
-      if (selectedOption == "") {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Please select an option')));
-        return;
-      }
+      //if (selectedOption == "") {
+      //  ScaffoldMessenger.of(context).showSnackBar(
+      //      const SnackBar(content: Text('Please select an option')));
+      //  return;
+      //}
       if (selectedClass == "") {
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Please select a class')));
@@ -90,9 +91,9 @@ class _EventPageState extends State<NewEventPage> {
       }
 
       FirebaseFirestore firestore = FirebaseFirestore.instance;
-      await firestore.collection('football_$selectedOption').add({
+      await firestore.collection('football_${widget.level}').add({
         'title': title,
-        'selectedOption': selectedOption,
+        'selectedOption': widget.level,
         'imagePath': imagePath,
         'selectedClass': selectedClass,
         'description': description,
@@ -125,66 +126,59 @@ class _EventPageState extends State<NewEventPage> {
               decoration: InputDecoration(labelText: 'Titolo'),
             ),
             SizedBox(height: 16.0),
-            DropdownButton<String>(
-              value: selectedOption,
-              onChanged: (value) {
-                setState(() {
-                  selectedOption = value!;
-                });
-              },
-              items: ['', 'tournament', 'extra']
-                  .map((String option) {
-                return DropdownMenuItem<String>(
-                  value: option,
-                  child: Text(option),
-                );
-              }).toList(),
-              hint: Text('Seleziona un\'opzione'),
+            TextField(
+              controller: TextEditingController(text: widget.level),
+              decoration: InputDecoration(hintText: 'Seleziona un\'opzione'),
+              enabled: false, // This makes the TextField not editable
             ),
             SizedBox(height: 16.0),
             ElevatedButton(
-                onPressed: imageUploaded ? null : () async {
-                  String imageUrl = await uploadImage();
-                  setState(() {
-                    imagePath = imageUrl;
-                  });
+              onPressed: imageUploaded
+                  ? null
+                  : () async {
+                      String imageUrl = await uploadImage();
+                      setState(() {
+                        imagePath = imageUrl;
+                      });
+                    },
+              child:
+                  Text(imageUploaded ? 'Immagine caricata' : 'Carica Immagine'),
+            ),
+            if (imageUploaded) ...[
+              ElevatedButton(
+                onPressed: () async {
+                  // Mostra un dialogo di conferma prima di eliminare l'immagine
+                  bool? confirm = await showDialog<bool>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text('Conferma'),
+                        content:
+                            Text('Sei sicuro di voler eliminare l\'immagine?'),
+                        actions: <Widget>[
+                          TextButton(
+                            child: Text('Annulla'),
+                            onPressed: () {
+                              Navigator.of(context).pop(false);
+                            },
+                          ),
+                          TextButton(
+                            child: Text('Elimina'),
+                            onPressed: () {
+                              Navigator.of(context).pop(true);
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                  if (confirm == true) {
+                    await deleteImage();
+                  }
                 },
-                child: Text(imageUploaded ? 'Immagine caricata' : 'Carica Immagine'),
+                child: Text('Elimina Immagine'),
               ),
-              if (imageUploaded) ...[
-                ElevatedButton(
-                  onPressed: () async {
-                    // Mostra un dialogo di conferma prima di eliminare l'immagine
-                    bool? confirm = await showDialog<bool>(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text('Conferma'),
-                          content: Text('Sei sicuro di voler eliminare l\'immagine?'),
-                          actions: <Widget>[
-                            TextButton(
-                              child: Text('Annulla'),
-                              onPressed: () {
-                                Navigator.of(context).pop(false);
-                              },
-                            ),
-                            TextButton(
-                              child: Text('Elimina'),
-                              onPressed: () {
-                                Navigator.of(context).pop(true);
-                              },
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                    if (confirm == true) {
-                      await deleteImage();
-                    }
-                  },
-                  child: Text('Elimina Immagine'),
-                ),
-              ],
+            ],
             SizedBox(height: 16.0),
             DropdownButton<String>(
               value: selectedClass,
@@ -193,8 +187,17 @@ class _EventPageState extends State<NewEventPage> {
                   selectedClass = value!;
                 });
               },
-              items: ['', '1st', '2nd', '3rd', '1st hs', '2nd hs', '3rd hs', '4th hs', '5th hs']
-                  .map((String option) {
+              items: [
+                '',
+                '1st',
+                '2nd',
+                '3rd',
+                '1st hs',
+                '2nd hs',
+                '3rd hs',
+                '4th hs',
+                '5th hs'
+              ].map((String option) {
                 return DropdownMenuItem<String>(
                   value: option,
                   child: Text(option),

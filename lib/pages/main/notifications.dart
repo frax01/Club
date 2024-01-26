@@ -9,8 +9,7 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterL
 
 const AndroidNotificationChannel channel = AndroidNotificationChannel(
   'high_importance_channel', // id
-  'High Importance Notifications', // title
-  'This channel is used for important notifications.', // description
+  'High Importance Notifications', //title
   importance: Importance.high,
 );
 
@@ -35,7 +34,6 @@ class NotificationHandler extends StatelessWidget {
           android: AndroidNotificationDetails(
             channel.id,
             channel.name,
-            channel.description,
             icon: android.smallIcon,
             // other properties...
           ),
@@ -57,9 +55,9 @@ class NotificationHandler extends StatelessWidget {
     print('User token: $token');
   }
 
-  String to = 'francescomartignoni1@gmail.com';
-  String title = 'Tiber';
-  String body = 'ciao';
+  //String to = 'francescomartignoni1@gmail.com';
+  //String title = 'Tiber';
+  //String body = 'ciao';
 
   Future<void> sendNotification(to, title, body) async {
     print('Sending notification...');
@@ -67,7 +65,7 @@ class NotificationHandler extends StatelessWidget {
       Uri.parse('https://fcm.googleapis.com/fcm/send'),
       headers: <String, String>{
         'Content-Type': 'application/json',
-        'Authorization': 'AIzaSyAkmPm2DpVcfIg6uXMUuj7uLIxGd371qqM',
+        'Authorization': 'api key',
       },
       body: jsonEncode(
         <String, dynamic>{

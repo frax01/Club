@@ -1,6 +1,7 @@
-import 'package:club/pages/football/ranking/rankingDetails.dart';
+import 'package:club/pages/football/tabClass/ranking/newRanking.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'updateRanking.dart';
 
 class RankingEventPage extends StatefulWidget {
   const RankingEventPage({super.key, required this.title});
@@ -18,7 +19,8 @@ class _RankingEventState extends State<RankingEventPage> {
   @override
   void initState() {
     super.initState();
-    _eventsStream = FirebaseFirestore.instance.collection('football_ranking').snapshots();
+    _eventsStream =
+        FirebaseFirestore.instance.collection('football_ranking').snapshots();
   }
 
   @override
@@ -39,8 +41,11 @@ class _RankingEventState extends State<RankingEventPage> {
           }
 
           List<QueryDocumentSnapshot> events = snapshot.data!.docs;
-          List<String> existingTeams = events.map((e) => (e.data() as Map<String, dynamic>)['team'] as String).toList();
-          List<String> teamsWithoutEvent = teams.where((team) => !existingTeams.contains(team)).toList();
+          List<String> existingTeams = events
+              .map((e) => (e.data() as Map<String, dynamic>)['team'] as String)
+              .toList();
+          List<String> teamsWithoutEvent =
+              teams.where((team) => !existingTeams.contains(team)).toList();
 
           return ListView.builder(
             itemCount: events.length + teamsWithoutEvent.length,
@@ -58,7 +63,13 @@ class _RankingEventState extends State<RankingEventPage> {
                         IconButton(
                           icon: Icon(Icons.edit),
                           onPressed: () {
-                            Navigator.pushNamed(context, '/updateEvent');
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => UpdateRankingPage(
+                                    teamName: '${eventData['team']}'),
+                              ),
+                            );
                           },
                         ),
                         IconButton(
@@ -69,7 +80,8 @@ class _RankingEventState extends State<RankingEventPage> {
                               builder: (context) {
                                 return AlertDialog(
                                   title: Text('Conferma'),
-                                  content: Text('Sei sicuro di voler eliminare questo evento?'),
+                                  content: Text(
+                                      'Sei sicuro di voler eliminare questo evento?'),
                                   actions: [
                                     TextButton(
                                       child: Text('Annulla'),
@@ -89,7 +101,10 @@ class _RankingEventState extends State<RankingEventPage> {
                             );
 
                             if (shouldDelete == true) {
-                              FirebaseFirestore.instance.collection('football_ranking').doc(events[index].id).delete();
+                              FirebaseFirestore.instance
+                                  .collection('football_ranking')
+                                  .doc(events[index].id)
+                                  .delete();
                             }
                           },
                         ),
@@ -109,7 +124,8 @@ class _RankingEventState extends State<RankingEventPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => RankingDetailsPage(level: team),
+                            builder: (context) =>
+                                NewRankingPage(level: team),
                           ),
                         );
                       },

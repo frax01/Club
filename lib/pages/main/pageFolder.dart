@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class FootballExtraPage extends StatefulWidget {
-  const FootballExtraPage({super.key, required this.title});
+class PageFolder extends StatefulWidget {
+  const PageFolder({super.key, required this.title, required this.level, required this.option});
 
+  final String option;
+  final String level;
   final String title;
 
   @override
-  _FootballExtraPageState createState() => _FootballExtraPageState();
+  _PageFolderState createState() => _PageFolderState();
 }
 
-class _FootballExtraPageState extends State<FootballExtraPage> {
+class _PageFolderState extends State<PageFolder> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,14 +23,13 @@ class _FootballExtraPageState extends State<FootballExtraPage> {
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: StreamBuilder(
-        stream:
-            FirebaseFirestore.instance.collection('football_extra').snapshots(),
-            builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            if (!snapshot.hasData) {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            }
+        stream: FirebaseFirestore.instance.collection('${widget.option}_${widget.level}').snapshots(),
+        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (!snapshot.hasData) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
 
           // Estrai la lista dei documenti da Firestore
           List<DocumentSnapshot> documents = snapshot.data!.docs;
@@ -36,12 +37,12 @@ class _FootballExtraPageState extends State<FootballExtraPage> {
           return ListView.builder(
             itemCount: documents.length,
             itemBuilder: (context, index) {
-              var footballExtraData = documents[index].data() as Map<String, dynamic>;
-              var title = footballExtraData['title'] ?? '';
-              var clubClass = footballExtraData['selectedClass'] ?? '';
-              var description = footballExtraData['description'] ?? '';
+              var extraData = documents[index].data() as Map<String, dynamic>;
+              var title = extraData['title'] ?? '';
+              var clubClass = extraData['selectedClass'] ?? '';
+              var description = extraData['description'] ?? '';
 
-              return FootballExtraBox(
+              return Box(
                 title: title,
                 clubClass: clubClass,
                 description: description,
@@ -54,12 +55,12 @@ class _FootballExtraPageState extends State<FootballExtraPage> {
   }
 }
 
-class FootballExtraBox extends StatelessWidget {
+class Box extends StatelessWidget {
   final String title;
   final String clubClass;
   final String description;
 
-  FootballExtraBox({
+  Box({
     required this.title,
     required this.clubClass,
     required this.description,

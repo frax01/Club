@@ -3,8 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
-class FootballEventEditPage extends StatefulWidget {
-  const FootballEventEditPage(
+class UpdateEventPage extends StatefulWidget {
+  const UpdateEventPage(
       {Key? key, required this.documentId, required this.Option})
       : super(key: key);
 
@@ -13,10 +13,10 @@ class FootballEventEditPage extends StatefulWidget {
   //final String title = 'Club Event';
 
   @override
-  _FootballEventEditPageState createState() => _FootballEventEditPageState();
+  _UpdateEventPageState createState() => _UpdateEventPageState();
 }
 
-class _FootballEventEditPageState extends State<FootballEventEditPage> {
+class _UpdateEventPageState extends State<UpdateEventPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController titleController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
@@ -88,7 +88,7 @@ class _FootballEventEditPageState extends State<FootballEventEditPage> {
     setState(() {
       titleController.text = data['title'];
       title = titleController.text;
-      selectedOption = data['selectedOption'];
+      selectedOption = widget.Option;
       imagePath = data['imagePath'];
       selectedClass = data['selectedClass'];
       descriptionController.text = data['description'];
@@ -102,11 +102,11 @@ class _FootballEventEditPageState extends State<FootballEventEditPage> {
             const SnackBar(content: Text('Please select a title')));
         return;
       }
-      if (selectedOption == "") {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Please select an option')));
-        return;
-      }
+      //if (selectedOption == "") {
+      //  ScaffoldMessenger.of(context).showSnackBar(
+      //      const SnackBar(content: Text('Please select an option')));
+      //  return;
+      //}
       if (selectedClass == "") {
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Please select a class')));
@@ -156,20 +156,10 @@ class _FootballEventEditPageState extends State<FootballEventEditPage> {
                 decoration: InputDecoration(labelText: 'Titolo'),
               ),
               SizedBox(height: 16.0),
-              DropdownButtonFormField<String>(
-                value: selectedOption,
-                onChanged: (value) {
-                  setState(() {
-                    selectedOption = value!;
-                  });
-                },
-                items: ['', 'extra', 'tournament'].map((String option) {
-                  return DropdownMenuItem<String>(
-                    value: option,
-                    child: Text(option),
-                  );
-                }).toList(),
-                hint: Text('Seleziona un\'opzione'),
+              TextField(
+                controller: TextEditingController(text: widget.Option),
+                decoration: InputDecoration(hintText: 'Seleziona un\'opzione'),
+                enabled: false, // This makes the TextField not editable
               ),
               SizedBox(height: 16.0),
               ElevatedButton(

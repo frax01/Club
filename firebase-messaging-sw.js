@@ -2,7 +2,7 @@ importScripts('https://www.gstatic.com/firebasejs/7.6.0/firebase-app.js');
 importScripts('https://www.gstatic.com/firebasejs/7.6.0/firebase-messaging.js');
 
 firebase.initializeApp({
-    apiKey: 'AIzaSyAkmPm2DpVcfIg6uXMUuj7uLIxGd371qqM', // sostituisci con la tua chiave API
+    apiKey: 'apikey', // sostituisci con la tua chiave API
     authDomain: 'club-60d94.firebaseapp.com', // sostituisci con il tuo dominio di autenticazione
     projectId: 'club-60d94', // sostituisci con il tuo ID progetto
     storageBucket: 'club-60d94.appspot.com', // sostituisci con il tuo bucket di storage

@@ -1,19 +1,11 @@
+import 'package:club/pages/club/updateClubEvent/clubModifier.dart';
 import 'package:club/pages/football/football.dart';
-import 'package:club/pages/football/footballEvent.dart';
-import 'package:club/pages/football/ranking/rankingEvent.dart';
+import 'package:club/pages/football/updateFootballEvent/footballModifier.dart';
+import 'package:club/pages/football/tabClass/ranking/rankingEvent.dart';
 import 'package:club/pages/main/signup.dart';
-import 'package:club/pages/club/weekend.dart';
-import 'package:club/pages/club/trip.dart';
-import 'package:club/pages/main/summer.dart';
-import 'package:club/pages/club/extra.dart';
-import 'package:club/pages/football/match/matchEvent.dart';
-import 'package:club/pages/football/calendar/calendarEvent.dart';
-import 'package:club/pages/football/scorer/scorerEvent.dart';
-import 'package:club/pages/club/clubEventManagement.dart';
-import 'package:club/pages/football/tournaments.dart';
-import 'package:club/pages/football/footballEventManagement.dart';
-import 'package:club/pages/football/extra.dart';
-import 'package:club/pages/football/event.dart';
+import 'package:club/pages/football/tabClass/match/matchEvent.dart';
+import 'package:club/pages/football/tabClass/calendar/calendarEvent.dart';
+import 'package:club/pages/football/tabClass/scorer/scorerEvent.dart';
 import 'package:club/pages/main/setting.dart';
 import 'package:flutter/material.dart';
 import 'functions/button.dart';
@@ -22,7 +14,6 @@ import 'pages/main/login.dart';
 import 'pages/main/waiting.dart';
 import 'pages/main/acceptance.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'pages/club/event.dart';
 import 'config.dart';
 
 //import 'package:firebase_auth/firebase_auth.dart';
@@ -40,6 +31,8 @@ void main() async {
       appId: '1:53952636966:android:4913f93f8c6e0fc8959ee7',
     ),
   );
+
+  //FirebaseAnalytics analytics = FirebaseAnalytics();
 
   //CollectionReference users = FirebaseFirestore.instance.collection('user');
   //QuerySnapshot querySnapshot = await users.get();
@@ -73,17 +66,8 @@ class MyApp extends StatelessWidget {
         '/club': (context) => const ClubPage(title: 'Phoenix Club'),
         '/football': (context) => const FootballPage(title: 'Phoenix United'),
         '/acceptance': (context) => const AcceptancePage(title: 'Phoenix United'),
-        '/club_event': (context) => const ClubNewEventPage(title: 'Phoenix Club'),
-        '/event': (context) => const EventPage(title: 'Phoenix Club'),
-        '/weekend': (context) => const WeekendPage(title: 'Phoenix Club'),
-        '/new': (context) => const NewEventPage(title: 'Phoenix Club'),
-        '/trip': (context) => const TripPage(title: 'Phoenix Club'),
-        '/summer': (context) => const SummerPage(title: 'Phoenix Club'),
-        '/extra': (context) => const ExtraPage(title: 'Phoenix Club'),
-        '/football_extra': (context) => const FootballExtraPage(title: 'Tiber Club'),
-        '/football_tournaments': (context) => const TournamentPage(title: 'Tiber Club'),
-        '/football_management_event': (context) => const FootballEventManagementPage(title: 'Phoenix United'),
-        '/footballEvent': (context) => const FootballEventPage(title: 'Phoenix United'),
+        '/club_modifier': (context) => const ClubModifier(title: 'Phoenix Club'),
+        '/football_modifier': (context) => const FootballModifier(title: 'Phoenix United'),
         '/matchEvent': (context) => const MatchEventPage(title: 'Phoenix United'),
         '/calendarEvent': (context) => const CalendarEventPage(title: 'Phoenix United'),
         '/rankingEvent': (context) => const RankingEventPage(title: 'Phoenix United'),
