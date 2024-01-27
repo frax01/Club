@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:club/pages/club/updateClubEvent/updatePage.dart';
+import 'package:club/pages/main/updateEvent/updatePage.dart';
 
 class ClubModifier extends StatelessWidget {
   const ClubModifier({super.key, required this.title});
@@ -22,7 +22,7 @@ class ClubModifier extends StatelessWidget {
               Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => UpdatePage(level: 'weekend')));
+                                  builder: (context) => UpdatePage(level: 'weekend', section: 'club',)));
             },
             child: Text('Update Weekend'),
           ),
@@ -32,7 +32,7 @@ class ClubModifier extends StatelessWidget {
               Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => UpdatePage(level: 'trip')));
+                                  builder: (context) => UpdatePage(level: 'trip', section: 'club',)));
             },
             child: Text('Update Trip'),
           ),
@@ -42,7 +42,7 @@ class ClubModifier extends StatelessWidget {
               Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => UpdatePage(level: 'summer')));
+                                  builder: (context) => UpdatePage(level: 'summer', section: 'club')));
             },
             child: Text('Update Summer'),
           ),
@@ -52,7 +52,7 @@ class ClubModifier extends StatelessWidget {
               Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => UpdatePage(level: 'extra')));
+                                  builder: (context) => UpdatePage(level: 'extra', section: 'club')));
             },
             child: Text('Update Extra'),
           ),

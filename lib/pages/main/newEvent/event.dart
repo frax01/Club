@@ -2,31 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:intl/intl.dart';
 
-class UpdateEventPage extends StatefulWidget {
-  const UpdateEventPage(
-      {Key? key, required this.documentId, required this.Option})
-      : super(key: key);
+class EventPage extends StatefulWidget {
+  const EventPage({super.key, required this.title, required this.level, required this.section});
 
-  final String documentId;
-  final String Option;
-  //final String title = 'Club Event';
+  final String section;
+  final String level;
+  final String title;
 
   @override
-  _UpdateEventPageState createState() => _UpdateEventPageState();
+  _EventPageState createState() => _EventPageState();
 }
 
-class _UpdateEventPageState extends State<UpdateEventPage> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController titleController = TextEditingController();
-  final TextEditingController descriptionController = TextEditingController();
-  String title = '';
-  String selectedOption = '';
-  String imagePath = '';
-  String selectedClass = '';
-  String description = '';
-
-  bool imageUploaded = true;
+class _EventPageState extends State<EventPage> {
+  bool imageUploaded = false;
 
   Future<String> uploadImage() async {
     final ImagePicker _picker = ImagePicker();
@@ -40,7 +30,7 @@ class _UpdateEventPageState extends State<UpdateEventPage> {
     // Crea un riferimento a Firebase Storage
     final Reference ref = FirebaseStorage.instance
         .ref()
-        .child('football_image/${DateTime.now().toIso8601String()}');
+        .child('${widget.section}_image/${DateTime.now().toIso8601String()}');
 
     // Carica l'immagine su Firebase Storage
     final UploadTask uploadTask = ref.putData(await image.readAsBytes());
@@ -72,30 +62,54 @@ class _UpdateEventPageState extends State<UpdateEventPage> {
     });
   }
 
-  @override
-  void initState() {
-    super.initState();
-    loadInitialData();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  String title = '';
+  String selectedOption = '';
+  String imagePath = '';
+  String selectedClass = '';
+  String description = '';
+  String startDate = '';
+  String endDate = '';
+
+  Future<void> _startDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+    );
+    if (picked != null && picked != DateTime.now()) {
+      setState(() {
+        startDate = DateFormat('dd-MM-yyyy').format(picked);
+      });
+    }
   }
 
-  Future<void> loadInitialData() async {
-    DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
-        .collection('football_${widget.Option}')
-        .doc(widget.documentId)
-        .get();
-
-    Map<String, dynamic> data = documentSnapshot.data() as Map<String, dynamic>;
-    setState(() {
-      titleController.text = data['title'];
-      title = titleController.text;
-      selectedOption = widget.Option;
-      imagePath = data['imagePath'];
-      selectedClass = data['selectedClass'];
-      descriptionController.text = data['description'];
-    });
+  Future<void> _endDate(BuildContext context) async {
+    if (startDate == "") {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please select the startDate first')));
+      return;
+    } else {
+      DateFormat inputFormat = DateFormat('dd-MM-yyyy');
+      DateTime date = inputFormat.parse(startDate);
+      DateFormat outputFormat = DateFormat('yyyy-MM-dd');
+      String formattedStartDate = outputFormat.format(date);
+      final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: DateTime.parse(formattedStartDate),
+        firstDate: DateTime.parse(formattedStartDate),
+        lastDate: DateTime.parse(formattedStartDate).add(const Duration(days: 365)),
+      );
+      if (picked != null && picked != DateTime.now()) {
+        setState(() {
+          endDate = DateFormat('dd-MM-yyyy').format(picked);
+        });
+      }
+    }
   }
 
-  Future<void> updateClubDetails() async {
+  Future<void> createEvent() async {
     try {
       if (title == "") {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -112,35 +126,50 @@ class _UpdateEventPageState extends State<UpdateEventPage> {
             const SnackBar(content: Text('Please select a class')));
         return;
       }
+      if ((widget.level == 'weekend' || widget.level == 'extra') &&
+          startDate == "") {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Please select a date')));
+        return;
+      }
+      if ((widget.level == 'trip' || widget.level == 'summer') &&
+          (startDate == "" || endDate == "")) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('Please select the start and the end date')));
+        return;
+      }
+      if (description == "") {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Please select a description')));
+        return;
+      }
 
-      //FirebaseFirestore firestore = FirebaseFirestore.instance;
-      //QuerySnapshot querySnapshot = await firestore.collection('club_$selectedOption').where('title', isEqualTo: title).get();
-      //String documentId = querySnapshot.docs.first.id;
-      //.doc(_selected
-      // Aggiorna i dati nel documento
-      await FirebaseFirestore.instance
-          .collection('football_${widget.Option}')
-          .doc(widget.documentId)
-          .delete();
-
-      await FirebaseFirestore.instance
-          .collection('football_$selectedOption')
-          .add({
+      FirebaseFirestore firestore = FirebaseFirestore.instance;
+      await firestore.collection('${widget.section}_${widget.level}').add({
         'title': title,
-        'selectedOption': selectedOption,
+        'selectedOption': widget.level,
         'imagePath': imagePath,
         'selectedClass': selectedClass,
         'description': description,
+        'startDate': startDate,
+        'endDate': endDate,
       });
+      print('Evento creato con successo!');
       Navigator.pop(context);
     } catch (e) {
-      print('Error updating user details: $e');
+      print('Errore durante la creazione dell\'evento: $e');
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title, style: const TextStyle(color: Colors.white)),
+        backgroundColor: const Color.fromARGB(255, 130, 16, 8),
+        centerTitle: true,
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -149,7 +178,6 @@ class _UpdateEventPageState extends State<UpdateEventPage> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               TextFormField(
-                controller: titleController,
                 onChanged: (value) {
                   title = value;
                 },
@@ -157,7 +185,7 @@ class _UpdateEventPageState extends State<UpdateEventPage> {
               ),
               SizedBox(height: 16.0),
               TextField(
-                controller: TextEditingController(text: widget.Option),
+                controller: TextEditingController(text: widget.level),
                 decoration: InputDecoration(hintText: 'Seleziona un\'opzione'),
                 enabled: false, // This makes the TextField not editable
               ),
@@ -235,9 +263,27 @@ class _UpdateEventPageState extends State<UpdateEventPage> {
                 }).toList(),
                 hint: Text('Seleziona un\'opzione'),
               ),
+              ...(widget.level == 'weekend' || widget.level == 'extra')
+                  ? [
+                      ElevatedButton(
+                        onPressed: () => _startDate(context),
+                        child: Text('Date'),
+                      ),
+                    ]
+                  : (widget.level == 'trip' || widget.level == 'summer' || widget.level == 'tournament')
+                      ? [
+                          ElevatedButton(
+                            onPressed: () => _startDate(context),
+                            child: Text('Start date'),
+                          ),
+                          ElevatedButton(
+                            onPressed: () => _endDate(context),
+                            child: Text('End date'),
+                          ),
+                        ]
+                      : [],
               SizedBox(height: 16.0),
               TextFormField(
-                controller: descriptionController,
                 onChanged: (value) {
                   description = value;
                 },
@@ -248,7 +294,7 @@ class _UpdateEventPageState extends State<UpdateEventPage> {
               ElevatedButton(
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
-                    await updateClubDetails();
+                    await createEvent();
                   }
                 },
                 child: Text('Crea'),

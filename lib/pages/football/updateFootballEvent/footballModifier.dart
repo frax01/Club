@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:club/pages/football/drawerClass/tournament/tournamentDetails.dart';
-import 'package:club/pages/football/drawerClass/extra/extraDetails.dart';
+import 'package:club/pages/main/updateEvent/updatePage.dart';
 
 class FootballModifier extends StatelessWidget {
   const FootballModifier({super.key, required this.title});
@@ -51,7 +50,7 @@ class FootballModifier extends StatelessWidget {
               Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => TournamentUpdatePage(level: 'tournament')));
+                                  builder: (context) => UpdatePage(level: 'tournament', section: 'football',)));
             },
             child: Text('Update Tournament'),
           ),
@@ -61,7 +60,7 @@ class FootballModifier extends StatelessWidget {
               Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => ExtraUpdatePage(level: 'extra')));
+                                  builder: (context) => UpdatePage(level: 'extra', section: 'football',)));
             },
             child: Text('Updated Extra'),
           ),

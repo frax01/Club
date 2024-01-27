@@ -29,8 +29,8 @@ class _NewCalendarPageState extends State<NewCalendarPage> {
               onChanged: (value) {
                 setState(() {
                   numberOfMatches = int.tryParse(value) ?? 0;
-                  matchDetails = List.generate(
-                      numberOfMatches, (index) => {'': ''});
+                  matchDetails =
+                      List.generate(numberOfMatches, (index) => {'': ''});
                 });
               },
               decoration: InputDecoration(
@@ -107,11 +107,34 @@ class _NewCalendarPageState extends State<NewCalendarPage> {
       'matches': matchDetails,
     });
 
-    // Navigate back or perform any other action
-    // ...
+    String opponent = matchDetails[0].keys.first + " vs " + matchDetails[0].values.first;
+    //String place = matchDetails[0].keys.first=="la nostra squadra"? 'CASA' : "";
+    updateMatchDetails(widget.level, opponent);
+
     Navigator.pop(context);
 
     print('Changes confirmed');
+  }
+
+  void updateMatchDetails(String team, String opponent) async {
+    try {
+      FirebaseFirestore firestore = FirebaseFirestore.instance;
+      QuerySnapshot querySnapshot = await firestore
+          .collection('football_match')
+          .where('team', isEqualTo: team)
+          .get();
+      String documentId = querySnapshot.docs.first.id;
+      await FirebaseFirestore.instance
+          .collection('football_match')
+          .doc(documentId)
+          .update({
+        'team': team,
+        'opponent': opponent,
+        //'place': locationController, da fare sopra
+      });
+    } catch (e) {
+      print('Error updating user details: $e');
+    }
   }
 }
 

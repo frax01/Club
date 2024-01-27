@@ -1,18 +1,19 @@
-import 'package:club/pages/football/updateFootballEvent/updateEvent.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:club/pages/football/addFootballEvent/event.dart';
+import 'package:club/pages/main/updateEvent/updateEvent.dart';
+import 'package:club/pages/main/newEvent/event.dart';
 
-class ExtraUpdatePage extends StatefulWidget {
-  const ExtraUpdatePage({Key? key, required this.level}) : super(key: key);
+class UpdatePage extends StatefulWidget {
+  const UpdatePage({Key? key, required this.level, required this.section}) : super(key: key);
 
+  final String section;
   final String level;
 
   @override
-  _ExtraUpdatePageState createState() => _ExtraUpdatePageState();
+  _UpdatePageState createState() => _UpdatePageState();
 }
 
-class _ExtraUpdatePageState extends State<ExtraUpdatePage> {
+class _UpdatePageState extends State<UpdatePage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<void> deleteDocument(String collection, String docId) async {
@@ -26,7 +27,7 @@ class _ExtraUpdatePageState extends State<ExtraUpdatePage> {
         title: Text('Calendar Update Event'),
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: _firestore.collection('football_extra').snapshots(),
+        stream: _firestore.collection('${widget.section}_${widget.level}').snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return Center(child: CircularProgressIndicator());
@@ -41,16 +42,19 @@ class _ExtraUpdatePageState extends State<ExtraUpdatePage> {
                   icon: Icon(Icons.add),
                   onPressed: () {
                     Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => NewEventPage(title: 'Phoenix Club', level: widget.level)));
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => EventPage(
+                                title: 'Phoenix Club',
+                                level: widget.level,
+                                section: '${widget.section}')));
                   },
                 );
               }
 
               final doc = snapshot.data!.docs[index];
               final data = doc.data() as Map<String, dynamic>;
-              
+
               String documentId = doc.id;
               String Option = data['selectedOption'];
 
@@ -70,39 +74,41 @@ class _ExtraUpdatePageState extends State<ExtraUpdatePage> {
                                   builder: (context) => UpdateEventPage(
                                         documentId: documentId,
                                         Option: Option,
+                                        section: '${widget.section}',
                                       )));
                         },
                       ),
                       IconButton(
                         icon: Icon(Icons.delete),
                         onPressed: () async {
-                              bool? shouldDelete = await showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: Text('Confirm'),
-                                    content: Text('Are you sure you want to delete this item?'),
-                                    actions: <Widget>[
-                                      TextButton(
-                                        child: Text('Cancel'),
-                                        onPressed: () {
-                                          Navigator.of(context).pop(false);
-                                        },
-                                      ),
-                                      TextButton(
-                                        child: Text('Delete'),
-                                        onPressed: () {
-                                          Navigator.of(context).pop(true);
-                                        },
-                                      ),
-                                    ],
-                                  );
-                                },
+                          bool? shouldDelete = await showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('Confirm'),
+                                content: Text(
+                                    'Are you sure you want to delete this item?'),
+                                actions: <Widget>[
+                                  TextButton(
+                                    child: Text('Cancel'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop(false);
+                                    },
+                                  ),
+                                  TextButton(
+                                    child: Text('Delete'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop(true);
+                                    },
+                                  ),
+                                ],
                               );
-                              if (shouldDelete == true) {
-                                deleteDocument('football_extra', documentId);
-                              }
                             },
+                          );
+                          if (shouldDelete == true) {
+                            deleteDocument('${widget.section}_${widget.level}', documentId);
+                          }
+                        },
                       ),
                     ],
                   ),
