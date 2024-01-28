@@ -39,7 +39,7 @@ class _MatchEventPageState extends State<MatchEventPage> {
       List<Map<String, String>> matches = List<Map<String, String>>.from(
         (data['matches'] as List).map(
           (item) => Map<String, String>.from(item as Map)
-        )
+        ).where((item) => item.length == 1)
       );
 
       switch (data['team']) {

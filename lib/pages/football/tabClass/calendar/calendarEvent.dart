@@ -21,7 +21,22 @@ class _CalendarEventState extends State<CalendarEventPage> {
   @override
   void initState() {
     super.initState();
-    _eventsStream = FirebaseFirestore.instance.collection('football_calendar').snapshots();
+    _eventsStream =
+        FirebaseFirestore.instance.collection('football_calendar').snapshots();
+  }
+
+  Future<void> _clearOpponentField(String teamName) async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('football_match')
+        .where('team', isEqualTo: teamName)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      DocumentSnapshot documentSnapshot = querySnapshot.docs.first;
+      await documentSnapshot.reference.update({'opponent': ""});
+    } else {
+      print("No document found with team name: $teamName");
+    }
   }
 
   @override
@@ -42,8 +57,11 @@ class _CalendarEventState extends State<CalendarEventPage> {
           }
 
           List<QueryDocumentSnapshot> events = snapshot.data!.docs;
-          List<String> existingTeams = events.map((e) => (e.data() as Map<String, dynamic>)['team'] as String).toList();
-          List<String> teamsWithoutEvent = teams.where((team) => !existingTeams.contains(team)).toList();
+          List<String> existingTeams = events
+              .map((e) => (e.data() as Map<String, dynamic>)['team'] as String)
+              .toList();
+          List<String> teamsWithoutEvent =
+              teams.where((team) => !existingTeams.contains(team)).toList();
 
           return ListView.builder(
             itemCount: events.length + teamsWithoutEvent.length,
@@ -60,13 +78,49 @@ class _CalendarEventState extends State<CalendarEventPage> {
                       children: [
                         IconButton(
                           icon: Icon(Icons.edit),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => UpdateCalendarPage(teamName: '${eventData['team']}'),
-                              ),
-                            );
+                          onPressed: () async {
+                            // Ottieni la CollectionReference
+                            CollectionReference colRef = FirebaseFirestore
+                                .instance
+                                .collection('football_calendar');
+
+                            // Utilizza la clausola where per ottenere i documenti con 'team' uguale a eventData['team']
+                            QuerySnapshot querySnapshot = await colRef
+                                .where('team',
+                                    isEqualTo: '${eventData['team']}')
+                                .get();
+
+                            // Controlla se esiste un documento che soddisfa la condizione
+                            if (querySnapshot.docs.isNotEmpty) {
+                              // Prendi il primo documento che soddisfa la condizione
+                              DocumentSnapshot docSnapshot =
+                                  querySnapshot.docs.first;
+                              Map<String, dynamic> docData =
+                                  docSnapshot.data() as Map<String, dynamic>;
+
+                              // Controlla se esiste una mappa con 2 elementi nella lista 'matches'
+                              List matches = docData['matches'];
+                              bool hasTwoElements =
+                                  matches.any((match) => match.length == 2);
+
+                              if (hasTwoElements) {
+                                // Mostra uno SnackBar se esiste una mappa con 2 elementi
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content: Text(
+                                          'Il campionato è già cominciato, non puoi modificarlo')),
+                                );
+                              } else {
+                                // Naviga alla pagina di aggiornamento del calendario se non esiste una mappa con 2 elementi
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => UpdateCalendarPage(
+                                        teamName: '${eventData['team']}'),
+                                  ),
+                                );
+                              }
+                            }
                           },
                         ),
                         IconButton(
@@ -77,7 +131,8 @@ class _CalendarEventState extends State<CalendarEventPage> {
                               builder: (context) {
                                 return AlertDialog(
                                   title: Text('Conferma'),
-                                  content: Text('Sei sicuro di voler eliminare questo evento?'),
+                                  content: Text(
+                                      'Sei sicuro di voler eliminare questo evento?'),
                                   actions: [
                                     TextButton(
                                       child: Text('Annulla'),
@@ -97,7 +152,11 @@ class _CalendarEventState extends State<CalendarEventPage> {
                             );
 
                             if (shouldDelete == true) {
-                              FirebaseFirestore.instance.collection('football_calendar').doc(events[index].id).delete();
+                              FirebaseFirestore.instance
+                                  .collection('football_calendar')
+                                  .doc(events[index].id)
+                                  .delete();
+                              _clearOpponentField(eventData['team']);
                             }
                           },
                         ),
@@ -117,7 +176,8 @@ class _CalendarEventState extends State<CalendarEventPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => NewCalendarPage(title: 'Phoenix United', level: team),
+                            builder: (context) => NewCalendarPage(
+                                title: 'Phoenix United', level: team),
                           ),
                         );
                       },

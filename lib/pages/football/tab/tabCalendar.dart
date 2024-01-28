@@ -52,7 +52,9 @@ class _TabCalendarPageState extends State<TabCalendarPage> {
                   itemBuilder: (context, index) {
                     Map<String, dynamic> rankingData =
                         calendars[_currentPage].data() as Map<String, dynamic>;
+
                     List<Map<String, dynamic>> rankingList =List<Map<String, dynamic>>.from(rankingData['matches']);
+
 
                     return Column(
                       mainAxisAlignment: MainAxisAlignment.center,
