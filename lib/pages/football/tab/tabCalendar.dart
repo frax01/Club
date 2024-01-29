@@ -19,6 +19,21 @@ class _TabCalendarPageState extends State<TabCalendarPage> {
     _pageController = PageController();
   }
 
+  Future<String> funzione(team) async {
+    final firestore = FirebaseFirestore.instance;
+    final opponentQuerySnapshot = await firestore
+        .collection('football_match')
+        .where('team', isEqualTo: team)
+        .get();
+    if (opponentQuerySnapshot.docs.isEmpty) {
+      throw Exception('No documents found');
+    }
+
+    final documentSnapshot = opponentQuerySnapshot.docs.first;
+    final opponent = documentSnapshot.data()['opponent'] as String;
+    return opponent;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,7 +41,8 @@ class _TabCalendarPageState extends State<TabCalendarPage> {
         title: Text('Rankings'),
       ),
       body: FutureBuilder<QuerySnapshot>(
-        future: FirebaseFirestore.instance.collection('football_calendar').get(),
+        future:
+            FirebaseFirestore.instance.collection('football_calendar').get(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
@@ -53,58 +69,109 @@ class _TabCalendarPageState extends State<TabCalendarPage> {
                     Map<String, dynamic> rankingData =
                         calendars[_currentPage].data() as Map<String, dynamic>;
 
-                    List<Map<String, dynamic>> rankingList =List<Map<String, dynamic>>.from(rankingData['matches']);
+                    List<Map<String, dynamic>> rankingList =
+                        List<Map<String, dynamic>>.from(rankingData['matches']);
+                    print("rankingggg: $rankingList");
 
+                    return FutureBuilder<String>(
+                      future: funzione(rankingData['team']),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return CircularProgressIndicator();
+                        }
 
-                    return Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text('Team: ${rankingData['team']}',
-                            style: TextStyle(
-                                fontSize: 20.0, fontWeight: FontWeight.bold)),
-                        SizedBox(height: 16.0),
-                        Expanded(
-                          child: ListView.builder(
-                            itemCount: rankingList.length,
-                            itemBuilder: (context, listViewIndex) {
-                              return Card(
-                                elevation: 4.0,
-                                margin: EdgeInsets.all(8.0),
-                                child: Padding(
-                                  padding: EdgeInsets.all(16.0),
-                                  child: Row(
-                                    children: [
-                                      Text('${rankingList[listViewIndex].keys.first} vs ${rankingList[listViewIndex].values.first}'),
-                                      SizedBox(width: 10),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                        DotsIndicator(
-                          dotsCount: calendars.length,
-                          position: _currentPage.toDouble(),
-                          decorator: DotsDecorator(
-                            size: const Size.square(9.0),
-                            activeSize: const Size(18.0, 9.0),
-                            color: Colors.black26,
-                            activeColor: Colors.black,
-                            spacing: const EdgeInsets.all(3.0),
-                          ),
-                          onTap: (position) {
-                            _pageController.animateToPage(
-                              position.toInt(),
-                              duration: Duration(milliseconds: 300), // Imposta la durata dell'animazione
-                              curve: Curves.easeInOut, // Imposta la curva di animazione desiderata
-                            );
-                            setState(() {
-                              _currentPage = position.toInt();
-                            });
-                          },
-                        ),
-                      ],
+                        if (snapshot.hasError) {
+                          return Text('Errore: ${snapshot.error}');
+                        }
+
+                        String vs = snapshot.data!;
+
+                        return Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text('Team: ${rankingData['team']}',
+                                style: TextStyle(
+                                    fontSize: 20.0,
+                                    fontWeight: FontWeight.bold)),
+                            SizedBox(height: 16.0),
+                            Expanded(
+                              child: ListView.builder(
+                                itemCount: rankingList.length,
+                                itemBuilder: (context, listViewIndex) {
+                                  String match = '';
+                                  String score = '';
+                                  if (rankingList[listViewIndex].length == 1) {
+                                    match =
+                                        '${rankingList[listViewIndex].keys.first} vs ${rankingList[listViewIndex].values.first}';
+                                  } else {
+                                    score = 
+                                      '${rankingList[listViewIndex].keys.first} vs ${rankingList[listViewIndex].values.first}';
+                                    match =
+                                        '${rankingList[listViewIndex].keys.elementAt(1)} vs ${rankingList[listViewIndex].values.elementAt(1)}';
+                                  }
+                                  if (score == '') {
+                                    return Card(
+                                      color: vs == match ? Colors.green : null,
+                                      elevation: 4.0,
+                                      margin: EdgeInsets.all(8.0),
+                                      child: Padding(
+                                        padding: EdgeInsets.all(16.0),
+                                        child: Row(
+                                          children: [
+                                            Text(match),
+                                            SizedBox(width: 10),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                  else {
+                                    return Card(
+                                      color: vs == match ? Colors.green : null,
+                                      elevation: 4.0,
+                                      margin: EdgeInsets.all(8.0),
+                                      child: Padding(
+                                        padding: EdgeInsets.all(16.0),
+                                        child: Row(
+                                          children: [
+                                            Text(match + ' ' + score),
+                                            SizedBox(width: 10),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                },
+                              ),
+                            ),
+                            DotsIndicator(
+                              dotsCount: calendars.length,
+                              position: _currentPage.toDouble(),
+                              decorator: DotsDecorator(
+                                size: const Size.square(9.0),
+                                activeSize: const Size(18.0, 9.0),
+                                color: Colors.black26,
+                                activeColor: Colors.black,
+                                spacing: const EdgeInsets.all(3.0),
+                              ),
+                              onTap: (position) {
+                                _pageController.animateToPage(
+                                  position.toInt(),
+                                  duration: Duration(
+                                      milliseconds:
+                                          300), // Imposta la durata dell'animazione
+                                  curve: Curves
+                                      .easeInOut, // Imposta la curva di animazione desiderata
+                                );
+                                setState(() {
+                                  _currentPage = position.toInt();
+                                });
+                              },
+                            ),
+                          ],
+                        );
+                      },
                     );
                   },
                 ),

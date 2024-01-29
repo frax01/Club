@@ -15,9 +15,7 @@ import 'pages/main/waiting.dart';
 import 'pages/main/acceptance.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'config.dart';
-
-//import 'package:firebase_auth/firebase_auth.dart';
-//import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,16 +30,46 @@ void main() async {
     ),
   );
 
-  //FirebaseAnalytics analytics = FirebaseAnalytics();
-
-  //CollectionReference users = FirebaseFirestore.instance.collection('user');
-  //QuerySnapshot querySnapshot = await users.get();
-  //querySnapshot.docs.forEach((doc) {
-  //  var name = doc['name'];
-  //  print('Nome: $name');
-  //});
+  deleteOldDocuments();
 
   runApp(const MyApp());
+}
+
+void deleteOldDocuments() async {
+  final firestore = FirebaseFirestore.instance;
+  final today = DateTime.now();
+
+  final oneDateCollections = [
+    'club_extra',
+    'club_weekend',
+    'football_extra',
+  ];
+  for (final collection in oneDateCollections) {
+    final querySnapshot = await firestore.collection(collection).get();
+    for (final document in querySnapshot.docs) {
+      final startDateString = document.data()['startDate'] as String;
+      final startDate = DateTime.parse(startDateString.split('-').reversed.join('-'));
+      if (startDate.isBefore(today)) {
+        await document.reference.delete();
+      }
+    }
+  }
+
+  final twoDateCollections = [
+    'club_summer',
+    'club_trip',
+    'football_tournament',
+  ];
+  for (final collection in twoDateCollections) {
+    final querySnapshot = await firestore.collection(collection).get();
+    for (final document in querySnapshot.docs) {
+      final startDateString = document.data()['endDate'] as String;
+      final startDate = DateTime.parse(startDateString.split('-').reversed.join('-'));
+      if (startDate.isBefore(today)) {
+        await document.reference.delete();
+      }
+    }
+  }
 }
 
 class MyApp extends StatelessWidget {

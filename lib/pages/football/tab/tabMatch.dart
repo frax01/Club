@@ -68,16 +68,14 @@ class _TabMatchPageState extends State<TabMatchPage> {
       updateMatchDetails(teamController, opponent);
     } else if (index < matches.length - 1 && matches[index + 1].length == 1) {
       index++;
-      opponent =
-          matches[index].keys.first + " vs " + matches[index].values.first;
+      opponent = matches[index].keys.first + " vs " + matches[index].values.first;
       updateMatchDetails(teamController, opponent);
       print('Update eseguito con successo');
     } else if (index == matches.length - 1) {
       int count = 0;
       while (count < matches.length - 1) {
         if (matches[count].length == 1) {
-          opponent =
-              matches[count].keys.first + " vs " + matches[count].values.first;
+          opponent = matches[count].keys.first + " vs " + matches[count].values.first;
           updateMatchDetails(teamController, opponent);
           print('Update eseguito con successo');
           break;
@@ -101,9 +99,7 @@ class _TabMatchPageState extends State<TabMatchPage> {
           .update({
         'team': team,
         'opponent': opponent,
-        //'place': locationController, da fare sopra
       });
-      //updateOpponent();
     } catch (e) {
       print('Error updating user details: $e');
     }
