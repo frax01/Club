@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dots_indicator/dots_indicator.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 class TabMatchPage extends StatefulWidget {
   @override
@@ -15,10 +18,51 @@ class _TabMatchPageState extends State<TabMatchPage> {
   final _res1Controller = TextEditingController();
   final _res2Controller = TextEditingController();
 
+  int is_day = 0;
+  double temperature = 0;
+  int rain = 0;
+  int weather_code = 0;
+  int temperature_min = 0;
+  int temperature_max = 0;
+
   @override
   void initState() {
     super.initState();
     _fetchMatchesData();
+  }
+
+  Future<void> _fetchWeatherData(team, date) async {
+    DateFormat inputFormat = DateFormat("dd-MM-yyyy");
+    DateFormat outputFormat = DateFormat("yyyy-MM-dd");
+    DateTime parsedDate = inputFormat.parse(date);
+    String outputDate = outputFormat.format(parsedDate);
+    print(outputDate);
+    final response = await http.get(
+      Uri.parse(
+          'https://api.open-meteo.com/v1/forecast?latitude=45.4613&longitude=9.1595&hourly=is_day&current=temperature_2m,rain,weather_code&daily=temperature_2m_min,temperature_2m_max&timezone=Europe%2FRome&start_date=${outputDate}&end_date=${outputDate}'),
+    );
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      int currentHour = DateTime.now().hour;
+      is_day = data['hourly']['is_day'][currentHour];
+      temperature = data['current']['temperature_2m'];
+      rain = data['current']['rain'];
+      weather_code = data['current']['weather_code'];
+      temperature_min = (data['daily']['temperature_2m_min'][0] < 0)
+          ? data['daily']['temperature_2m_min'][0].ceil()
+          : data['daily']['temperature_2m_min'][0].floor();
+      temperature_max = (data['daily']['temperature_2m_max'][0] < 0)
+          ? data['daily']['temperature_2m_max'][0].ceil()
+          : data['daily']['temperature_2m_max'][0].floor();
+      print('Is day: $is_day');
+      print('Temperature: $temperature');
+      print('Rain: $rain');
+      print('Weather_code: $weather_code');
+      print('Temperature Min: $temperature_min');
+      print('Temperature Max: $temperature_max');
+    } else {
+      throw Exception('Failed to fetch weather data');
+    }
   }
 
   //void updateOpponent() async {
@@ -68,14 +112,16 @@ class _TabMatchPageState extends State<TabMatchPage> {
       updateMatchDetails(teamController, opponent);
     } else if (index < matches.length - 1 && matches[index + 1].length == 1) {
       index++;
-      opponent = matches[index].keys.first + " vs " + matches[index].values.first;
+      opponent =
+          matches[index].keys.first + " vs " + matches[index].values.first;
       updateMatchDetails(teamController, opponent);
       print('Update eseguito con successo');
     } else if (index == matches.length - 1) {
       int count = 0;
       while (count < matches.length - 1) {
         if (matches[count].length == 1) {
-          opponent = matches[count].keys.first + " vs " + matches[count].values.first;
+          opponent =
+              matches[count].keys.first + " vs " + matches[count].values.first;
           updateMatchDetails(teamController, opponent);
           print('Update eseguito con successo');
           break;
@@ -136,6 +182,9 @@ class _TabMatchPageState extends State<TabMatchPage> {
                       print(_currentPage);
                       print(_matchesData);
                       print(_matchesData[_currentPage]['team']);
+
+                      _fetchWeatherData(_matchesData[_currentPage]['team'],
+                          _matchesData[_currentPage]['date']);
 
                       if (_matchesData[index]['opponent'] == '') {
                         return Center(

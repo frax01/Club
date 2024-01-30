@@ -81,7 +81,6 @@ class _SignUpFormState extends State<SignUp> {
         'name': user.name,
         'surname': user.surname,
         'email': user.email,
-        'password': user.password,
         'birthdate': user.birthdate,
         'role': user.role,
         'club_class': user.club_class,

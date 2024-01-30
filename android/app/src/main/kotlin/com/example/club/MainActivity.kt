@@ -1,4 +1,4 @@
-package com.example.club
+package com.mycompany.dima
 
 import io.flutter.embedding.android.FlutterActivity
 
