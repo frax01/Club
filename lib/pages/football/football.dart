@@ -6,6 +6,8 @@ import 'tab/tabCalendar.dart';
 import 'tab/tabRanking.dart';
 import 'tab/tabScorer.dart';
 import 'package:club/pages/main/pageFolder.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:club/pages/main/login.dart';
 
 class FootballPage extends StatefulWidget {
   const FootballPage({super.key, required this.title});
@@ -19,9 +21,19 @@ class FootballPage extends StatefulWidget {
 class _FootballPageState extends State<FootballPage> {
   var section = 'FOOTBALL';
 
+  _saveLastPage(String page) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('lastPage', page);
+  }
+
   Future<void> _logout() async {
     setState(() {
-      Navigator.pushNamed(context, '/login');
+      Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Login(
+                            title: 'Tiber Club',
+                            logout: true)));
     });
   }
 
@@ -131,8 +143,8 @@ class _FootballPageState extends State<FootballPage> {
               children: [
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Image(
-                    image: const AssetImage('images/photo.jpg'),
+                  child: Image.asset(
+                    'images/logo.png',
                     width: width > 700 ? width / 4 : width / 8,
                     height: height / 4,
                   ),
@@ -184,6 +196,7 @@ class _FootballPageState extends State<FootballPage> {
                     setState(() {
                       section = value.toString();
                       if (section == 'CLUB') {
+                        _saveLastPage('ClubPage');
                         Navigator.pushNamed(context, '/club');
                       }
                     });

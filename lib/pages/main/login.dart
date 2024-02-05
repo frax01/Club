@@ -4,9 +4,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
-  const Login({Key? key, required this.title}) : super(key: key);
+  const Login({Key? key, required this.title, required this.logout})
+      : super(key: key);
 
   final String title;
+  final bool logout;
 
   @override
   _LoginState createState() => _LoginState();
@@ -19,11 +21,24 @@ class _LoginState extends State<Login> {
 
   bool rememberMe = false;
   List<String> emailSuggestions = [];
+  Map<String, String> savedCredentials = {};
 
   @override
   void initState() {
     super.initState();
-    _loadLoginInfo();
+    if (widget.logout==true) {
+      emailController.text = '';
+      passwordController.text = '';
+      rememberMe = false;
+      //emailController.addListener(_fillPassword);
+    }
+    else {
+      _loadLoginInfo().then((_) {
+        if (rememberMe && emailController.text.isNotEmpty && passwordController.text.isNotEmpty) {
+          _handleLogin();
+        }
+    });
+    }
   }
 
   _loadLoginInfo() async {
@@ -36,6 +51,12 @@ class _LoginState extends State<Login> {
     });
   }
 
+  //_fillPassword() {
+  //  if (savedCredentials.containsKey(emailController.text)) {
+  //    passwordController.text = savedCredentials[emailController.text]!;
+  //  }
+  //}
+
   _saveLoginInfo() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('email', emailController.text);
@@ -45,6 +66,22 @@ class _LoginState extends State<Login> {
       emailSuggestions.add(emailController.text);
       prefs.setStringList('emailSuggestions', emailSuggestions);
     }
+  }
+
+  _loadLastPage() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String lastPage = (prefs.getString('lastPage') ?? 'FootballPage');
+
+    if (lastPage == 'ClubPage') {
+      Navigator.pushNamed(context, '/club');
+    } else if (lastPage == 'FootballPage') {
+      Navigator.pushNamed(context, '/football');
+    }
+  }
+
+  _saveLastPage(String page) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('lastPage', page);
   }
 
   Future<void> _handleLogin() async {
@@ -78,16 +115,32 @@ class _LoginState extends State<Login> {
 
       String userEmail = userCredential.user?.email ?? '';
 
-      CollectionReference users1 = FirebaseFirestore.instance.collection('user');
+      CollectionReference users1 =
+          FirebaseFirestore.instance.collection('user');
       QuerySnapshot querySnapshot1 =
           await users1.where('email', isEqualTo: userEmail).get();
       var role = querySnapshot1.docs.first['role'];
+      String club_class = '';
+      String soccer_class = '';
 
       setState(() {
         if (role == "") {
           Navigator.pushNamed(context, '/waiting');
         } else {
-          Navigator.pushNamed(context, '/homepage');
+          _loadLastPage();
+          //if (querySnapshot1.docs.first['club_class'] != null) {
+          //  club_class = querySnapshot1.docs.first['club_class'];
+          //}
+          //if (querySnapshot1.docs.first['soccer_class'] != null) {
+          //  soccer_class = querySnapshot1.docs.first['soccer_class'];
+          //}
+          //Navigator.push(
+          //    context,
+          //    MaterialPageRoute(
+          //        builder: (context) => HomePage(
+          //            title: 'Phoenix United',
+          //            club_class: club_class,
+          //            soccer_class: soccer_class)));
         }
       });
       if (rememberMe) {

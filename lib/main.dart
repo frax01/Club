@@ -19,14 +19,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp(
     options: const FirebaseOptions(
       apiKey: Config.apiKey,
-      authDomain: 'club-60d94.firebaseapp.com',
-      projectId: 'club-60d94',
-      storageBucket: 'club-60d94.appspot.com',
-      messagingSenderId: '53952636966',
-      appId: '1:53952636966:android:4913f93f8c6e0fc8959ee7',
+      authDomain: Config.authDomain,
+      projectId: Config.projectId,
+      storageBucket: Config.storageBucket,
+      messagingSenderId: Config.messagingSenderId,
+      appId: Config.appId,
     ),
   );
 
@@ -48,7 +49,8 @@ void deleteOldDocuments() async {
     final querySnapshot = await firestore.collection(collection).get();
     for (final document in querySnapshot.docs) {
       final startDateString = document.data()['startDate'] as String;
-      final startDate = DateTime.parse(startDateString.split('-').reversed.join('-'));
+      final startDate =
+          DateTime.parse(startDateString.split('-').reversed.join('-'));
       if (startDate.isBefore(today)) {
         await document.reference.delete();
       }
@@ -64,7 +66,8 @@ void deleteOldDocuments() async {
     final querySnapshot = await firestore.collection(collection).get();
     for (final document in querySnapshot.docs) {
       final startDateString = document.data()['endDate'] as String;
-      final startDate = DateTime.parse(startDateString.split('-').reversed.join('-'));
+      final startDate =
+          DateTime.parse(startDateString.split('-').reversed.join('-'));
       if (startDate.isBefore(today)) {
         await document.reference.delete();
       }
@@ -83,32 +86,41 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.transparent),
         useMaterial3: true,
       ),
-      home: const Login(title: 'Phoenix United'),
+      home: const Login(title: 'Phoenix United', logout: false,),
       initialRoute: '/',
       routes: {
-        '/login': (context) => const Login(title: 'Phoenix United'),
+        '/login': (context) => const Login(title: 'Phoenix United', logout: false,),
         '/signup': (context) => const SignUp(title: 'Phoenix United'),
         '/waiting': (context) => const Waiting(title: 'Phoenix United'),
-        '/homepage': (context) => const HomePage(title: 'Phoenix United'),
+        //'/homepage': (context) => const HomePage(title: 'Phoenix United'),
         '/settings': (context) => const SettingsPage(),
         '/club': (context) => const ClubPage(title: 'Phoenix Club'),
         '/football': (context) => const FootballPage(title: 'Phoenix United'),
-        '/acceptance': (context) => const AcceptancePage(title: 'Phoenix United'),
-        '/club_modifier': (context) => const ClubModifier(title: 'Phoenix Club'),
-        '/football_modifier': (context) => const FootballModifier(title: 'Phoenix United'),
-        '/matchEvent': (context) => const MatchEventPage(title: 'Phoenix United'),
-        '/calendarEvent': (context) => const CalendarEventPage(title: 'Phoenix United'),
-        '/rankingEvent': (context) => const RankingEventPage(title: 'Phoenix United'),
-        '/scorerEvent': (context) => const ScorerEventPage(title: 'Phoenix United'),
+        '/acceptance': (context) =>
+            const AcceptancePage(title: 'Phoenix United'),
+        '/club_modifier': (context) =>
+            const ClubModifier(title: 'Phoenix Club'),
+        '/football_modifier': (context) =>
+            const FootballModifier(title: 'Phoenix United'),
+        '/matchEvent': (context) =>
+            const MatchEventPage(title: 'Phoenix United'),
+        '/calendarEvent': (context) =>
+            const CalendarEventPage(title: 'Phoenix United'),
+        '/rankingEvent': (context) =>
+            const RankingEventPage(title: 'Phoenix United'),
+        '/scorerEvent': (context) =>
+            const ScorerEventPage(title: 'Phoenix United'),
       },
     );
   }
 }
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key, required this.title});
+  const HomePage({super.key, required this.title, required this.club_class, required this.soccer_class});
 
   final String title;
+  final String club_class;
+  final String soccer_class;
 
   @override
   Widget build(BuildContext context) {

@@ -214,7 +214,8 @@ class _TabMatchPageState extends State<TabMatchPage> {
                                 ),
                               ),
                               Image.asset(
-                                _matchesData[index]['image'],
+                                //_matchesData[index]['image'],
+                                'images/CC.jpeg',
                                 width: widthScreen / 5,
                                 height: heightScreen / 5,
                               ),
