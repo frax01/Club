@@ -22,7 +22,7 @@ class ClubPage extends StatefulWidget {
 class _ClubPageState extends State<ClubPage> {
   var section = 'CLUB';
 
-    _saveLastPage(String page) async {
+  _saveLastPage(String page) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('lastPage', page);
   }
@@ -33,13 +33,14 @@ class _ClubPageState extends State<ClubPage> {
     //await prefs.clear();
     setState(() {
       Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Login(
-                            title: 'Tiber Club',
-                            logout: true)));
+          context,
+          MaterialPageRoute(
+              builder: (context) => Login(title: 'Tiber Club', logout: true)));
     });
   }
+
+  String club_class = '';
+  String soccer_class = '';
 
   Future<List<String>> getUserData() async {
     List<String> userData = [];
@@ -56,6 +57,8 @@ class _ClubPageState extends State<ClubPage> {
           var name = querySnapshot.docs.first['name'];
           var surname = querySnapshot.docs.first['surname'];
           var email = querySnapshot.docs.first['email'];
+          club_class = querySnapshot.docs.first['club_class'];
+          soccer_class = querySnapshot.docs.first['soccer_class'];
 
           userData = [name, surname, email];
         }
@@ -98,53 +101,51 @@ class _ClubPageState extends State<ClubPage> {
   @override
   void initState() {
     super.initState();
-    sendNotification(
-        'E2KfozhFBUaAPslgo5Us29Gpswn2',
-        'ciaoooo',
-        'ciaoooooo');
+    sendNotification('E2KfozhFBUaAPslgo5Us29Gpswn2', 'ciaoooo', 'ciaoooooo');
 
     const AndroidNotificationChannel channel = AndroidNotificationChannel(
-  'high_importance_channel', // id
-  'High Importance Notifications', //title
-  importance: Importance.high,
-);
+      'high_importance_channel', // id
+      'High Importance Notifications', //title
+      importance: Importance.high,
+    );
 
-Future<void> initialize() async {
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      RemoteNotification? notification = message.notification;
-  AndroidNotification? android = message.notification?.android;
+    Future<void> initialize() async {
+      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+        RemoteNotification? notification = message.notification;
+        AndroidNotification? android = message.notification?.android;
 
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+        final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+            FlutterLocalNotificationsPlugin();
 
-  if (notification != null && android != null) {
-    flutterLocalNotificationsPlugin.show(
-        notification.hashCode,
-        notification.title,
-        notification.body,
-        NotificationDetails(
-          android: AndroidNotificationDetails(
-            channel.id,
-            channel.name,
-            icon: android.smallIcon,
-            // other properties...
-          ),
-        ));
-  }
-    });
+        if (notification != null && android != null) {
+          flutterLocalNotificationsPlugin.show(
+              notification.hashCode,
+              notification.title,
+              notification.body,
+              NotificationDetails(
+                android: AndroidNotificationDetails(
+                  channel.id,
+                  channel.name,
+                  icon: android.smallIcon,
+                  // other properties...
+                ),
+              ));
+        }
+      });
 
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      // Gestisci la notifica quando l'utente tocca la notifica nell'area di notifica del sistema
-    });
+      FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+        // Gestisci la notifica quando l'utente tocca la notifica nell'area di notifica del sistema
+      });
 
-    //NotificationSettings settings = await messaging.requestPermission(
-    //  alert: true,
-    //  badge: true,
-    //  sound: true,
-    //);
+      //NotificationSettings settings = await messaging.requestPermission(
+      //  alert: true,
+      //  badge: true,
+      //  sound: true,
+      //);
 
-    String? token = await messaging.getToken();
-    print('User token: $token');
-  }
+      String? token = await messaging.getToken();
+      print('User token: $token');
+    }
 
     var initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -264,13 +265,21 @@ Future<void> initialize() async {
             DropdownButton(
               value: section,
               onChanged: (value) {
-                setState(() {
-                  section = value.toString();
-                  if (section == 'FOOTBALL') {
-                    _saveLastPage('FootballPage');
-                    Navigator.pushNamed(context, '/football');
-                  }
-                });
+                if (soccer_class != '') {
+                  setState(() {
+                    section = value.toString();
+                    if (section == 'FOOTBALL') {
+                      _saveLastPage('FootballPage');
+                      Navigator.pushNamed(context, '/football');
+                    }
+                  });
+                } else {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                        content: Text('Non fai ancora parte di una squadra')),
+                  );
+                }
               },
               alignment: AlignmentDirectional.center,
               padding: const EdgeInsets.only(left: 8.0, right: 8.0),

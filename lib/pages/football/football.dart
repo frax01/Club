@@ -10,8 +10,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:club/pages/main/login.dart';
 
 class FootballPage extends StatefulWidget {
-  const FootballPage({super.key, required this.title});
+  const FootballPage(
+      {super.key,
+      required this.title,
+      required this.email,
+      required this.status});
 
+  final String email;
+  final String status;
   final String title;
 
   @override
@@ -29,17 +35,17 @@ class _FootballPageState extends State<FootballPage> {
   Future<void> _logout() async {
     setState(() {
       Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Login(
-                            title: 'Tiber Club',
-                            logout: true)));
+          context,
+          MaterialPageRoute(
+              builder: (context) => Login(title: 'Tiber Club', logout: true)));
     });
   }
 
+  String club_class = '';
+  String soccer_class = '';
+
   Future<List<String>> getUserData() async {
     List<String> userData = [];
-
     try {
       User? user = FirebaseAuth.instance.currentUser;
       if (user != null) {
@@ -52,6 +58,9 @@ class _FootballPageState extends State<FootballPage> {
           var name = querySnapshot.docs.first['name'];
           var surname = querySnapshot.docs.first['surname'];
           var email = querySnapshot.docs.first['email'];
+          print(email);
+          club_class = querySnapshot.docs.first['club_class'];
+          soccer_class = querySnapshot.docs.first['soccer_class'];
 
           userData = [name, surname, email];
         }
@@ -129,7 +138,7 @@ class _FootballPageState extends State<FootballPage> {
 
               //Icon(Icons.directions_bike, size: 150, color: Colors.teal),
               // Contenuto per il Tab 4
-              TabScorer(),
+              TabScorer(email: widget.email, status: widget.status),
             ],
           ),
           drawer: Drawer(
@@ -193,13 +202,21 @@ class _FootballPageState extends State<FootballPage> {
                 DropdownButton(
                   value: section,
                   onChanged: (value) {
-                    setState(() {
-                      section = value.toString();
-                      if (section == 'CLUB') {
-                        _saveLastPage('ClubPage');
-                        Navigator.pushNamed(context, '/club');
-                      }
-                    });
+                    if (club_class != '') {
+                      setState(() {
+                        section = value.toString();
+                        if (section == 'CLUB') {
+                          _saveLastPage('ClubPage');
+                          Navigator.pushNamed(context, '/club');
+                        }
+                      });
+                    } else {
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                            content: Text('Non sei ancora iscritto al club')),
+                      );
+                    }
                   },
                   alignment: AlignmentDirectional.center,
                   padding: const EdgeInsets.only(left: 8.0, right: 8.0),
@@ -223,12 +240,25 @@ class _FootballPageState extends State<FootballPage> {
                     Icons.calendar_month_outlined,
                   ),
                   title: const Text('Tournaments'),
-                  subtitle: Text('Just do it', style: TextStyle(fontSize: width > 700? 12 : width > 500? 14 : width > 400? 11 : width > 330? 12 : 10)),
+                  subtitle: Text('Just do it',
+                      style: TextStyle(
+                          fontSize: width > 700
+                              ? 12
+                              : width > 500
+                                  ? 14
+                                  : width > 400
+                                      ? 11
+                                      : width > 330
+                                          ? 12
+                                          : 10)),
                   onTap: () {
                     Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => PageFolder(title: 'ASD Tiber Club', level: 'tournament', option: 'football')));
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => PageFolder(
+                                title: 'ASD Tiber Club',
+                                level: 'tournament',
+                                option: 'football')));
                   },
                 ),
                 ListTile(
@@ -236,12 +266,25 @@ class _FootballPageState extends State<FootballPage> {
                     Icons.plus_one_outlined,
                   ),
                   title: const Text('Extra'),
-                  subtitle: Text('What are you waiting for?', style: TextStyle(fontSize: width > 700? 12 : width > 500? 14 : width > 400? 11 : width > 330? 12 : 10)),
+                  subtitle: Text('What are you waiting for?',
+                      style: TextStyle(
+                          fontSize: width > 700
+                              ? 12
+                              : width > 500
+                                  ? 14
+                                  : width > 400
+                                      ? 11
+                                      : width > 330
+                                          ? 12
+                                          : 10)),
                   onTap: () {
                     Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => PageFolder(title: 'ASD Tiber Club', level: 'extra', option: 'football')));
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => PageFolder(
+                                title: 'ASD Tiber Club',
+                                level: 'extra',
+                                option: 'football')));
                   },
                 ),
                 ListTile(
@@ -249,7 +292,17 @@ class _FootballPageState extends State<FootballPage> {
                     Icons.settings,
                   ),
                   title: const Text('Settings'),
-                  subtitle: Text('Account management', style: TextStyle(fontSize: width > 700? 12 : width > 500? 14 : width > 400? 11 : width > 330? 12 : 10)),
+                  subtitle: Text('Account management',
+                      style: TextStyle(
+                          fontSize: width > 700
+                              ? 12
+                              : width > 500
+                                  ? 14
+                                  : width > 400
+                                      ? 11
+                                      : width > 330
+                                          ? 12
+                                          : 10)),
                   onTap: () {
                     Navigator.pushNamed(context, '/settings');
                   },
@@ -339,7 +392,6 @@ class _FootballPageState extends State<FootballPage> {
               ],
             ),
           ),
-        )
-      );
+        ));
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:club/pages/football/football.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key, required this.title, required this.logout})
@@ -19,6 +20,8 @@ class _LoginState extends State<Login> {
   final TextEditingController passwordController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  String? status;
+
   bool rememberMe = false;
   List<String> emailSuggestions = [];
   Map<String, String> savedCredentials = {};
@@ -26,18 +29,19 @@ class _LoginState extends State<Login> {
   @override
   void initState() {
     super.initState();
-    if (widget.logout==true) {
+    if (widget.logout == true) {
       emailController.text = '';
       passwordController.text = '';
       rememberMe = false;
       //emailController.addListener(_fillPassword);
-    }
-    else {
+    } else {
       _loadLoginInfo().then((_) {
-        if (rememberMe && emailController.text.isNotEmpty && passwordController.text.isNotEmpty) {
+        if (rememberMe &&
+            emailController.text.isNotEmpty &&
+            passwordController.text.isNotEmpty) {
           _handleLogin();
         }
-    });
+      });
     }
   }
 
@@ -75,8 +79,19 @@ class _LoginState extends State<Login> {
     if (lastPage == 'ClubPage') {
       Navigator.pushNamed(context, '/club');
     } else if (lastPage == 'FootballPage') {
-      Navigator.pushNamed(context, '/football');
+      print(emailController.text);
+      loadPage(status);
     }
+  }
+
+  loadPage(status) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => FootballPage(
+                title: "Phoenix United",
+                email: emailController.text,
+                status: status)));
   }
 
   _saveLastPage(String page) async {
@@ -120,27 +135,21 @@ class _LoginState extends State<Login> {
       QuerySnapshot querySnapshot1 =
           await users1.where('email', isEqualTo: userEmail).get();
       var role = querySnapshot1.docs.first['role'];
-      String club_class = '';
-      String soccer_class = '';
+      String club_class = querySnapshot1.docs.first['club_class'];
+      String soccer_class = querySnapshot1.docs.first['soccer_class'];
+      status = querySnapshot1.docs.first['status'];
 
       setState(() {
         if (role == "") {
           Navigator.pushNamed(context, '/waiting');
         } else {
-          _loadLastPage();
-          //if (querySnapshot1.docs.first['club_class'] != null) {
-          //  club_class = querySnapshot1.docs.first['club_class'];
-          //}
-          //if (querySnapshot1.docs.first['soccer_class'] != null) {
-          //  soccer_class = querySnapshot1.docs.first['soccer_class'];
-          //}
-          //Navigator.push(
-          //    context,
-          //    MaterialPageRoute(
-          //        builder: (context) => HomePage(
-          //            title: 'Phoenix United',
-          //            club_class: club_class,
-          //            soccer_class: soccer_class)));
+          if (club_class == "") {
+            Navigator.pushNamed(context, '/football');
+          } else if (soccer_class == "") {
+            Navigator.pushNamed(context, '/club');
+          } else {
+            _loadLastPage();
+          }
         }
       });
       if (rememberMe) {

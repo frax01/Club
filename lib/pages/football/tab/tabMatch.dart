@@ -6,15 +6,16 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 class TabMatchPage extends StatefulWidget {
+
   @override
   _TabMatchPageState createState() => _TabMatchPageState();
 }
 
 class _TabMatchPageState extends State<TabMatchPage> {
   List<Map<String, dynamic>> _matchesData = [];
-  final _pageController = PageController();
-  int _currentPage = 0;
 
+  int _currentPage = 0;
+  final _pageController = PageController();
   final _res1Controller = TextEditingController();
   final _res2Controller = TextEditingController();
 
@@ -64,23 +65,6 @@ class _TabMatchPageState extends State<TabMatchPage> {
       throw Exception('Failed to fetch weather data');
     }
   }
-
-  //void updateOpponent() async {
-  //  final team = _matchesData[_currentPage]['team'];
-  //  print("ecco$team");
-//
-  //  if (_matchesData.where((match) => match.length == 2).length ==
-  //      _matchesData.length) {
-  //    final matchQuery = FirebaseFirestore.instance
-  //        .collection('football_match')
-  //        .where('team', isEqualTo: team);
-  //    final matchQuerySnapshot = await matchQuery.get();
-//
-  //    // Prendi il primo documento corrispondente e aggiorna opponent a ''
-  //    final matchDocumentSnapshot = matchQuerySnapshot.docs.first;
-  //    await matchDocumentSnapshot.reference.update({'opponent': ''});
-  //  }
-  //}
 
   Future<void> _updateFootballCalendar(
       String team1, String team2, String res1, String res2) async {
@@ -152,9 +136,7 @@ class _TabMatchPageState extends State<TabMatchPage> {
   }
 
   Future<void> _fetchMatchesData() async {
-    // Ottieni i dati della collezione 'football_match'
-    final QuerySnapshot querySnapshot =
-        await FirebaseFirestore.instance.collection('football_match').get();
+    final QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('football_match').get();
 
     setState(() {
       _matchesData = querySnapshot.docs.map((DocumentSnapshot document) {

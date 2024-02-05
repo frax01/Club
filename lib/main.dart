@@ -1,11 +1,9 @@
 import 'package:club/pages/club/updateClubEvent/clubModifier.dart';
-import 'package:club/pages/football/football.dart';
 import 'package:club/pages/football/updateFootballEvent/footballModifier.dart';
 import 'package:club/pages/football/tabClass/ranking/rankingEvent.dart';
 import 'package:club/pages/main/signup.dart';
 import 'package:club/pages/football/tabClass/match/matchEvent.dart';
 import 'package:club/pages/football/tabClass/calendar/calendarEvent.dart';
-import 'package:club/pages/football/tabClass/scorer/scorerEvent.dart';
 import 'package:club/pages/main/setting.dart';
 import 'package:flutter/material.dart';
 import 'functions/button.dart';
@@ -16,6 +14,7 @@ import 'pages/main/acceptance.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'config.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,6 +31,7 @@ void main() async {
   );
 
   deleteOldDocuments();
+  firebaseMessaging();
 
   runApp(const MyApp());
 }
@@ -75,6 +75,16 @@ void deleteOldDocuments() async {
   }
 }
 
+void firebaseMessaging() {
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+
+  _firebaseMessaging.requestPermission();
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    print('Got a message whilst in the foreground!');
+    print('Message data: ${message.data}');
+  });
+}
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -86,16 +96,22 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.transparent),
         useMaterial3: true,
       ),
-      home: const Login(title: 'Phoenix United', logout: false,),
+      home: const Login(
+        title: 'Phoenix United',
+        logout: false,
+      ),
       initialRoute: '/',
       routes: {
-        '/login': (context) => const Login(title: 'Phoenix United', logout: false,),
+        '/login': (context) => const Login(
+              title: 'Phoenix United',
+              logout: false,
+            ),
         '/signup': (context) => const SignUp(title: 'Phoenix United'),
         '/waiting': (context) => const Waiting(title: 'Phoenix United'),
         //'/homepage': (context) => const HomePage(title: 'Phoenix United'),
         '/settings': (context) => const SettingsPage(),
         '/club': (context) => const ClubPage(title: 'Phoenix Club'),
-        '/football': (context) => const FootballPage(title: 'Phoenix United'),
+        //'/football': (context) => const FootballPage(title: 'Phoenix United'),
         '/acceptance': (context) =>
             const AcceptancePage(title: 'Phoenix United'),
         '/club_modifier': (context) =>
@@ -108,15 +124,17 @@ class MyApp extends StatelessWidget {
             const CalendarEventPage(title: 'Phoenix United'),
         '/rankingEvent': (context) =>
             const RankingEventPage(title: 'Phoenix United'),
-        '/scorerEvent': (context) =>
-            const ScorerEventPage(title: 'Phoenix United'),
       },
     );
   }
 }
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key, required this.title, required this.club_class, required this.soccer_class});
+  const HomePage(
+      {super.key,
+      required this.title,
+      required this.club_class,
+      required this.soccer_class});
 
   final String title;
   final String club_class;
