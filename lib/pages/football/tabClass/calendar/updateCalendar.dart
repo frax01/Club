@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class UpdateCalendarPage extends StatefulWidget {
   final String teamName;
 
-  UpdateCalendarPage({required this.teamName});
+  const UpdateCalendarPage({super.key, required this.teamName});
 
   @override
   _UpdateCalendarPageState createState() =>
@@ -79,20 +79,20 @@ class _UpdateCalendarPageState extends State<UpdateCalendarPage> {
               Expanded(
                 child: TextField(
                   controller: keyControllers[index],
-                  decoration: InputDecoration(labelText: 'Key'),
+                  decoration: const InputDecoration(labelText: 'Key'),
                 ),
               ),
               const SizedBox(width: 8.0),
-              Text('vs'),
+              const Text('vs'),
               const SizedBox(width: 8.0),
               Expanded(
                 child: TextField(
                   controller: valueControllers[index],
-                  decoration: InputDecoration(labelText: 'Value'),
+                  decoration: const InputDecoration(labelText: 'Value'),
                 ),
               ),
               IconButton(
-                icon: Icon(Icons.delete),
+                icon: const Icon(Icons.delete),
                 onPressed: () => _deleteRow(index),
               ),
             ],
@@ -104,14 +104,14 @@ class _UpdateCalendarPageState extends State<UpdateCalendarPage> {
         children: <Widget>[
           FloatingActionButton(
             onPressed: _addRow,
-            child: Icon(Icons.add),
-            heroTag: null, // Needed to use multiple FABs.
+            heroTag: null,
+            child: const Icon(Icons.add), // Needed to use multiple FABs.
           ),
-          SizedBox(height: 10), // Add some space between the FABs.
+          const SizedBox(height: 10), // Add some space between the FABs.
           FloatingActionButton(
             onPressed: _updateNewMatches,
-            child: Icon(Icons.save),
-            heroTag: null, // Needed to use multiple FABs.
+            heroTag: null,
+            child: const Icon(Icons.save), // Needed to use multiple FABs.
           ),
         ],
       ),
@@ -119,9 +119,9 @@ class _UpdateCalendarPageState extends State<UpdateCalendarPage> {
   }
 
   Future<void> _updateNewMatches() async {
-    if (keyControllers.length==0) {
+    if (keyControllers.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Aggiungi almeno una partita')));
+          const SnackBar(content: Text('Aggiungi almeno una partita')));
       return;
     }
 
@@ -131,7 +131,7 @@ class _UpdateCalendarPageState extends State<UpdateCalendarPage> {
 
     if (hasEmptyField) {
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Errore: uno o più campi sono vuoti.')));
+          const SnackBar(content: Text('Errore: uno o più campi sono vuoti.')));
       return;
     }
 

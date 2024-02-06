@@ -90,18 +90,16 @@ class _LoginState extends State<Login> {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => ClubPage(
-                title: "Phoenix United",
-                document: document)));
+            builder: (context) =>
+                ClubPage(title: "Phoenix United", document: document)));
   }
 
   loadFootballPage(status) {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => FootballPage(
-                title: "Phoenix United",
-                document: document)));
+            builder: (context) =>
+                FootballPage(title: "Phoenix United", document: document)));
   }
 
   _saveLastPage(String page) async {
@@ -121,7 +119,8 @@ class _LoginState extends State<Login> {
 
       String userEmail = userCredential.user?.email ?? '';
       CollectionReference user = FirebaseFirestore.instance.collection('user');
-      QuerySnapshot querySnapshot1 = await user.where('email', isEqualTo: userEmail).get();
+      QuerySnapshot querySnapshot1 =
+          await user.where('email', isEqualTo: userEmail).get();
 
       document = {
         'name': querySnapshot1.docs.first['name'],
@@ -168,164 +167,178 @@ class _LoginState extends State<Login> {
     print('Forgot Password tapped');
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title:
-              Text(widget.title, style: const TextStyle(color: Colors.white)),
-          backgroundColor: const Color.fromARGB(255, 130, 16, 8),
-          centerTitle: true,
-          automaticallyImplyLeading: false,
+  Column buildForm() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Center(
+          child: Column(
+            children: [
+              Text('Log In',
+                  style:
+                      TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold)),
+              Text('Complete the fields below',
+                  style: TextStyle(fontSize: 14.0)),
+            ],
+          ),
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(30.0),
-          child: Card(
-            color: Colors.white,
-            elevation: 30.0,
-            shadowColor: Colors.black,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(
-                  5.0), // Regola il raggio per ottenere bordi arrotondati
-              //side: BorderSide(
-              //  color: Colors.black,
-              //  width: 0.5,
-              //),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Center(
-                    child: Column(
-                      children: [
-                        Text('Log In',
-                            style: TextStyle(
-                                fontSize: 24.0, fontWeight: FontWeight.bold)),
-                        Text('Complete the fields below',
-                            style: TextStyle(fontSize: 14.0)),
-                      ],
-                    ),
-                  ),
-                  TextField(
-                    controller: emailController,
-                    decoration: const InputDecoration(labelText: 'Email'),
-                    onSubmitted: (_) => _handleLogin(),
-                  ),
-                  SizedBox(height: 16.0),
-                  TextField(
-                    controller: passwordController,
-                    obscureText: true,
-                    decoration: const InputDecoration(labelText: 'Password'),
-                    onSubmitted: (_) => _handleLogin(),
-                  ),
-                  SizedBox(height: 16.0),
-                  CheckboxListTile(
-                    title: Text('Remember me'),
-                    value: rememberMe,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        rememberMe = value!;
-                      });
-                    },
-                  ),
-                  SizedBox(height: 16.0),
-                  ElevatedButton(
-                    onPressed: _handleLogin,
-                    child: const Text('Login',
-                        style: TextStyle(color: Colors.black)),
-                    style: ButtonStyle(
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                              5.0), // Imposta il raggio per ottenere bordi arrotondati
-                          //side: BorderSide(color: Colors.black, width: 1.0), // Imposta il colore e lo spessore del bordo
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 8.0),
-                  ElevatedButton(
-                    onPressed: _handleSignUp,
-                    style: ButtonStyle(
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5.0),
-                        ),
-                      ),
-                    ),
-                    child: const Text('Sign Up',
-                        style: TextStyle(color: Colors.black)),
-                  ),
-                  SizedBox(height: 16.0),
-                  TextButton(
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          TextEditingController resetEmailController =
-                              TextEditingController();
-                          return AlertDialog(
-                            title: Text('Recupero password'),
-                            content: TextField(
-                              controller: resetEmailController,
-                              decoration:
-                                  const InputDecoration(labelText: 'Email'),
-                            ),
-                            actions: [
-                              TextButton(
-                                child: Text('Annulla'),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                              TextButton(
-                                child: Text('Invia'),
-                                onPressed: () async {
-                                  if (resetEmailController.text.isNotEmpty) {
-                                    try {
-                                      await FirebaseAuth.instance
-                                          .sendPasswordResetEmail(
-                                              email: resetEmailController.text);
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(
-                                            content: Text(
-                                                'Email di recupero password inviata.')),
-                                      );
-                                    } catch (e) {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(
-                                            content: Text(
-                                                'Errore durante l\'invio dell\'email di recupero password.')),
-                                      );
-                                    }
-                                  } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                          content:
-                                              Text('Inserisci un\'email.')),
-                                    );
-                                  }
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    },
-                    child: const Text(
-                      'Password dimenticata?',
-                      style: TextStyle(color: Colors.black),
-                    ),
-                  ),
-                ],
+        TextField(
+          controller: emailController,
+          decoration: const InputDecoration(labelText: 'Email'),
+          onSubmitted: (_) => _handleLogin(),
+        ),
+        const SizedBox(height: 8),
+        TextField(
+          controller: passwordController,
+          obscureText: true,
+          decoration: const InputDecoration(labelText: 'Password'),
+          onSubmitted: (_) => _handleLogin(),
+        ),
+        const SizedBox(height: 16.0),
+        CheckboxListTile(
+          title: const Text('Remember me'),
+          value: rememberMe,
+          onChanged: (bool? value) {
+            setState(() {
+              rememberMe = value!;
+            });
+          },
+        ),
+        const SizedBox(height: 8),
+        ElevatedButton(
+          onPressed: _handleLogin,
+          style: ButtonStyle(
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(5.0),
               ),
             ),
           ),
-        ));
+          child: const Text('Login', style: TextStyle(color: Colors.black)),
+        ),
+        const SizedBox(height: 8),
+        ElevatedButton(
+          onPressed: _handleSignUp,
+          style: ButtonStyle(
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(5.0),
+              ),
+            ),
+          ),
+          child: const Text('Sign up', style: TextStyle(color: Colors.black)),
+        ),
+        const SizedBox(height: 16.0),
+        TextButton(
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (context) {
+                TextEditingController resetEmailController =
+                    TextEditingController();
+                return AlertDialog(
+                  title: const Text('Recover password'),
+                  content: TextField(
+                    controller: resetEmailController,
+                    decoration: const InputDecoration(labelText: 'Email'),
+                  ),
+                  actions: [
+                    TextButton(
+                      child: const Text('Cancel'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                    TextButton(
+                      child: const Text('Send'),
+                      onPressed: () async {
+                        if (resetEmailController.text.isNotEmpty) {
+                          try {
+                            await FirebaseAuth.instance.sendPasswordResetEmail(
+                                email: resetEmailController.text);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content:
+                                      Text('Password recovery email sent')),
+                            );
+                          } catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text(
+                                      'Error sending password recovery email')),
+                            );
+                          }
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Insert a mail address')),
+                          );
+                        }
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+          child: const Text(
+            'Forgot password?',
+            style: TextStyle(color: Colors.black),
+          ),
+        ),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(builder: (context, constraints) {
+      return Stack(
+          children: [
+            Image.asset(
+              "images/CC.jpeg",
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              fit: BoxFit.cover,
+            ),
+            Scaffold(
+              backgroundColor: Colors.transparent,
+              body: Center(
+                child: SizedBox(
+                  width: 600,
+                  height: 620,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15)),
+                      elevation: 10.0,
+                      shadowColor: Colors.black,
+                      surfaceTintColor: Colors.white54,
+                      child: SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.all(25),
+                          child: Column(
+                            children: [
+                              Image.asset("images/logo.png", width: 150),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              Container(
+                                child: buildForm(),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+    });
   }
 }

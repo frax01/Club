@@ -3,7 +3,6 @@ import 'package:club/pages/football/tabClass/ranking/rankingEvent.dart';
 import 'package:club/pages/main/signup.dart';
 import 'package:club/pages/football/tabClass/match/matchEvent.dart';
 import 'package:club/pages/football/tabClass/calendar/calendarEvent.dart';
-import 'package:club/pages/main/setting.dart';
 import 'package:flutter/material.dart';
 import 'pages/main/login.dart';
 import 'pages/main/waiting.dart';
@@ -73,9 +72,9 @@ void deleteOldDocuments() async {
 }
 
 void firebaseMessaging() {
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
 
-  _firebaseMessaging.requestPermission();
+  firebaseMessaging.requestPermission();
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     print('Got a message whilst in the foreground!');
     print('Message data: ${message.data}');
@@ -99,7 +98,7 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/homepage',
       routes: {
-        '/homepage': (context) => HomePage(),
+        '/homepage': (context) => const HomePage(),
         '/login': (context) => const Login(
               title: 'Phoenix United',
               logout: false,
@@ -126,6 +125,8 @@ class MyApp extends StatelessWidget {
 }
 
 class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -133,7 +134,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   Future<void> loadData() async {
     // Simula il caricamento dei dati dal database
-    await Future.delayed(Duration(seconds: 5));
+    await Future.delayed(const Duration(seconds: 5));
 
     // Una volta che i dati sono stati caricati, naviga alla pagina di login
     Navigator.pushReplacementNamed(context, '/login');
@@ -154,8 +155,8 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Image.asset('images/logo.png'),
-            SizedBox(height: 20.0),
-            CircularProgressIndicator(),
+            const SizedBox(height: 20.0),
+            const CircularProgressIndicator(),
           ],
         ),
       ),

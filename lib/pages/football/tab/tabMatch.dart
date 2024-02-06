@@ -6,6 +6,8 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 class TabMatchPage extends StatefulWidget {
+  const TabMatchPage({super.key});
+
 
   @override
   _TabMatchPageState createState() => _TabMatchPageState();
@@ -40,7 +42,7 @@ class _TabMatchPageState extends State<TabMatchPage> {
     print(outputDate);
     final response = await http.get(
       Uri.parse(
-          'https://api.open-meteo.com/v1/forecast?latitude=45.4613&longitude=9.1595&hourly=is_day&current=temperature_2m,rain,weather_code&daily=temperature_2m_min,temperature_2m_max&timezone=Europe%2FRome&start_date=${outputDate}&end_date=${outputDate}'),
+          'https://api.open-meteo.com/v1/forecast?latitude=45.4613&longitude=9.1595&hourly=is_day&current=temperature_2m,rain,weather_code&daily=temperature_2m_min,temperature_2m_max&timezone=Europe%2FRome&start_date=$outputDate&end_date=$outputDate'),
     );
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
@@ -97,7 +99,7 @@ class _TabMatchPageState extends State<TabMatchPage> {
     } else if (index < matches.length - 1 && matches[index + 1].length == 1) {
       index++;
       opponent =
-          matches[index].keys.first + " vs " + matches[index].values.first;
+          "${matches[index].keys.first} vs " + matches[index].values.first;
       updateMatchDetails(teamController, opponent);
       print('Update eseguito con successo');
     } else if (index == matches.length - 1) {
@@ -105,7 +107,7 @@ class _TabMatchPageState extends State<TabMatchPage> {
       while (count < matches.length - 1) {
         if (matches[count].length == 1) {
           opponent =
-              matches[count].keys.first + " vs " + matches[count].values.first;
+              "${matches[count].keys.first} vs " + matches[count].values.first;
           updateMatchDetails(teamController, opponent);
           print('Update eseguito con successo');
           break;
@@ -154,7 +156,7 @@ class _TabMatchPageState extends State<TabMatchPage> {
     return Scaffold(
       body: Column(
         children: [
-          Container(
+          SizedBox(
             height: heightScreen / 1.5,
             child: _matchesData.isNotEmpty
                 ? PageView.builder(
@@ -169,16 +171,16 @@ class _TabMatchPageState extends State<TabMatchPage> {
                           _matchesData[_currentPage]['date']);
 
                       if (_matchesData[index]['opponent'] == '') {
-                        return Center(
+                        return const Center(
                           child: Text("non ci sono più partite da giocare"),
                         );
                       } else {
                         return Padding(
-                          padding: EdgeInsets.all(16.0),
+                          padding: const EdgeInsets.all(16.0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Container(
+                              SizedBox(
                                 width: widthScreen / 2,
                                 height: heightScreen / 12,
                                 child: Card(
@@ -189,7 +191,7 @@ class _TabMatchPageState extends State<TabMatchPage> {
                                   child: Center(
                                     child: Text(
                                         '${_matchesData[index]['team']}',
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                             fontSize: 18.0,
                                             fontWeight: FontWeight.bold)),
                                   ),
@@ -201,7 +203,7 @@ class _TabMatchPageState extends State<TabMatchPage> {
                                 width: widthScreen / 5,
                                 height: heightScreen / 5,
                               ),
-                              Container(
+                              SizedBox(
                                 width: widthScreen / 2,
                                 height: heightScreen / 8,
                                 child: Card(
@@ -221,13 +223,13 @@ class _TabMatchPageState extends State<TabMatchPage> {
                               ),
                               TextField(
                                 controller: _res1Controller,
-                                decoration: InputDecoration(labelText: 'Res1'),
+                                decoration: const InputDecoration(labelText: 'Res1'),
                                 keyboardType: TextInputType.number,
                               ),
-                              Text('-'),
+                              const Text('-'),
                               TextField(
                                 controller: _res2Controller,
-                                decoration: InputDecoration(labelText: 'Res2'),
+                                decoration: const InputDecoration(labelText: 'Res2'),
                                 keyboardType: TextInputType.number,
                               ),
                               ElevatedButton(
@@ -248,7 +250,7 @@ class _TabMatchPageState extends State<TabMatchPage> {
                                   }
                                   setState(() {}); //non mi aggiorna la pagina
                                 },
-                                child: Text('Update'),
+                                child: const Text('Update'),
                               ),
                             ],
                           ),
@@ -261,7 +263,7 @@ class _TabMatchPageState extends State<TabMatchPage> {
                       });
                     },
                   )
-                : Center(
+                : const Center(
                     child: Text('Nessun elemento disponibile'),
                   ),
           ),
@@ -269,16 +271,16 @@ class _TabMatchPageState extends State<TabMatchPage> {
             DotsIndicator(
               dotsCount: _matchesData.length,
               position: _currentPage.toDouble(),
-              decorator: DotsDecorator(
-                size: const Size.square(9.0),
-                activeSize: const Size(18.0, 9.0),
+              decorator: const DotsDecorator(
+                size: Size.square(9.0),
+                activeSize: Size(18.0, 9.0),
                 color: Colors.black26,
                 activeColor: Colors.black,
               ),
               onTap: (position) {
                 _pageController.animateToPage(
                   position.toInt(),
-                  duration: Duration(
+                  duration: const Duration(
                       milliseconds: 300), // Imposta la durata dell'animazione
                   curve: Curves
                       .easeInOut, // Imposta la curva di animazione desiderata

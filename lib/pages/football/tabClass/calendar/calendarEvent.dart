@@ -43,13 +43,13 @@ class _CalendarEventState extends State<CalendarEventPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Eventi Calendario'),
+        title: const Text('Eventi Calendario'),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: _eventsStream,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
 
           if (snapshot.hasError) {
@@ -77,7 +77,7 @@ class _CalendarEventState extends State<CalendarEventPage> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         IconButton(
-                          icon: Icon(Icons.edit),
+                          icon: const Icon(Icons.edit),
                           onPressed: () async {
                             // Ottieni la CollectionReference
                             CollectionReference colRef = FirebaseFirestore
@@ -106,7 +106,7 @@ class _CalendarEventState extends State<CalendarEventPage> {
                               if (hasTwoElements) {
                                 // Mostra uno SnackBar se esiste una mappa con 2 elementi
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
+                                  const SnackBar(
                                       content: Text(
                                           'Il campionato è già cominciato, non puoi modificarlo')),
                                 );
@@ -124,24 +124,24 @@ class _CalendarEventState extends State<CalendarEventPage> {
                           },
                         ),
                         IconButton(
-                          icon: Icon(Icons.delete),
+                          icon: const Icon(Icons.delete),
                           onPressed: () async {
                             bool? shouldDelete = await showDialog(
                               context: context,
                               builder: (context) {
                                 return AlertDialog(
-                                  title: Text('Conferma'),
-                                  content: Text(
+                                  title: const Text('Conferma'),
+                                  content: const Text(
                                       'Sei sicuro di voler eliminare questo evento?'),
                                   actions: [
                                     TextButton(
-                                      child: Text('Annulla'),
+                                      child: const Text('Annulla'),
                                       onPressed: () {
                                         Navigator.of(context).pop(false);
                                       },
                                     ),
                                     TextButton(
-                                      child: Text('Elimina'),
+                                      child: const Text('Elimina'),
                                       onPressed: () {
                                         Navigator.of(context).pop(true);
                                       },
@@ -171,7 +171,7 @@ class _CalendarEventState extends State<CalendarEventPage> {
                   child: ListTile(
                     title: Text(team),
                     trailing: IconButton(
-                      icon: Icon(Icons.add),
+                      icon: const Icon(Icons.add),
                       onPressed: () {
                         Navigator.push(
                           context,

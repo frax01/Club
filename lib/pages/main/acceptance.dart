@@ -21,25 +21,27 @@ class _AcceptancePageState extends State<AcceptancePage> {
         centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: UserList(),
+      body: const UserList(),
     );
   }
 }
 
 class UserList extends StatelessWidget {
+  const UserList({super.key});
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance.collection('user').where('role', isEqualTo: '').snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
+          return const CircularProgressIndicator();
         }
         if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         }
         if (snapshot.data == null || snapshot.data!.docs.isEmpty) {
-          return Center(
+          return const Center(
             child: Text('Nessun utente da accettare'),
           );
         }

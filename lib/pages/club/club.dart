@@ -39,7 +39,7 @@ class _ClubPageState extends State<ClubPage> {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => Login(title: 'Tiber Club', logout: true)));
+              builder: (context) => const Login(title: 'Tiber Club', logout: true)));
     });
   }
 
@@ -97,9 +97,9 @@ class _ClubPageState extends State<ClubPage> {
   }
 
   Future<String> uploadImage() async {
-    final ImagePicker _picker = ImagePicker();
+    final ImagePicker picker = ImagePicker();
     // Seleziona un'immagine dalla galleria
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
 
     if (image == null) {
       throw Exception('No image selected');
@@ -129,14 +129,14 @@ class _ClubPageState extends State<ClubPage> {
     return imageUrl;
   }
 
-  Future<void> createEvent(String event, String imagePath, String club_class, String startDate, String endDate, String description) async {
+  Future<void> createEvent(String event, String imagePath, String clubClass, String startDate, String endDate, String description) async {
     try {
       if (event == "") {
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Please select a title')));
         return;
       }
-      if (club_class == "") {
+      if (clubClass == "") {
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Please select a class')));
         return;
@@ -161,11 +161,11 @@ class _ClubPageState extends State<ClubPage> {
       }
 
       FirebaseFirestore firestore = FirebaseFirestore.instance;
-      await firestore.collection('${section.toLowerCase()}_${_selectedLevel}').add({
+      await firestore.collection('${section.toLowerCase()}_$_selectedLevel').add({
         'title': event,
         'selectedOption': _selectedLevel,
         'imagePath': imagePath,
-        'selectedClass': club_class,
+        'selectedClass': clubClass,
         'description': description,
         'startDate': startDate,
         'endDate': endDate,
@@ -180,7 +180,7 @@ class _ClubPageState extends State<ClubPage> {
   Future<void> _showAddEvent(String level) async {
     String event = '';
     String imagePath = '';
-    String club_class = '';
+    String clubClass = '';
     //String soccer_class = '';
     String startDate = '';
     String endDate = '';
@@ -191,7 +191,7 @@ class _ClubPageState extends State<ClubPage> {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: Text('$level'),
+              title: Text(level),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -203,12 +203,12 @@ class _ClubPageState extends State<ClubPage> {
                       });
                     },
                   ),
-                  SizedBox(height: 16.0),
+                  const SizedBox(height: 16.0),
                   DropdownButtonFormField<String>(
-                    value: club_class,
+                    value: clubClass,
                     onChanged: (value) {
                       setState(() {
-                        club_class = value!;
+                        clubClass = value!;
                       });
                     },
                     items: [
@@ -222,9 +222,9 @@ class _ClubPageState extends State<ClubPage> {
                         child: Text(option),
                       );
                     }).toList(),
-                    hint: Text('Seleziona una classe'),
+                    hint: const Text('Seleziona una classe'),
                   ),
-                  SizedBox(height: 16.0),
+                  const SizedBox(height: 16.0),
                   ElevatedButton(
                     onPressed: imageUploaded
                         ? null
@@ -237,7 +237,7 @@ class _ClubPageState extends State<ClubPage> {
                     child: Text(
                         imageUploaded ? 'Immagine caricata' : 'Carica Immagine'),
                   ),
-                  SizedBox(height: 16.0),
+                  const SizedBox(height: 16.0),
                   if (imageUploaded) ...[
                 ElevatedButton(
                   onPressed: () async {
@@ -246,12 +246,12 @@ class _ClubPageState extends State<ClubPage> {
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
-                          title: Text('Conferma'),
-                          content: Text(
+                          title: const Text('Conferma'),
+                          content: const Text(
                               'Sei sicuro di voler eliminare l\'immagine?'),
                           actions: <Widget>[
                             TextButton(
-                              child: Text('Annulla'),
+                              child: const Text('Annulla'),
                               onPressed: () {
                                 setState(() {
                                   Navigator.of(context).pop(false);
@@ -259,7 +259,7 @@ class _ClubPageState extends State<ClubPage> {
                               },
                             ),
                             TextButton(
-                              child: Text('Elimina'),
+                              child: const Text('Elimina'),
                               onPressed: () {
                                 setState(() {
                                   imageUploaded = false;
@@ -275,17 +275,17 @@ class _ClubPageState extends State<ClubPage> {
                       await deleteImage(imagePath);
                     }
                   },
-                  child: Text('Elimina Immagine'),
+                  child: const Text('Elimina Immagine'),
                 ),
               ],
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
               ...(_selectedLevel == 'weekend' || _selectedLevel == 'extra')
               ? [
                   ElevatedButton(
                     onPressed: () async {
                       startDate = await _startDate(context, startDate);
                     },
-                    child: Text('Date'),
+                    child: const Text('Date'),
                   ),
                 ]
               : (_selectedLevel == 'trip' || _selectedLevel == 'tournament')
@@ -294,39 +294,39 @@ class _ClubPageState extends State<ClubPage> {
                     onPressed: () async {
                       startDate = await _startDate(context, startDate);
                     },
-                    child: Text('Start date'),
+                    child: const Text('Start date'),
                   ),
-                  SizedBox(height: 16.0),
+                  const SizedBox(height: 16.0),
                   ElevatedButton(
                     onPressed: () async {
                       endDate = await _endDate(context, startDate, endDate);
                     },
-                    child: Text('End date'),
+                    child: const Text('End date'),
                   ),
                 ]
               : [],
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
               TextFormField(
                 onChanged: (value) {
                   description = value;
                 },
-                decoration: InputDecoration(labelText: 'Descrizione'),
+                decoration: const InputDecoration(labelText: 'Descrizione'),
                 maxLines: null,
               ),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
               Row(
                 children: [
                   ElevatedButton(
                     onPressed: () async {
                       Navigator.of(context).pop();
                     },
-                    child: Text('Annulla'),
+                    child: const Text('Annulla'),
                   ),
                   ElevatedButton(
                     onPressed: () async {
-                      await createEvent(event, imagePath, club_class, startDate, endDate, description);
+                      await createEvent(event, imagePath, clubClass, startDate, endDate, description);
                     },
-                    child: Text('Crea'),
+                    child: const Text('Crea'),
                   ),
                 ],
               )
@@ -429,7 +429,7 @@ class _ClubPageState extends State<ClubPage> {
                 } else {
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
+                    const SnackBar(
                         content: Text('Non fai ancora parte di una squadra')),
                   );
                 }
@@ -568,11 +568,11 @@ class _ClubPageState extends State<ClubPage> {
           onPressed: () {
             _showAddEvent(_selectedLevel);
           },
-          child: Icon(Icons.add),
+          child: const Icon(Icons.add),
         )
       : null,
       bottomNavigationBar: BottomAppBar(
-        color: Color.fromARGB(255, 130, 16, 8),
+        color: const Color.fromARGB(255, 130, 16, 8),
         child: Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,

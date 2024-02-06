@@ -102,7 +102,7 @@ class _TabScorerState extends State<TabScorer> {
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: Text('Annulla'),
+                  child: const Text('Annulla'),
                 ),
                 TextButton(
                   onPressed: () async {
@@ -285,7 +285,7 @@ class _TabScorerState extends State<TabScorer> {
           onPressed: () {
             _showAddDialog();
           },
-          child: Icon(Icons.add),
+          child: const Icon(Icons.add),
         )
       : null,
     );

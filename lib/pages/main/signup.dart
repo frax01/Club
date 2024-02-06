@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:club/classes/user.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class SignUp extends StatefulWidget {
@@ -59,7 +59,7 @@ class _SignUpFormState extends State<SignUp> {
             status: "",
             created_time: DateTime.now()));
 
-        print('Sign Up successful: ${userCredential.user?.email}');
+        print('Sign up successful: ${userCredential.user?.email}');
         setState(() {
           Navigator.pushNamed(context, '/waiting');
         });
@@ -67,7 +67,7 @@ class _SignUpFormState extends State<SignUp> {
       // Puoi aggiungere qui la navigazione a una nuova schermata, se necessario
     } catch (e) {
       // Gestisci gli errori di registrazione qui
-      print('Error during Sign Up: $e');
+      print('Error during Sign up: $e');
     }
   }
 
@@ -108,96 +108,147 @@ class _SignUpFormState extends State<SignUp> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title, style: const TextStyle(color: Colors.white)),
-        backgroundColor: const Color.fromARGB(255, 130, 16, 8),
-        centerTitle: true,
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
-      body: Form(
-        key: _formKey,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            TextFormField(
-              controller: nameController,
-              decoration: InputDecoration(labelText: 'Name'),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Name is required';
-                }
-                return null; // Il valore è valido
-              },
+  Form buildForm() {
+    return Form(
+      key: _formKey,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const BackButton(),
+          const Center(
+            child: Column(
+              children: [
+                Text('Sign up',
+                    style:
+                        TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold)),
+                Text('Complete the fields below',
+                    style: TextStyle(fontSize: 14.0)),
+              ],
             ),
-            TextFormField(
-              controller: surnameController,
-              decoration: InputDecoration(labelText: 'Surname'),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Surname is required';
-                }
-                return null; // Il valore è valido
-              },
+          ),
+          TextFormField(
+            controller: nameController,
+            decoration: const InputDecoration(labelText: 'Name'),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Name is required';
+              }
+              return null; // Il valore è valido
+            },
+          ),
+          TextFormField(
+            controller: surnameController,
+            decoration: const InputDecoration(labelText: 'Surname'),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Surname is required';
+              }
+              return null; // Il valore è valido
+            },
+          ),
+          TextFormField(
+            controller: emailController,
+            decoration: const InputDecoration(labelText: 'Email'),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Email is required';
+              }
+              return null; // Il valore è valido
+            },
+          ),
+          TextFormField(
+            controller: passwordController,
+            obscureText: true,
+            decoration: const InputDecoration(labelText: 'Password'),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Password is required';
+              }
+              return null; // Il valore è valido
+            },
+          ),
+          TextFormField(
+            controller: passwordConfirmController,
+            obscureText: true,
+            decoration: const InputDecoration(labelText: 'Password confirm'),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Password confirm is required';
+              }
+              return null; // Il valore è valido
+            },
+          ),
+          InkWell(
+            onTap: () => _selectDate(context),
+            child: IgnorePointer(
+              child: TextFormField(
+                controller: birthdateController,
+                decoration: const InputDecoration(labelText: 'Birthdate'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Birthdate is required';
+                  }
+                  return null; // Il valore è valido
+                },
+              ),
             ),
-            TextFormField(
-              controller: emailController,
-              decoration: InputDecoration(labelText: 'Email'),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Email is required';
-                }
-                return null; // Il valore è valido
-              },
-            ),
-            TextFormField(
-              controller: passwordController,
-              obscureText: true,
-              decoration: InputDecoration(labelText: 'Password'),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Password is required';
-                }
-                return null; // Il valore è valido
-              },
-            ),
-            TextFormField(
-              controller: passwordConfirmController,
-              obscureText: true,
-              decoration: InputDecoration(labelText: 'Password confirm'),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Password confirm is required';
-                }
-                return null; // Il valore è valido
-              },
-            ),
-            InkWell(
-              onTap: () => _selectDate(context),
-              child: IgnorePointer(
-                child: TextFormField(
-                  controller: birthdateController,
-                  decoration: InputDecoration(labelText: 'Birthdate'),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Birthdate is required';
-                    }
-                    return null; // Il valore è valido
-                  },
+          ),
+          const SizedBox(height: 32),
+          ElevatedButton(
+            onPressed: _handleSignUp,
+            style: ButtonStyle(
+              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5.0),
                 ),
               ),
             ),
-            SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: _handleSignUp,
-              child: Text('Sign Up'),
-            ),
-          ],
-        ),
+            child: const Text('Sign up', style: TextStyle(color: Colors.black)),
+          ),
+        ],
       ),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(builder: (context, constraints) {
+      return Stack(
+        children: [
+          Image.asset(
+            "images/CC.jpeg",
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            fit: BoxFit.cover,
+          ),
+          Scaffold(
+            backgroundColor: Colors.transparent,
+            body: Center(
+              child: SizedBox(
+                width: 600,
+                height: 620,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15)),
+                    elevation: 10.0,
+                    shadowColor: Colors.black,
+                    surfaceTintColor: Colors.white54,
+                    child: SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.all(25),
+                        child: buildForm(),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    });
   }
 }

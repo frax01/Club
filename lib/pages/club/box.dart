@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 
 class Box extends StatefulWidget {
 
-  const Box({
+  const Box({super.key, 
     required this.level,
     required this.clubClass,
     required this.section,
@@ -140,7 +140,7 @@ class _BoxState extends State<Box> {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: Text('${level}'),
+              title: Text(level),
               content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -149,9 +149,9 @@ class _BoxState extends State<Box> {
                 onChanged: (value) {
                   newTitle = value;
                 },
-                decoration: InputDecoration(labelText: 'Titolo'),
+                decoration: const InputDecoration(labelText: 'Titolo'),
               ),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
               DropdownButtonFormField<String>(
                 value: data['selectedClass'],
                 onChanged: (value) {
@@ -170,9 +170,9 @@ class _BoxState extends State<Box> {
                     child: Text(option),
                   );
                 }).toList(),
-                hint: Text('Seleziona un\'opzione'),
+                hint: const Text('Seleziona un\'opzione'),
               ),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
                   ElevatedButton(
                     onPressed: imageUploaded
                         ? null
@@ -185,7 +185,7 @@ class _BoxState extends State<Box> {
                     child: Text(
                         imageUploaded ? 'Immagine caricata' : 'Carica Immagine'),
                   ),
-                  SizedBox(height: 16.0),
+                  const SizedBox(height: 16.0),
                //  if (imageUploaded) ...[
                //ElevatedButton(
                //  onPressed: () async {
@@ -226,7 +226,7 @@ class _BoxState extends State<Box> {
                //  },
                //  child: Text('Elimina Immagine'),
                //),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
               ...(level == 'weekend' || level == 'extra')
                   ? [
                       ElevatedButton(
@@ -236,7 +236,7 @@ class _BoxState extends State<Box> {
                             startDate = newDate;
                           });
                         },
-                        child: Text('$startDate'),
+                        child: Text(startDate),
                       ),
                     ]
                   : (level == 'trip' || level == 'tournament')
@@ -248,7 +248,7 @@ class _BoxState extends State<Box> {
                                 startDate = newDate;
                               });
                             },
-                            child: Text('$startDate'),
+                            child: Text(startDate),
                           ),
                           ElevatedButton(
                             onPressed: () async {
@@ -257,25 +257,25 @@ class _BoxState extends State<Box> {
                                 endDate = newDate;
                               });
                             },
-                            child: Text('$endDate'),
+                            child: Text(endDate),
                           ),
                         ]
                       : [],
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
               TextFormField(
                 controller: descriptionController,
                 onChanged: (value) {
                   description = value;
                 },
-                decoration: InputDecoration(labelText: 'Testo'),
+                decoration: const InputDecoration(labelText: 'Testo'),
                 maxLines: null,
               ),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: () async {
                   await updateClubDetails(data['id'], newTitle, imagePath, selectedClass, startDate, endDate, description);
                 },
-                child: Text('Crea'),
+                child: const Text('Crea'),
               ),
             ]//]
           ),
@@ -319,8 +319,8 @@ class _BoxState extends State<Box> {
   }
 
   Future<String> uploadImage() async {
-    final ImagePicker _picker = ImagePicker();
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
 
     if (image == null) {
       throw Exception('No image selected');
@@ -352,7 +352,7 @@ class _BoxState extends State<Box> {
       future: _fetchData(),
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
+          return const CircularProgressIndicator();
         } else {
           documents.sort((a, b) => (a['startDate'] as String).compareTo(b['startDate'] as String));
           return ListView.builder(
@@ -366,8 +366,8 @@ class _BoxState extends State<Box> {
               //var imagePath = document['imagePath'];
               var description = document['description'];
               return Container(
-                margin: EdgeInsets.all(10.0),
-                padding: EdgeInsets.all(15.0),
+                margin: const EdgeInsets.all(10.0),
+                padding: const EdgeInsets.all(15.0),
                 decoration: BoxDecoration(
                   border: Border.all(),
                   borderRadius: BorderRadius.circular(10.0),
@@ -379,7 +379,7 @@ class _BoxState extends State<Box> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Title: $title', style: TextStyle(fontWeight: FontWeight.bold)),
+                          Text('Title: $title', style: const TextStyle(fontWeight: FontWeight.bold)),
                           Text('StartDate: $startDate'),
                           Text('Club Class: ${widget.clubClass}'),
                           if(document['endDate']!='') Text('EndDate: ${document['endDate']}'),
@@ -403,24 +403,24 @@ class _BoxState extends State<Box> {
                           },
                         ),
                         IconButton(
-                          icon: Icon(Icons.delete),
+                          icon: const Icon(Icons.delete),
                           onPressed: () async {
                             bool? shouldDelete = await showDialog(
                               context: context,
                               builder: (BuildContext context) {
                                 return AlertDialog(
-                                  title: Text('Confirm'),
-                                  content: Text(
+                                  title: const Text('Confirm'),
+                                  content: const Text(
                                       'Are you sure you want to delete this item?'),
                                   actions: <Widget>[
                                     TextButton(
-                                      child: Text('Cancel'),
+                                      child: const Text('Cancel'),
                                       onPressed: () {
                                         Navigator.of(context).pop(false);
                                       },
                                     ),
                                     TextButton(
-                                      child: Text('Delete'),
+                                      child: const Text('Delete'),
                                       onPressed: () {
                                         Navigator.of(context).pop(true);
                                       },
