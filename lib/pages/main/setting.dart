@@ -3,7 +3,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SettingsPage extends StatefulWidget {
-  const SettingsPage({super.key});
+  const SettingsPage({super.key, required this.id});
+
+  final String id;
+
   @override
   _SettingsPageState createState() => _SettingsPageState();
 }
@@ -13,6 +16,7 @@ class _SettingsPageState extends State<SettingsPage> {
   final _nameController = TextEditingController();
   final _surnameController = TextEditingController();
   final _birthdateController = TextEditingController();
+  final _emailController = TextEditingController();
 
   // Assuming you have a method to get the current user's email
   final _currentUser = FirebaseAuth.instance.currentUser;
@@ -24,13 +28,15 @@ class _SettingsPageState extends State<SettingsPage> {
       _nameController.text = userData['name'];
       _surnameController.text = userData['surname'];
       _birthdateController.text = userData['birthdate'];
+      _emailController.text = userData['email'];
     });
   }
 
   Future<Map<String, dynamic>> getUserData() async {
+    print(_currentUser!.uid);
     DocumentSnapshot userDoc = await FirebaseFirestore.instance
         .collection('user')
-        .doc(_currentUser!.uid)
+        .doc(widget.id)
         .get();
     return userDoc.data() as Map<String, dynamic>;
   }
@@ -56,6 +62,7 @@ class _SettingsPageState extends State<SettingsPage> {
             _buildTextFieldWithUpdateButton('Name', _nameController),
             _buildTextFieldWithUpdateButton('Surname', _surnameController),
             _buildTextFieldWithUpdateButton('Birthdate', _birthdateController),
+            _buildTextFieldWithUpdateButton('Email', _emailController),
             ElevatedButton(
               onPressed: () async {
                 bool? confirm = await showDialog<bool>(

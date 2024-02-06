@@ -133,6 +133,7 @@ class _LoginState extends State<Login> {
         'status': querySnapshot1.docs.first['status'],
         'birthdate': querySnapshot1.docs.first['birthdate'],
         'token': querySnapshot1.docs.first['token'],
+        'id': querySnapshot1.docs.first.id,
       };
 
       setState(() {

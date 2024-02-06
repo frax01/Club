@@ -5,10 +5,10 @@ import 'tab/tabMatch.dart';
 import 'tab/tabCalendar.dart';
 import 'tab/tabRanking.dart';
 import 'tab/tabScorer.dart';
-import 'package:club/pages/main/pageFolder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:club/pages/main/login.dart';
 import 'package:club/pages/club/club.dart';
+import 'package:club/pages/main/setting.dart';
 
 class FootballPage extends StatefulWidget {
   const FootballPage(
@@ -239,58 +239,6 @@ class _FootballPageState extends State<FootballPage> {
                 ),
                 ListTile(
                   leading: const Icon(
-                    Icons.calendar_month_outlined,
-                  ),
-                  title: const Text('Tournaments'),
-                  subtitle: Text('Just do it',
-                      style: TextStyle(
-                          fontSize: width > 700
-                              ? 12
-                              : width > 500
-                                  ? 14
-                                  : width > 400
-                                      ? 11
-                                      : width > 330
-                                          ? 12
-                                          : 10)),
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => PageFolder(
-                                title: 'ASD Tiber Club',
-                                level: 'tournament',
-                                option: 'football')));
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(
-                    Icons.plus_one_outlined,
-                  ),
-                  title: const Text('Extra'),
-                  subtitle: Text('What are you waiting for?',
-                      style: TextStyle(
-                          fontSize: width > 700
-                              ? 12
-                              : width > 500
-                                  ? 14
-                                  : width > 400
-                                      ? 11
-                                      : width > 330
-                                          ? 12
-                                          : 10)),
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => PageFolder(
-                                title: 'ASD Tiber Club',
-                                level: 'extra',
-                                option: 'football')));
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(
                     Icons.settings,
                   ),
                   title: const Text('Settings'),
@@ -306,7 +254,10 @@ class _FootballPageState extends State<FootballPage> {
                                           ? 12
                                           : 10)),
                   onTap: () {
-                    Navigator.pushNamed(context, '/settings');
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => SettingsPage(id: widget.document['id'],)));
                   },
                 ),
                 ListTile(

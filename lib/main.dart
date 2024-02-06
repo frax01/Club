@@ -1,4 +1,3 @@
-import 'package:club/pages/club/updateClubEvent/clubModifier.dart';
 import 'package:club/pages/football/updateFootballEvent/footballModifier.dart';
 import 'package:club/pages/football/tabClass/ranking/rankingEvent.dart';
 import 'package:club/pages/main/signup.dart';
@@ -6,8 +5,6 @@ import 'package:club/pages/football/tabClass/match/matchEvent.dart';
 import 'package:club/pages/football/tabClass/calendar/calendarEvent.dart';
 import 'package:club/pages/main/setting.dart';
 import 'package:flutter/material.dart';
-import 'functions/button.dart';
-import 'pages/club/club.dart';
 import 'pages/main/login.dart';
 import 'pages/main/waiting.dart';
 import 'pages/main/acceptance.dart';
@@ -15,7 +12,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'config.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:club/pages/football/football.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -111,13 +107,11 @@ class MyApp extends StatelessWidget {
         '/signup': (context) => const SignUp(title: 'Phoenix United'),
         '/waiting': (context) => const Waiting(title: 'Phoenix United'),
         //'/homepage': (context) => const HomePage(title: 'Phoenix United'),
-        '/settings': (context) => const SettingsPage(),
+        //'/settings': (context) => const SettingsPage(),
         //'/club': (context) => const ClubPage(title: 'Phoenix Club'),
         //'/football': (context) => const FootballPage(title: 'Phoenix United'),
         '/acceptance': (context) =>
             const AcceptancePage(title: 'Phoenix United'),
-        '/club_modifier': (context) =>
-            const ClubModifier(title: 'Phoenix Club'),
         '/football_modifier': (context) =>
             const FootballModifier(title: 'Phoenix United'),
         '/matchEvent': (context) =>
