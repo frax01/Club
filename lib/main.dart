@@ -3,7 +3,6 @@ import 'package:club/pages/football/tabClass/ranking/rankingEvent.dart';
 import 'package:club/pages/main/signup.dart';
 import 'package:club/pages/football/tabClass/match/matchEvent.dart';
 import 'package:club/pages/football/tabClass/calendar/calendarEvent.dart';
-import 'package:club/pages/main/setting.dart';
 import 'package:flutter/material.dart';
 import 'pages/main/login.dart';
 import 'pages/main/waiting.dart';
@@ -28,7 +27,15 @@ void main() async {
   );
 
   deleteOldDocuments();
+  
   firebaseMessaging();
+  
+  Future<void> _backgroundMessageHandler(RemoteMessage message) async {
+    print('Got a message whilst in the background!');
+    print('Message data: ${message.data}');
+  }
+
+  FirebaseMessaging.onBackgroundMessage(_backgroundMessageHandler);
 
   runApp(const MyApp());
 }
@@ -79,6 +86,11 @@ void firebaseMessaging() {
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     print('Got a message whilst in the foreground!');
     print('Message data: ${message.data}');
+  });
+
+  FirebaseMessaging.instance.getToken().then((String? token) {
+    assert(token != null);
+    print('FCM Token: $token');
   });
 }
 
