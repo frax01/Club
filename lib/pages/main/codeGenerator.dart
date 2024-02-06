@@ -20,15 +20,9 @@ class _UserDetailsPageState extends State<UserDetailsPage> {
   final List<String> roleOptions = ["", "Boy", "Parent", "Tutor", "Coach"];
   final List<String> clubClassOptions = [
     "",
-    "5th grade",
-    "1st year",
-    "2nd year",
-    "3rd year",
-    "1st high scholl",
-    "2nd high school",
-    "3rd high school",
-    "4th high school",
-    "5th high school"
+    "1° media",
+    "2° media",
+    "3° media"
   ];
   final List<String> soccerClassOptions = [
     "",

@@ -39,7 +39,9 @@ class UserList extends StatelessWidget {
           return Text('Error: ${snapshot.error}');
         }
         if (snapshot.data == null || snapshot.data!.docs.isEmpty) {
-          return Text('No users found with role=""');
+          return Center(
+            child: Text('Nessun utente da accettare'),
+          );
         }
         return ListView.builder(
           itemCount: snapshot.data!.docs.length,

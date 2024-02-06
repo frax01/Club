@@ -181,14 +181,9 @@ class _UpdateEventPageState extends State<UpdateEventPage> {
                 },
                 items: [
                   '',
-                  '1st',
-                  '2nd',
-                  '3rd',
-                  '1st hs',
-                  '2nd hs',
-                  '3rd hs',
-                  '4th hs',
-                  '5th hs'
+                  '1° media',
+                  '2° media',
+                  '3° media'
                 ].map((String option) {
                   return DropdownMenuItem<String>(
                     value: option,

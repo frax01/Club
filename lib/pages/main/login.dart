@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:club/pages/football/football.dart';
+import 'package:club/pages/club/club.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key, required this.title, required this.logout})
@@ -25,6 +26,7 @@ class _LoginState extends State<Login> {
   bool rememberMe = false;
   List<String> emailSuggestions = [];
   Map<String, String> savedCredentials = {};
+  Map<String, dynamic> document = {};
 
   @override
   void initState() {
@@ -77,21 +79,29 @@ class _LoginState extends State<Login> {
     String lastPage = (prefs.getString('lastPage') ?? 'FootballPage');
 
     if (lastPage == 'ClubPage') {
-      Navigator.pushNamed(context, '/club');
+      loadClubPage(status);
     } else if (lastPage == 'FootballPage') {
       print(emailController.text);
-      loadPage(status);
+      loadFootballPage(status);
     }
   }
 
-  loadPage(status) {
+  loadClubPage(status) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ClubPage(
+                title: "Phoenix United",
+                document: document)));
+  }
+
+  loadFootballPage(status) {
     Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => FootballPage(
                 title: "Phoenix United",
-                email: emailController.text,
-                status: status)));
+                document: document)));
   }
 
   _saveLastPage(String page) async {
@@ -109,43 +119,29 @@ class _LoginState extends State<Login> {
         password: password,
       );
 
-      //NotificationHandler notificationHandler = NotificationHandler();
-      //final FirebaseMessaging messaging = FirebaseMessaging.instance;
-      //String? token = await messaging.getToken();
-      //QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-      //    .collection('user')
-      //    .where('email', isEqualTo: email)
-      //    .get();
-//
-      //print(token);
-//
-      //if (querySnapshot.docs.isNotEmpty) {
-      //  DocumentSnapshot documentSnapshot = querySnapshot.docs.first;
-      //  documentSnapshot.reference.update({'token': token});
-      //}
-      //await notificationHandler.sendNotification(
-      //    token,
-      //    'Login successful',
-      //    'You have logged in successfully');
-
       String userEmail = userCredential.user?.email ?? '';
+      CollectionReference user = FirebaseFirestore.instance.collection('user');
+      QuerySnapshot querySnapshot1 = await user.where('email', isEqualTo: userEmail).get();
 
-      CollectionReference users1 =
-          FirebaseFirestore.instance.collection('user');
-      QuerySnapshot querySnapshot1 =
-          await users1.where('email', isEqualTo: userEmail).get();
-      var role = querySnapshot1.docs.first['role'];
-      String club_class = querySnapshot1.docs.first['club_class'];
-      String soccer_class = querySnapshot1.docs.first['soccer_class'];
-      status = querySnapshot1.docs.first['status'];
+      document = {
+        'name': querySnapshot1.docs.first['name'],
+        'surname': querySnapshot1.docs.first['surname'],
+        'email': querySnapshot1.docs.first['email'],
+        'role': querySnapshot1.docs.first['role'],
+        'club_class': querySnapshot1.docs.first['club_class'],
+        'soccer_class': querySnapshot1.docs.first['soccer_class'],
+        'status': querySnapshot1.docs.first['status'],
+        'birthdate': querySnapshot1.docs.first['birthdate'],
+        'token': querySnapshot1.docs.first['token'],
+      };
 
       setState(() {
-        if (role == "") {
+        if (document['role'] == "") {
           Navigator.pushNamed(context, '/waiting');
         } else {
-          if (club_class == "") {
+          if (document['club_class'] == "") {
             Navigator.pushNamed(context, '/football');
-          } else if (soccer_class == "") {
+          } else if (document['soccer_class'] == "") {
             Navigator.pushNamed(context, '/club');
           } else {
             _loadLastPage();

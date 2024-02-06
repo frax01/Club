@@ -38,16 +38,6 @@ class ClubModifier extends StatelessWidget {
           ),
           ElevatedButton(
             onPressed: () {
-              // Naviga alla pagina UpdateRankings
-              Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => UpdatePage(level: 'summer', section: 'club')));
-            },
-            child: Text('Update Summer'),
-          ),
-          ElevatedButton(
-            onPressed: () {
               // Naviga alla pagina UpdateScorers
               Navigator.push(
                               context,

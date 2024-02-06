@@ -15,6 +15,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'config.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:club/pages/football/football.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -111,7 +112,7 @@ class MyApp extends StatelessWidget {
         '/waiting': (context) => const Waiting(title: 'Phoenix United'),
         //'/homepage': (context) => const HomePage(title: 'Phoenix United'),
         '/settings': (context) => const SettingsPage(),
-        '/club': (context) => const ClubPage(title: 'Phoenix Club'),
+        //'/club': (context) => const ClubPage(title: 'Phoenix Club'),
         //'/football': (context) => const FootballPage(title: 'Phoenix United'),
         '/acceptance': (context) =>
             const AcceptancePage(title: 'Phoenix United'),

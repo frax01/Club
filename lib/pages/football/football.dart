@@ -8,16 +8,15 @@ import 'tab/tabScorer.dart';
 import 'package:club/pages/main/pageFolder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:club/pages/main/login.dart';
+import 'package:club/pages/club/club.dart';
 
 class FootballPage extends StatefulWidget {
   const FootballPage(
       {super.key,
       required this.title,
-      required this.email,
-      required this.status});
+      required this.document});
 
-  final String email;
-  final String status;
+  final Map document;
   final String title;
 
   @override
@@ -138,7 +137,7 @@ class _FootballPageState extends State<FootballPage> {
 
               //Icon(Icons.directions_bike, size: 150, color: Colors.teal),
               // Contenuto per il Tab 4
-              TabScorer(email: widget.email, status: widget.status),
+              TabScorer(email: widget.document['email'], status: widget.document['status']),
             ],
           ),
           drawer: Drawer(
@@ -207,7 +206,10 @@ class _FootballPageState extends State<FootballPage> {
                         section = value.toString();
                         if (section == 'CLUB') {
                           _saveLastPage('ClubPage');
-                          Navigator.pushNamed(context, '/club');
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ClubPage(title: 'Tiber Club', document: widget.document)));
                         }
                       });
                     } else {
