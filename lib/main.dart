@@ -100,8 +100,9 @@ class MyApp extends StatelessWidget {
         title: 'Phoenix United',
         logout: false,
       ),
-      initialRoute: '/',
+      initialRoute: '/homepage',
       routes: {
+        '/homepage': (context) => HomePage(),
         '/login': (context) => const Login(
               title: 'Phoenix United',
               logout: false,
@@ -129,35 +130,40 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class HomePage extends StatelessWidget {
-  const HomePage(
-      {super.key,
-      required this.title,
-      required this.club_class,
-      required this.soccer_class});
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
 
-  final String title;
-  final String club_class;
-  final String soccer_class;
+class _HomePageState extends State<HomePage> {
+  Future<void> loadData() async {
+    // Simula il caricamento dei dati dal database
+    await Future.delayed(Duration(seconds: 5));
+
+    // Una volta che i dati sono stati caricati, naviga alla pagina di login
+    Navigator.pushReplacementNamed(context, '/login');
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadData();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(title, style: const TextStyle(color: Colors.white)),
-          backgroundColor: const Color.fromARGB(255, 130, 16, 8),
-          centerTitle: true,
-          iconTheme: const IconThemeData(color: Colors.white),
+      backgroundColor: Colors.red,
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Image.asset('images/logo.png'),
+            SizedBox(height: 20.0),
+            CircularProgressIndicator(),
+          ],
         ),
-        body: const Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              ClubButton(),
-              FootballButton(),
-            ],
-          ),
-        ));
+      ),
+    );
   }
 }
