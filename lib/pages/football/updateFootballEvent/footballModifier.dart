@@ -9,7 +9,7 @@ class FootballModifier extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Football Modifier'),
+        title: const Text('Football Modifier'),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -20,28 +20,28 @@ class FootballModifier extends StatelessWidget {
               // Naviga alla pagina UpdateMatches
               Navigator.pushNamed(context, '/matchEvent');
             },
-            child: Text('Update Matches'),
+            child: const Text('Update Matches'),
           ),
           ElevatedButton(
             onPressed: () {
               // Naviga alla pagina UpdateCalendars
               Navigator.pushNamed(context, '/calendarEvent');
             },
-            child: Text('Update Calendars'),
+            child: const Text('Update Calendars'),
           ),
           ElevatedButton(
             onPressed: () {
               // Naviga alla pagina UpdateRankings
               Navigator.pushNamed(context, '/rankingEvent');
             },
-            child: Text('Update Rankings'),
+            child: const Text('Update Rankings'),
           ),
           ElevatedButton(
             onPressed: () {
               // Naviga alla pagina UpdateScorers
               Navigator.pushNamed(context, '/scorerEvent');
             },
-            child: Text('Update Scorers'),
+            child: const Text('Update Scorers'),
           ),
         ],
       ),

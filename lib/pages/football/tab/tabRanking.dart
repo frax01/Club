@@ -23,13 +23,13 @@ class _TabRankingState extends State<TabRanking> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Rankings'),
+        title: const Text('Rankings'),
       ),
       body: FutureBuilder<QuerySnapshot>(
         future: FirebaseFirestore.instance.collection('football_ranking').get(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
 
           if (snapshot.hasError) {
@@ -58,9 +58,9 @@ class _TabRankingState extends State<TabRanking> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text('Team: ${rankingData['team']}',
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontSize: 20.0, fontWeight: FontWeight.bold)),
-                        SizedBox(height: 16.0),
+                        const SizedBox(height: 16.0),
                         Expanded(
                           child: ListView.builder(
                             itemCount: rankingList.length,
@@ -77,17 +77,17 @@ class _TabRankingState extends State<TabRanking> {
                         DotsIndicator(
                           dotsCount: rankings.length,
                           position: _currentPage.toDouble(),
-                          decorator: DotsDecorator(
-                            size: const Size.square(9.0),
-                            activeSize: const Size(18.0, 9.0),
+                          decorator: const DotsDecorator(
+                            size: Size.square(9.0),
+                            activeSize: Size(18.0, 9.0),
                             color: Colors.black26,
                             activeColor: Colors.black,
-                            spacing: const EdgeInsets.all(3.0),
+                            spacing: EdgeInsets.all(3.0),
                           ),
                           onTap: (position) {
                             _pageController.animateToPage(
                               position.toInt(),
-                              duration: Duration(milliseconds: 300), // Imposta la durata dell'animazione
+                              duration: const Duration(milliseconds: 300), // Imposta la durata dell'animazione
                               curve: Curves.easeInOut, // Imposta la curva di animazione desiderata
                             );
                             setState(() {

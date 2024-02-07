@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class NewCalendarPage extends StatefulWidget {
-  NewCalendarPage({super.key, required this.title, required this.level});
+  const NewCalendarPage({super.key, required this.title, required this.level});
   final String level;
   final String title;
 
@@ -33,20 +33,20 @@ class _NewCalendarPageState extends State<NewCalendarPage> {
                       List.generate(numberOfMatches, (index) => {'': ''});
                 });
               },
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Numero di partite',
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             if (numberOfMatches > 0)
               Column(
                 children: [
                   for (int i = 0; i < numberOfMatches; i++)
                     _buildTeamRow(i + 1, matchDetails[i]),
-                  SizedBox(height: 16.0),
+                  const SizedBox(height: 16.0),
                   ElevatedButton(
                     onPressed: _confirmChanges,
-                    child: Text('Conferma'),
+                    child: const Text('Conferma'),
                   ),
                 ],
               ),
@@ -65,7 +65,7 @@ class _NewCalendarPageState extends State<NewCalendarPage> {
       child: Row(
         children: [
           Text('$teamNumber.'),
-          SizedBox(width: 16.0),
+          const SizedBox(width: 16.0),
           Expanded(
             child: TextField(
               onChanged: (value) {
@@ -75,10 +75,10 @@ class _NewCalendarPageState extends State<NewCalendarPage> {
                   teamData[teamName] = teamScore;
                 });
               },
-              decoration: InputDecoration(labelText: 'Nome squadra'),
+              decoration: const InputDecoration(labelText: 'Nome squadra'),
             ),
           ),
-          SizedBox(width: 16.0),
+          const SizedBox(width: 16.0),
           Expanded(
             child: TextField(
               keyboardType: TextInputType.number,
@@ -89,7 +89,7 @@ class _NewCalendarPageState extends State<NewCalendarPage> {
                 });
               },
               decoration:
-                  InputDecoration(labelText: 'Squadra 2', hintText: '0'),
+                  const InputDecoration(labelText: 'Squadra 2', hintText: '0'),
             ),
           ),
         ],
@@ -107,7 +107,7 @@ class _NewCalendarPageState extends State<NewCalendarPage> {
       'matches': matchDetails,
     });
 
-    String opponent = matchDetails[0].keys.first + " vs " + matchDetails[0].values.first;
+    String opponent = "${matchDetails[0].keys.first} vs " + matchDetails[0].values.first;
     //String place = matchDetails[0].keys.first=="la nostra squadra"? 'CASA' : "";
     updateMatchDetails(widget.level, opponent);
 

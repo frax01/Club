@@ -38,14 +38,14 @@ class _TabCalendarPageState extends State<TabCalendarPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Rankings'),
+        title: const Text('Rankings'),
       ),
       body: FutureBuilder<QuerySnapshot>(
         future:
             FirebaseFirestore.instance.collection('football_calendar').get(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
 
           if (snapshot.hasError) {
@@ -78,7 +78,7 @@ class _TabCalendarPageState extends State<TabCalendarPage> {
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return CircularProgressIndicator();
+                          return const CircularProgressIndicator();
                         }
 
                         if (snapshot.hasError) {
@@ -91,10 +91,10 @@ class _TabCalendarPageState extends State<TabCalendarPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text('Team: ${rankingData['team']}',
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontSize: 20.0,
                                     fontWeight: FontWeight.bold)),
-                            SizedBox(height: 16.0),
+                            const SizedBox(height: 16.0),
                             Expanded(
                               child: ListView.builder(
                                 itemCount: rankingList.length,
@@ -114,13 +114,13 @@ class _TabCalendarPageState extends State<TabCalendarPage> {
                                     return Card(
                                       color: vs == match ? Colors.green : null,
                                       elevation: 4.0,
-                                      margin: EdgeInsets.all(8.0),
+                                      margin: const EdgeInsets.all(8.0),
                                       child: Padding(
-                                        padding: EdgeInsets.all(16.0),
+                                        padding: const EdgeInsets.all(16.0),
                                         child: Row(
                                           children: [
                                             Text(match),
-                                            SizedBox(width: 10),
+                                            const SizedBox(width: 10),
                                           ],
                                         ),
                                       ),
@@ -130,13 +130,13 @@ class _TabCalendarPageState extends State<TabCalendarPage> {
                                     return Card(
                                       color: vs == match ? Colors.green : null,
                                       elevation: 4.0,
-                                      margin: EdgeInsets.all(8.0),
+                                      margin: const EdgeInsets.all(8.0),
                                       child: Padding(
-                                        padding: EdgeInsets.all(16.0),
+                                        padding: const EdgeInsets.all(16.0),
                                         child: Row(
                                           children: [
-                                            Text(match + ' ' + score),
-                                            SizedBox(width: 10),
+                                            Text('$match $score'),
+                                            const SizedBox(width: 10),
                                           ],
                                         ),
                                       ),
@@ -148,17 +148,17 @@ class _TabCalendarPageState extends State<TabCalendarPage> {
                             DotsIndicator(
                               dotsCount: calendars.length,
                               position: _currentPage.toDouble(),
-                              decorator: DotsDecorator(
-                                size: const Size.square(9.0),
-                                activeSize: const Size(18.0, 9.0),
+                              decorator: const DotsDecorator(
+                                size: Size.square(9.0),
+                                activeSize: Size(18.0, 9.0),
                                 color: Colors.black26,
                                 activeColor: Colors.black,
-                                spacing: const EdgeInsets.all(3.0),
+                                spacing: EdgeInsets.all(3.0),
                               ),
                               onTap: (position) {
                                 _pageController.animateToPage(
                                   position.toInt(),
-                                  duration: Duration(
+                                  duration: const Duration(
                                       milliseconds:
                                           300), // Imposta la durata dell'animazione
                                   curve: Curves

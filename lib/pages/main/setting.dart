@@ -52,12 +52,12 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Settings'),
+        title: const Text('Settings'),
       ),
       body: Form(
         key: _formKey,
         child: ListView(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           children: <Widget>[
             _buildTextFieldWithUpdateButton('Name', _nameController),
             _buildTextFieldWithUpdateButton('Surname', _surnameController),
@@ -69,18 +69,18 @@ class _SettingsPageState extends State<SettingsPage> {
                   context: context,
                   builder: (BuildContext context) {
                     return AlertDialog(
-                      title: Text('Conferma'),
-                      content: Text(
+                      title: const Text('Conferma'),
+                      content: const Text(
                           'Sei sicuro di voler eliminare definitivamente il tuo account?'),
                       actions: <Widget>[
                         TextButton(
-                          child: Text('Annulla'),
+                          child: const Text('Annulla'),
                           onPressed: () {
                             Navigator.of(context).pop(false);
                           },
                         ),
                         TextButton(
-                          child: Text('Elimina'),
+                          child: const Text('Elimina'),
                           onPressed: () {
                             Navigator.of(context).pop(true);
                           },
@@ -113,9 +113,8 @@ class _SettingsPageState extends State<SettingsPage> {
                     }
                   }
                 }
-                ;
               },
-              child: Text('Elimina account'),
+              child: const Text('Elimina account'),
             ),
           ],
         ),
@@ -133,7 +132,7 @@ class _SettingsPageState extends State<SettingsPage> {
               : _buildTextField(label, controller),
         ),
         TextButton(
-          child: Text('Update'),
+          child: const Text('Update'),
           onPressed: () {
             if (_formKey.currentState!.validate()) {
               updateUserData({label.toLowerCase(): controller.text});
@@ -168,7 +167,7 @@ class _SettingsPageState extends State<SettingsPage> {
       ),
       readOnly: true,
       onTap: () async {
-        FocusScope.of(context).requestFocus(new FocusNode());
+        FocusScope.of(context).requestFocus(FocusNode());
         final String birthdate = _birthdateController.text;
         final DateTime initialDate = birthdate.isEmpty
             ? DateTime.now()

@@ -47,7 +47,7 @@ class _UserDetailsPageState extends State<UserDetailsPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('User Email: ${widget.userEmail}'),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             buildDropdown("Role", roleOptions, (value) {
               setState(() {
                 selectedRole = value.toString();
@@ -68,12 +68,12 @@ class _UserDetailsPageState extends State<UserDetailsPage> {
                 selectedStatus = value.toString();
               });
             }),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: () {
                 updateUserDetails();
               },
-              child: Text('Accept'),
+              child: const Text('Accept'),
             ),
           ],
         ),
@@ -103,7 +103,7 @@ class _UserDetailsPageState extends State<UserDetailsPage> {
           }).toList(),
           onChanged: onChanged,
         ),
-        SizedBox(height: 8.0),
+        const SizedBox(height: 8.0),
       ],
     );
   }

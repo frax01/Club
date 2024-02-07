@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class NewRankingPage extends StatefulWidget {
   final String level;
 
-  NewRankingPage({super.key, required this.level});
+  const NewRankingPage({super.key, required this.level});
 
   @override
   _NewRankingPageState createState() => _NewRankingPageState();
@@ -26,11 +26,11 @@ class _NewRankingPageState extends State<NewRankingPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text('Team: ${widget.level}',
-                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),
-            SizedBox(height: 16.0),
+                style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 16.0),
             TextField(
               keyboardType: TextInputType.number,
-              decoration: InputDecoration(labelText: 'Numero di squadre'),
+              decoration: const InputDecoration(labelText: 'Numero di squadre'),
               onChanged: (value) {
                 setState(() {
                   numberOfTeams = int.tryParse(value) ?? 0;
@@ -39,16 +39,16 @@ class _NewRankingPageState extends State<NewRankingPage> {
                 });
               },
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             if (numberOfTeams > 0)
               Column(
                 children: [
                   for (int i = 0; i < numberOfTeams; i++)
                     _buildTeamRow(i + 1, teamsData[i]),
-                  SizedBox(height: 16.0),
+                  const SizedBox(height: 16.0),
                   ElevatedButton(
                     onPressed: _confirmChanges,
-                    child: Text('Conferma'),
+                    child: const Text('Conferma'),
                   ),
                 ],
               ),
@@ -67,7 +67,7 @@ class _NewRankingPageState extends State<NewRankingPage> {
       child: Row(
         children: [
           Text('$teamNumber.'),
-          SizedBox(width: 16.0),
+          const SizedBox(width: 16.0),
           Expanded(
             child: TextField(
               onChanged: (value) {
@@ -77,10 +77,10 @@ class _NewRankingPageState extends State<NewRankingPage> {
                   teamData[teamName] = teamScore;
                 });
               },
-              decoration: InputDecoration(labelText: 'Nome squadra'),
+              decoration: const InputDecoration(labelText: 'Nome squadra'),
             ),
           ),
-          SizedBox(width: 16.0),
+          const SizedBox(width: 16.0),
           Expanded(
             child: TextField(
               keyboardType: TextInputType.number,
@@ -91,7 +91,7 @@ class _NewRankingPageState extends State<NewRankingPage> {
                 });
               },
               decoration:
-                  InputDecoration(labelText: 'Punteggio', hintText: '0'),
+                  const InputDecoration(labelText: 'Punteggio', hintText: '0'),
             ),
           ),
         ],

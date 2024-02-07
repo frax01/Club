@@ -36,7 +36,7 @@ class _FootballPageState extends State<FootballPage> {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => Login(title: 'Tiber Club', logout: true)));
+              builder: (context) => const Login(title: 'Tiber Club', logout: true)));
     });
   }
 
@@ -126,14 +126,14 @@ class _FootballPageState extends State<FootballPage> {
           body: TabBarView(
             children: [
               // Contenuto per il Tab 1
-              TabMatchPage(),
+              const TabMatchPage(),
               //Icon(Icons.directions_car, size: 150, color: Colors.red),
               // Contenuto per il Tab 2
-              TabCalendarPage(),
+              const TabCalendarPage(),
               //Icon(Icons.directions_transit, size: 150, color: Colors.brown),
               // Contenuto per il Tab 3
               //TabCalendarPage(),
-              TabRanking(),
+              const TabRanking(),
 
               //Icon(Icons.directions_bike, size: 150, color: Colors.teal),
               // Contenuto per il Tab 4
@@ -174,7 +174,7 @@ class _FootballPageState extends State<FootballPage> {
                           future: getUserData(),
                           builder: (context, snapshot) {
                             var userSurname = snapshot.data?[1] ?? '';
-                            return Text('$userSurname',
+                            return Text(userSurname,
                                 style:
                                     TextStyle(fontSize: width > 300 ? 18 : 14));
                           }),
@@ -188,7 +188,7 @@ class _FootballPageState extends State<FootballPage> {
                       future: getUserData(),
                       builder: (context, snapshot) {
                         var userEmail = snapshot.data?[2] ?? '';
-                        return Text('$userEmail',
+                        return Text(userEmail,
                             textAlign: TextAlign.center,
                             style: TextStyle(
                                 fontSize: width > 500
@@ -215,7 +215,7 @@ class _FootballPageState extends State<FootballPage> {
                     } else {
                       Navigator.pop(context);
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
+                        const SnackBar(
                             content: Text('Non sei ancora iscritto al club')),
                       );
                     }
@@ -226,7 +226,7 @@ class _FootballPageState extends State<FootballPage> {
                     height: 0.5,
                     color: Colors.black,
                   ),
-                  items: [
+                  items: const [
                     DropdownMenuItem(
                       value: 'CLUB',
                       child: Text('CLUB'),
@@ -321,17 +321,17 @@ class _FootballPageState extends State<FootballPage> {
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
-                          title: Text('Logout'),
-                          content: Text('Are you sure you want to logout?'),
+                          title: const Text('Logout'),
+                          content: const Text('Are you sure you want to logout?'),
                           actions: <Widget>[
                             TextButton(
-                              child: Text('Cancel'),
+                              child: const Text('Cancel'),
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
                             ),
                             TextButton(
-                              child: Text('Yes'),
+                              child: const Text('Yes'),
                               onPressed: () async {
                                 await _logout();
                               },
