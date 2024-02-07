@@ -193,6 +193,66 @@ class _FootballPageState extends State<FootballPage> {
                 ),
                 ListTile(
                   leading: const Icon(
+                    Icons.code,
+                  ),
+                  title: const Text('Beginner'),
+                  subtitle: Text('Team',
+                      style: TextStyle(
+                          fontSize: width > 700
+                              ? 12
+                              : width > 500
+                                  ? 14
+                                  : width > 400
+                                      ? 11
+                                      : width > 330
+                                          ? 12
+                                          : 10)),
+                  onTap: () {
+                    Navigator.pushNamed(context, '/acceptance');
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(
+                    Icons.code,
+                  ),
+                  title: const Text('Intermediate'),
+                  subtitle: Text('Team',
+                      style: TextStyle(
+                          fontSize: width > 700
+                              ? 12
+                              : width > 500
+                                  ? 14
+                                  : width > 400
+                                      ? 11
+                                      : width > 330
+                                          ? 12
+                                          : 10)),
+                  onTap: () {
+                    Navigator.pushNamed(context, '/acceptance');
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(
+                    Icons.code,
+                  ),
+                  title: const Text('Advanced'),
+                  subtitle: Text('Team',
+                      style: TextStyle(
+                          fontSize: width > 700
+                              ? 12
+                              : width > 500
+                                  ? 14
+                                  : width > 400
+                                      ? 11
+                                      : width > 330
+                                          ? 12
+                                          : 10)),
+                  onTap: () {
+                    Navigator.pushNamed(context, '/acceptance');
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(
                     Icons.settings,
                   ),
                   title: const Text('Settings'),
@@ -378,9 +438,9 @@ class Tab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (page=='match') {
-      return const TabMatchPage();
+      return TabMatchPage(document: document);
     } else if (page=='calendar') {
-      return const TabCalendarPage();
+      return TabCalendarPage();
     } else if (page=='ranking') {
       return const TabRanking();
     } else {

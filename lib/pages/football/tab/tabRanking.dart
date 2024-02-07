@@ -53,7 +53,7 @@ class _TabRankingState extends State<TabRanking> {
                     Map<String, dynamic> rankingData =
                         rankings[_currentPage].data() as Map<String, dynamic>;
                     List<Map<String, dynamic>> rankingList =List<Map<String, dynamic>>.from(rankingData['ranking']);
-
+                    rankingList.sort((a, b) => b.values.first.compareTo(a.values.first));
                     return Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [

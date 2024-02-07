@@ -111,7 +111,7 @@ class _NewRankingPageState extends State<NewRankingPage> {
 
     // Navigate back or perform any other action
     // ...
-
+    Navigator.of(context).pop();
     print('Changes confirmed');
   }
 }

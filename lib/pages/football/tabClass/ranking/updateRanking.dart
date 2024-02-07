@@ -32,6 +32,7 @@ class _UpdateRankingPageState extends State<UpdateRankingPage> {
       Map<String, dynamic> data =
           querySnapshot.docs.first.data() as Map<String, dynamic>;
       rankingData = List<Map<String, dynamic>>.from(data['ranking']);
+      rankingData.sort((a, b) => b.values.first.compareTo(a.values.first));
       for (Map<String, dynamic> row in rankingData) {
         String key = row.keys.first;
         String value = row.values.first.toString();
@@ -66,6 +67,16 @@ class _UpdateRankingPageState extends State<UpdateRankingPage> {
 
   @override
   Widget build(BuildContext context) {
+  //  List<Map<String, dynamic>> rankingData = List<Map<String, dynamic>>.generate(
+  //  keyControllers.length,
+  //  (index) => {
+  //    'key': keyControllers[index].text,
+  //    'value': int.parse(valueControllers[index].text),
+  //  },
+  //);
+//
+  //// Ordina la lista in base al campo 'value' in ordine decrescente
+  print(rankingData);
     return Scaffold(
       appBar: AppBar(
         title: Text('Update Ranking - ${widget.teamName}'),
