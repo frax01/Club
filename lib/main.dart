@@ -29,15 +29,25 @@ void main() async {
   deleteOldDocuments();
   
   firebaseMessaging();
-  
-  Future<void> _backgroundMessageHandler(RemoteMessage message) async {
-    print('Got a message whilst in the background!');
-    print('Message data: ${message.data}');
-  }
 
   FirebaseMessaging.onBackgroundMessage(_backgroundMessageHandler);
 
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+
+  _firebaseMessaging.requestPermission();
+  //FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+  //  print('Got a message whilst in the foreground!');
+  //  print('1');
+  //  print('Message data: ${message.data}');
+  //});
+
   runApp(const MyApp());
+}
+
+Future<void> _backgroundMessageHandler(RemoteMessage message) async {
+  print('Got a message whilst in the background!');
+  print('0');
+  print('Message data: ${message.data}');
 }
 
 void deleteOldDocuments() async {
@@ -80,13 +90,6 @@ void deleteOldDocuments() async {
 }
 
 void firebaseMessaging() {
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-
-  _firebaseMessaging.requestPermission();
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    print('Got a message whilst in the foreground!');
-    print('Message data: ${message.data}');
-  });
 
   FirebaseMessaging.instance.getToken().then((String? token) {
     assert(token != null);
