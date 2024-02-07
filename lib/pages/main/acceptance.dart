@@ -37,15 +37,17 @@ ListView _buildList(AsyncSnapshot<QuerySnapshot> snapshot) {
         subtitle: Text(
             'Email: $userEmail\nCreated: ${userData['created_time'].toDate()}'),
         onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => UserDetailsPage(
-                title: 'Phoenix United',
+          showModalBottomSheet<void>(
+            isScrollControlled: true,
+            showDragHandle: true,
+            context: context,
+            builder: (BuildContext context) {
+              return UserDetailsPage(
+                title: 'User Details',
                 userEmail: userEmail,
-                //userName: userData['name'] + ' ' + userData['surname'],
-              ),
-            ),
+                userName: userData['name'] + ' ' + userData['surname'],
+              );
+            },
           );
         },
         isThreeLine: true,
