@@ -479,7 +479,7 @@ class _ClubPageState extends State<ClubPage> {
                 leading: const Icon(
                   Icons.code,
                 ),
-                title: const Text('Code generation'),
+                title: const Text('Incoming requests'),
                 subtitle: Text('Accept new users',
                     style: TextStyle(
                         fontSize: width > 700
@@ -493,28 +493,6 @@ class _ClubPageState extends State<ClubPage> {
                                         : 10)),
                 onTap: () {
                   Navigator.pushNamed(context, '/acceptance');
-                },
-              )
-            : Container(),
-            widget.document['status'] == 'Admin'
-            ? ListTile(
-                leading: const Icon(
-                  Icons.mode,
-                ),
-                title: const Text('Page modifier'),
-                subtitle: Text('Create a new program!',
-                    style: TextStyle(
-                        fontSize: width > 700
-                            ? 12
-                            : width > 500
-                                ? 14
-                                : width > 400
-                                    ? 11
-                                    : width > 330
-                                        ? 12
-                                        : 10)),
-                onTap: () {
-                  Navigator.pushNamed(context, '/club_modifier');
                 },
               )
             : Container(),

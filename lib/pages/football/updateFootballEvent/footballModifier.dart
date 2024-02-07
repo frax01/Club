@@ -36,13 +36,6 @@ class FootballModifier extends StatelessWidget {
             },
             child: const Text('Update Rankings'),
           ),
-          ElevatedButton(
-            onPressed: () {
-              // Naviga alla pagina UpdateScorers
-              Navigator.pushNamed(context, '/scorerEvent');
-            },
-            child: const Text('Update Scorers'),
-          ),
         ],
       ),
     );

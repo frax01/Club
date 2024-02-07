@@ -11,6 +11,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'config.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,6 +43,8 @@ void main() async {
   //  print('1');
   //  print('Message data: ${message.data}');
   //});
+
+  initializeDateFormatting();
 
   runApp(const MyApp());
 }
@@ -110,6 +115,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('it', 'IT'),
+      ],
       title: 'Club App',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.transparent),
@@ -122,26 +135,14 @@ class MyApp extends StatelessWidget {
       initialRoute: '/homepage',
       routes: {
         '/homepage': (context) => const HomePage(),
-        '/login': (context) => const Login(
-              title: 'Phoenix United',
-              logout: false,
-            ),
+        '/login': (context) => const Login(title: 'Phoenix United', logout: false),
         '/signup': (context) => const SignUp(title: 'Phoenix United'),
         '/waiting': (context) => const Waiting(title: 'Phoenix United'),
-        //'/homepage': (context) => const HomePage(title: 'Phoenix United'),
-        //'/settings': (context) => const SettingsPage(),
-        //'/club': (context) => const ClubPage(title: 'Phoenix Club'),
-        //'/football': (context) => const FootballPage(title: 'Phoenix United'),
-        '/acceptance': (context) =>
-            const AcceptancePage(title: 'Phoenix United'),
-        '/football_modifier': (context) =>
-            const FootballModifier(title: 'Phoenix United'),
-        '/matchEvent': (context) =>
-            const MatchEventPage(title: 'Phoenix United'),
-        '/calendarEvent': (context) =>
-            const CalendarEventPage(title: 'Phoenix United'),
-        '/rankingEvent': (context) =>
-            const RankingEventPage(title: 'Phoenix United'),
+        '/acceptance': (context) => const AcceptancePage(title: 'Phoenix United'),
+        '/football_modifier': (context) => const FootballModifier(title: 'Phoenix United'),
+        '/matchEvent': (context) => const MatchEventPage(title: 'Phoenix United'),
+        '/calendarEvent': (context) => const CalendarEventPage(title: 'Phoenix United'),
+        '/rankingEvent': (context) => const RankingEventPage(title: 'Phoenix United'),
       },
     );
   }

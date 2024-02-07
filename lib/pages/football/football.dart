@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:club/pages/main/login.dart';
 import 'package:club/pages/club/club.dart';
 import 'package:club/pages/main/setting.dart';
+import 'package:club/pages/football/tab/tabScorer.dart';
 
 class FootballPage extends StatefulWidget {
   const FootballPage(
@@ -25,6 +26,7 @@ class FootballPage extends StatefulWidget {
 
 class _FootballPageState extends State<FootballPage> {
   var section = 'FOOTBALL';
+  String _selectedLevel = 'match';
 
   _saveLastPage(String page) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -85,60 +87,12 @@ class _FootballPageState extends State<FootballPage> {
             backgroundColor: const Color.fromARGB(255, 130, 16, 8),
             centerTitle: true,
             iconTheme: const IconThemeData(color: Colors.white),
-            bottom: const TabBar(
-              tabs: [
-                Tab(
-                  icon: Column(
-                    children: [
-                      Icon(Icons.car_crash, color: Colors.white),
-                      Text('Matches', style: TextStyle(color: Colors.white)),
-                    ],
-                  ),
-                ),
-                Tab(
-                  icon: Column(
-                    children: [
-                      Icon(Icons.sports_soccer_outlined, color: Colors.white),
-                      Text('Calendar', style: TextStyle(color: Colors.white)),
-                    ],
-                  ),
-                ),
-                Tab(
-                  icon: Column(
-                    children: [
-                      Icon(Icons.calendar_month, color: Colors.white),
-                      Text('Rankings', style: TextStyle(color: Colors.white)),
-                    ],
-                  ),
-                ),
-                Tab(
-                  icon: Column(
-                    children: [
-                      Icon(Icons.sports_soccer_outlined, color: Colors.white),
-                      Text('Top scorers',
-                          style: TextStyle(color: Colors.white)),
-                    ],
-                  ),
-                ),
-              ],
-            ),
           ),
-          body: TabBarView(
-            children: [
-              // Contenuto per il Tab 1
-              const TabMatchPage(),
-              //Icon(Icons.directions_car, size: 150, color: Colors.red),
-              // Contenuto per il Tab 2
-              const TabCalendarPage(),
-              //Icon(Icons.directions_transit, size: 150, color: Colors.brown),
-              // Contenuto per il Tab 3
-              //TabCalendarPage(),
-              const TabRanking(),
-
-              //Icon(Icons.directions_bike, size: 150, color: Colors.teal),
-              // Contenuto per il Tab 4
-              TabScorer(email: widget.document['email'], status: widget.document['status']),
-            ],
+          body: Center(
+            child: Tab(
+              page: _selectedLevel,
+              document: widget.document,
+            )
           ),
           drawer: Drawer(
             width: width > 700
@@ -345,6 +299,92 @@ class _FootballPageState extends State<FootballPage> {
               ],
             ),
           ),
+          bottomNavigationBar: BottomAppBar(
+        color: const Color.fromARGB(255, 130, 16, 8),
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            InkWell(
+              onTap: () {
+                setState(() {
+                  _selectedLevel = 'match';
+                });
+              },
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Icon(Icons.calendar_month_outlined, color: Colors.white),
+                  Text('Matches', style: TextStyle(color: Colors.white)),
+                ],
+              ),
+            ),
+            InkWell(
+               onTap: () {
+              setState(() {
+                _selectedLevel = 'calendar';
+              });
+              },
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Icon(Icons.calendar_month_outlined, color: Colors.white),
+                  Text('Calendar', style: TextStyle(color: Colors.white)),
+                ],
+              ),
+            ),
+            InkWell(
+              onTap: () {
+                setState(() {
+                _selectedLevel = 'ranking';
+              });
+            },
+            child: const Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Icon(Icons.calendar_month_outlined, color: Colors.white),
+                Text('Rankings', style: TextStyle(color: Colors.white)),
+              ],
+            ),
+          ),
+          InkWell(
+              onTap: () {
+                setState(() {
+                _selectedLevel = 'scorer';
+              });
+            },
+            child: const Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Icon(Icons.calendar_month_outlined, color: Colors.white),
+                Text('Top scorers', style: TextStyle(color: Colors.white)),
+              ],
+            ),
+          ),
+          ],
+        ),
+      ),
         ));
+  }
+}
+
+
+class Tab extends StatelessWidget {
+  const Tab({super.key, required this.page, required this.document});
+
+  final Map document;
+  final String page;
+
+  @override
+  Widget build(BuildContext context) {
+    if (page=='match') {
+      return const TabMatchPage();
+    } else if (page=='calendar') {
+      return const TabCalendarPage();
+    } else if (page=='ranking') {
+      return const TabRanking();
+    } else {
+      return TabScorer(email: document['email'], status: document['status']);
+    }
   }
 }

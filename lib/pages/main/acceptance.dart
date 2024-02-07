@@ -43,7 +43,7 @@ ListView _buildList(AsyncSnapshot<QuerySnapshot> snapshot) {
               builder: (context) => UserDetailsPage(
                 title: 'Phoenix United',
                 userEmail: userEmail,
-                userName: userData['name'] + ' ' + userData['surname'],
+                //userName: userData['name'] + ' ' + userData['surname'],
               ),
             ),
           );

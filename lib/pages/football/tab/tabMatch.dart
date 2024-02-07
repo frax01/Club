@@ -147,150 +147,262 @@ class _TabMatchPageState extends State<TabMatchPage> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
-    var widthScreen = size.width;
-    var heightScreen = size.height;
-    print(_matchesData.length);
-    return Scaffold(
-      body: Column(
-        children: [
-          SizedBox(
-            height: heightScreen / 1.5,
-            child: _matchesData.isNotEmpty
-                ? PageView.builder(
-                    controller: _pageController,
-                    itemCount: _matchesData.length,
-                    itemBuilder: (context, index) {
-                      print(_currentPage);
-                      print(_matchesData);
-                      print(_matchesData[_currentPage]['team']);
+ @override
+Widget build(BuildContext context) {
+  var size = MediaQuery.of(context).size;
+  var widthScreen = size.width;
+  var heightScreen = size.height;
+  print(_matchesData.length);
+  return Scaffold(
+    body: Column(
+      children: [
+        Expanded(
+          child: _matchesData.isNotEmpty
+              ? ListView.builder(
+                  itemCount: _matchesData.length,
+                  itemBuilder: (context, index) {
+                    print(_matchesData);
+                    print(_matchesData[index]['team']);
 
-                      _fetchWeatherData(_matchesData[_currentPage]['team'],
-                          _matchesData[_currentPage]['date']);
-
-                      if (_matchesData[index]['opponent'] == '') {
-                        return const Center(
-                          child: Text("non ci sono più partite da giocare"),
-                        );
-                      } else {
-                        return Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                width: widthScreen / 2,
-                                height: heightScreen / 12,
-                                child: Card(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(
-                                        5.0), // Regola il raggio per ottenere bordi arrotondati
-                                  ),
-                                  child: Center(
-                                    child: Text(
+                    return FutureBuilder(
+                      future: _fetchWeatherData(_matchesData[index]['team'], _matchesData[index]['date']),
+                      builder: (BuildContext context, AsyncSnapshot snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return CircularProgressIndicator(); // Show a loading spinner while waiting
+                        } else if (snapshot.error != null) {
+                          return Text('Error: ${snapshot.error}'); // Show error message if something went wrong
+                        } else {
+                          // Now you can safely access the temperature data
+                          return Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  width: widthScreen / 2,
+                                  height: heightScreen / 12,
+                                  child: Card(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(5.0),
+                                    ),
+                                    child: Center(
+                                      child: Text(
                                         '${_matchesData[index]['team']}',
                                         style: const TextStyle(
-                                            fontSize: 18.0,
-                                            fontWeight: FontWeight.bold)),
+                                          fontSize: 18.0,
+                                          fontWeight: FontWeight.bold
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Image.asset(
-                                //_matchesData[index]['image'],
-                                'images/CC.jpeg',
-                                width: widthScreen / 5,
-                                height: heightScreen / 5,
-                              ),
-                              SizedBox(
-                                width: widthScreen / 2,
-                                height: heightScreen / 8,
-                                child: Card(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(
-                                        5.0), // Regola il raggio per ottenere bordi arrotondati
-                                  ),
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                          '${_matchesData[index]['opponent']}'),
-                                      Text('${_matchesData[index]['place']}'),
-                                      Text('${_matchesData[index]['time']}'),
-                                    ],
+                                Image.asset(
+                                  'images/CC.jpeg',
+                                  width: widthScreen / 5,
+                                  height: heightScreen / 5,
+                                ),
+                                SizedBox(
+                                  width: widthScreen / 2,
+                                  height: heightScreen / 8,
+                                  child: Card(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(5.0),
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        Text('${_matchesData[index]['opponent']}'),
+                                        Text('${_matchesData[index]['place']}'),
+                                        if (_matchesData[index]['time'] != '') 
+                                          Text('${_matchesData[index]['time']}'),
+                                        if (_matchesData[index]['time'] == '')
+                                          ElevatedButton(
+                                            onPressed: () async {
+                                              final date = await showDatePicker(
+                                                context: context,
+                                                initialDate: DateTime.now(),
+                                                firstDate: DateTime(2000),
+                                                lastDate: DateTime(2050),
+                                              );
+                                              final time = await showTimePicker(
+                                                context: context,
+                                                initialTime: TimeOfDay.now(),
+                                              );
+                                              if (date != null && time != null) {
+                                                final dateTime = DateTime(date.year, date.month, date.day, time.hour, time.minute);
+                                                final formattedDateTime = DateFormat('dd/MM/yyyy HH:mm', 'it_IT').format(dateTime);
+                                                setState(() {
+                                                  _matchesData[index]['time'] = formattedDateTime;
+                                                });
+                                              }
+                                            },
+                                            child: Text('Inserisci data e ora'),
+                                          ),
+                                        Text("Temperatura minima: $temperature_min"),
+                                        Text("Temperatura: $temperature"),
+                                        Text("Temperatura massima: $temperature_max"),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                              TextField(
-                                controller: _res1Controller,
-                                decoration: const InputDecoration(labelText: 'Res1'),
-                                keyboardType: TextInputType.number,
-                              ),
-                              const Text('-'),
-                              TextField(
-                                controller: _res2Controller,
-                                decoration: const InputDecoration(labelText: 'Res2'),
-                                keyboardType: TextInputType.number,
-                              ),
-                              ElevatedButton(
-                                onPressed: () {
-                                  if (_res1Controller.text.isNotEmpty &&
-                                      _res2Controller.text.isNotEmpty) {
-                                    final opponent =
-                                        _matchesData[_currentPage]['opponent'];
-                                    final teams = opponent.split(' vs ');
-                                    final team1 = teams[0];
-                                    final team2 = teams[1];
+                              ],
+                            ),
+                          );
+                        }
+                      },
+                    );
+                  },
+                )
+              : Center(child: Text("Non ci sono partite da visualizzare")),
+        ),
+      ],
+    ),
+  );
+}
 
-                                    _updateFootballCalendar(
-                                        team1,
-                                        team2,
-                                        _res1Controller.text,
-                                        _res2Controller.text);
-                                  }
-                                  setState(() {}); //non mi aggiorna la pagina
-                                },
-                                child: const Text('Update'),
-                              ),
-                            ],
-                          ),
-                        );
-                      }
-                    },
-                    onPageChanged: (int index) {
-                      setState(() {
-                        _currentPage = index;
-                      });
-                    },
-                  )
-                : const Center(
-                    child: Text('Nessun elemento disponibile'),
-                  ),
-          ),
-          if (_matchesData.isNotEmpty)
-            DotsIndicator(
-              dotsCount: _matchesData.length,
-              position: _currentPage.toDouble(),
-              decorator: const DotsDecorator(
-                size: Size.square(9.0),
-                activeSize: Size(18.0, 9.0),
-                color: Colors.black26,
-                activeColor: Colors.black,
-              ),
-              onTap: (position) {
-                _pageController.animateToPage(
-                  position.toInt(),
-                  duration: const Duration(
-                      milliseconds: 300), // Imposta la durata dell'animazione
-                  curve: Curves
-                      .easeInOut, // Imposta la curva di animazione desiderata
-                );
-              },
-            ),
-        ],
-      ),
-    );
-  }
+  //@override
+  //Widget build(BuildContext context) {
+  //  var size = MediaQuery.of(context).size;
+  //  var widthScreen = size.width;
+  //  var heightScreen = size.height;
+  //  print(_matchesData.length);
+  //  return Scaffold(
+  //    body: Column(
+  //      children: [
+  //        SizedBox(
+  //          height: heightScreen / 1.5,
+  //          child: _matchesData.isNotEmpty
+  //              ? PageView.builder(
+  //                  controller: _pageController,
+  //                  itemCount: _matchesData.length,
+  //                  itemBuilder: (context, index) {
+  //                    print(_currentPage);
+  //                    print(_matchesData);
+  //                    print(_matchesData[_currentPage]['team']);
+//
+  //                    _fetchWeatherData(_matchesData[_currentPage]['team'],
+  //                        _matchesData[_currentPage]['date']);
+//
+  //                    if (_matchesData[index]['opponent'] == '') {
+  //                      return const Center(
+  //                        child: Text("non ci sono più partite da giocare"),
+  //                      );
+  //                    } else {
+  //                      return Padding(
+  //                        padding: const EdgeInsets.all(16.0),
+  //                        child: Column(
+  //                          crossAxisAlignment: CrossAxisAlignment.center,
+  //                          children: [
+  //                            SizedBox(
+  //                              width: widthScreen / 2,
+  //                              height: heightScreen / 12,
+  //                              child: Card(
+  //                                shape: RoundedRectangleBorder(
+  //                                  borderRadius: BorderRadius.circular(
+  //                                      5.0), // Regola il raggio per ottenere bordi arrotondati
+  //                                ),
+  //                                child: Center(
+  //                                  child: Text(
+  //                                      '${_matchesData[index]['team']}',
+  //                                      style: const TextStyle(
+  //                                          fontSize: 18.0,
+  //                                          fontWeight: FontWeight.bold)),
+  //                                ),
+  //                              ),
+  //                            ),
+  //                            Image.asset(
+  //                              //_matchesData[index]['image'],
+  //                              'images/CC.jpeg',
+  //                              width: widthScreen / 5,
+  //                              height: heightScreen / 5,
+  //                            ),
+  //                            SizedBox(
+  //                              width: widthScreen / 2,
+  //                              height: heightScreen / 8,
+  //                              child: Card(
+  //                                shape: RoundedRectangleBorder(
+  //                                  borderRadius: BorderRadius.circular(
+  //                                      5.0), // Regola il raggio per ottenere bordi arrotondati
+  //                                ),
+  //                                child: Column(
+  //                                  children: [
+  //                                    Text(
+  //                                        '${_matchesData[index]['opponent']}'),
+  //                                    Text('${_matchesData[index]['place']}'),
+  //                                    Text('${_matchesData[index]['time']}'),
+  //                                  ],
+  //                                ),
+  //                              ),
+  //                            ),
+  //                            TextField(
+  //                              controller: _res1Controller,
+  //                              decoration: const InputDecoration(labelText: 'Res1'),
+  //                              keyboardType: TextInputType.number,
+  //                            ),
+  //                            const Text('-'),
+  //                            TextField(
+  //                              controller: _res2Controller,
+  //                              decoration: const InputDecoration(labelText: 'Res2'),
+  //                              keyboardType: TextInputType.number,
+  //                            ),
+  //                            ElevatedButton(
+  //                              onPressed: () {
+  //                                if (_res1Controller.text.isNotEmpty &&
+  //                                    _res2Controller.text.isNotEmpty) {
+  //                                  final opponent =
+  //                                      _matchesData[_currentPage]['opponent'];
+  //                                  final teams = opponent.split(' vs ');
+  //                                  final team1 = teams[0];
+  //                                  final team2 = teams[1];
+//
+  //                                  _updateFootballCalendar(
+  //                                      team1,
+  //                                      team2,
+  //                                      _res1Controller.text,
+  //                                      _res2Controller.text);
+  //                                }
+  //                                setState(() {}); //non mi aggiorna la pagina
+  //                              },
+  //                              child: const Text('Update'),
+  //                            ),
+  //                          ],
+  //                        ),
+  //                      );
+  //                    }
+  //                  },
+  //                  onPageChanged: (int index) {
+  //                    setState(() {
+  //                      _currentPage = index;
+  //                    });
+  //                  },
+  //                )
+  //              : const Center(
+  //                  child: Text('Nessun elemento disponibile'),
+  //                ),
+  //        ),
+  //        if (_matchesData.isNotEmpty)
+  //          DotsIndicator(
+  //            dotsCount: _matchesData.length,
+  //            position: _currentPage.toDouble(),
+  //            decorator: const DotsDecorator(
+  //              size: Size.square(9.0),
+  //              activeSize: Size(18.0, 9.0),
+  //              color: Colors.black26,
+  //              activeColor: Colors.black,
+  //            ),
+  //            onTap: (position) {
+  //              _pageController.animateToPage(
+  //                position.toInt(),
+  //                duration: const Duration(
+  //                    milliseconds: 300), // Imposta la durata dell'animazione
+  //                curve: Curves
+  //                    .easeInOut, // Imposta la curva di animazione desiderata
+  //              );
+  //            },
+  //          ),
+  //      ],
+  //    ),
+  //  );
+  //}
 }
 
 //import 'package:flutter/material.dart';
