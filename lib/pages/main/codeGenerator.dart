@@ -2,10 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserDetailsPage extends StatefulWidget {
-  const UserDetailsPage({super.key, required this.title, required this.userEmail});
+  const UserDetailsPage(
+      {super.key,
+      required this.title,
+      required this.userEmail,
+      required this.userName});
 
   final String userEmail;
   final String title;
+  final String userName;
 
   @override
   _UserDetailsPageState createState() => _UserDetailsPageState();
@@ -35,45 +40,63 @@ class _UserDetailsPageState extends State<UserDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title, style: const TextStyle(color: Colors.white)),
-        backgroundColor: const Color.fromARGB(255, 130, 16, 8),
-        centerTitle: true,
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
           children: [
-            Text('User Email: ${widget.userEmail}'),
-            SizedBox(height: 16.0),
-            buildDropdown("Role", roleOptions, (value) {
-              setState(() {
-                selectedRole = value.toString();
-              });
-            }),
-            buildDropdown("Club Class", clubClassOptions, (value) {
-              setState(() {
-                selectedClubClass = value.toString();
-              });
-            }),
-            buildDropdown("Soccer Class", soccerClassOptions, (value) {
-              setState(() {
-                selectedSoccerClass = value.toString();
-              });
-            }),
-            buildDropdown("Status", statusOptions, (value) {
-              setState(() {
-                selectedStatus = value.toString();
-              });
-            }),
-            SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: () {
-                updateUserDetails();
-              },
-              child: Text('Accept'),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    widget.userName,
+                    style: const TextStyle(
+                        fontSize: 18.0, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    widget.userEmail,
+                  ),
+                  const SizedBox(height: 16.0),
+                  buildDropdown("Role", roleOptions, (value) {
+                    setState(() {
+                      selectedRole = value.toString();
+                    });
+                  }),
+                  buildDropdown("Club Class", clubClassOptions, (value) {
+                    setState(() {
+                      selectedClubClass = value.toString();
+                    });
+                  }),
+                  buildDropdown("Soccer Class", soccerClassOptions, (value) {
+                    setState(() {
+                      selectedSoccerClass = value.toString();
+                    });
+                  }),
+                  buildDropdown("Status", statusOptions, (value) {
+                    setState(() {
+                      selectedStatus = value.toString();
+                    });
+                  }),
+                  const SizedBox(height: 16.0),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          updateUserDetails();
+                        },
+                        child: const Text('Accept'),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          return Navigator.pop(context);
+                        },
+                        child: const Text('Cancel'),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -84,10 +107,11 @@ class _UserDetailsPageState extends State<UserDetailsPage> {
   Widget buildDropdown(
       String label, List<String> options, void Function(String?) onChanged) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(label),
+        Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
         DropdownButton<String>(
+          isExpanded: true,
           value: label == "Role"
               ? selectedRole
               : label == "Club Class"
@@ -103,7 +127,7 @@ class _UserDetailsPageState extends State<UserDetailsPage> {
           }).toList(),
           onChanged: onChanged,
         ),
-        SizedBox(height: 8.0),
+        const SizedBox(height: 8.0),
       ],
     );
   }

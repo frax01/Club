@@ -27,13 +27,13 @@ class _RankingEventState extends State<RankingEventPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Eventi Ranking'),
+        title: const Text('Eventi Ranking'),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: _eventsStream,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
 
           if (snapshot.hasError) {
@@ -61,7 +61,7 @@ class _RankingEventState extends State<RankingEventPage> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         IconButton(
-                          icon: Icon(Icons.edit),
+                          icon: const Icon(Icons.edit),
                           onPressed: () {
                             Navigator.push(
                               context,
@@ -73,24 +73,24 @@ class _RankingEventState extends State<RankingEventPage> {
                           },
                         ),
                         IconButton(
-                          icon: Icon(Icons.delete),
+                          icon: const Icon(Icons.delete),
                           onPressed: () async {
                             bool? shouldDelete = await showDialog(
                               context: context,
                               builder: (context) {
                                 return AlertDialog(
-                                  title: Text('Conferma'),
-                                  content: Text(
+                                  title: const Text('Conferma'),
+                                  content: const Text(
                                       'Sei sicuro di voler eliminare questo evento?'),
                                   actions: [
                                     TextButton(
-                                      child: Text('Annulla'),
+                                      child: const Text('Annulla'),
                                       onPressed: () {
                                         Navigator.of(context).pop(false);
                                       },
                                     ),
                                     TextButton(
-                                      child: Text('Elimina'),
+                                      child: const Text('Elimina'),
                                       onPressed: () {
                                         Navigator.of(context).pop(true);
                                       },
@@ -119,7 +119,7 @@ class _RankingEventState extends State<RankingEventPage> {
                   child: ListTile(
                     title: Text(team),
                     trailing: IconButton(
-                      icon: Icon(Icons.add),
+                      icon: const Icon(Icons.add),
                       onPressed: () {
                         Navigator.push(
                           context,

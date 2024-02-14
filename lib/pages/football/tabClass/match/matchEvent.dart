@@ -155,7 +155,7 @@ class _MatchEventPageState extends State<MatchEventPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Match Event'),
+        title: const Text('Match Event'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -182,7 +182,7 @@ class _MatchEventPageState extends State<MatchEventPage> {
                       ),
                     )
                     .toList(),
-                decoration: InputDecoration(labelText: 'Select Team'),
+                decoration: const InputDecoration(labelText: 'Select Team'),
               ),
               AbsorbPointer(
                 absorbing: selectedTeam.isEmpty,
@@ -197,7 +197,7 @@ class _MatchEventPageState extends State<MatchEventPage> {
                     .map<DropdownMenuItem<String>>(
                       (String value) => DropdownMenuItem<String>(
                         value: value,
-                        child: Text(''),
+                        child: const Text(''),
                       ),
                     )
                     .toList()
@@ -211,7 +211,7 @@ class _MatchEventPageState extends State<MatchEventPage> {
                           )
                           .toList(),
                     ),
-                  decoration: InputDecoration(labelText: 'Select Match'),
+                  decoration: const InputDecoration(labelText: 'Select Match'),
                 ),
               ),
               DropdownButtonFormField<String>(
@@ -229,23 +229,23 @@ class _MatchEventPageState extends State<MatchEventPage> {
                       ),
                     )
                     .toList(),
-                decoration: InputDecoration(labelText: 'Match Type'),
+                decoration: const InputDecoration(labelText: 'Match Type'),
               ),
               TextFormField(
                 onChanged: (value) {
                   locationController = value;
                 },
-                decoration: InputDecoration(labelText: 'Enter location'),
+                decoration: const InputDecoration(labelText: 'Enter location'),
               ),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: () => _date(context),
-                child: Text('$date'),
+                child: Text(date),
               ),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
               Row(
                 children: [
-                  Text('Select Time: '),
+                  const Text('Select Time: '),
                   ElevatedButton(
                     onPressed: () async {
                       final selectedTimeNew = await showTimePicker(
@@ -264,12 +264,12 @@ class _MatchEventPageState extends State<MatchEventPage> {
                   ),
                 ],
               ),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: () async {
                   updateMatchDetails();
                 },
-                child: Text('Update Data'),
+                child: const Text('Update Data'),
               ),
             ],
           ),

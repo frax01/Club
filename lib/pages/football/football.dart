@@ -5,10 +5,11 @@ import 'tab/tabMatch.dart';
 import 'tab/tabCalendar.dart';
 import 'tab/tabRanking.dart';
 import 'tab/tabScorer.dart';
-import 'package:club/pages/main/pageFolder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:club/pages/main/login.dart';
 import 'package:club/pages/club/club.dart';
+import 'package:club/pages/main/setting.dart';
+import 'package:club/pages/football/tab/tabScorer.dart';
 
 class FootballPage extends StatefulWidget {
   const FootballPage(
@@ -25,6 +26,7 @@ class FootballPage extends StatefulWidget {
 
 class _FootballPageState extends State<FootballPage> {
   var section = 'FOOTBALL';
+  String _selectedLevel = 'match';
 
   _saveLastPage(String page) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -36,7 +38,7 @@ class _FootballPageState extends State<FootballPage> {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => Login(title: 'Tiber Club', logout: true)));
+              builder: (context) => const Login(title: 'Tiber Club', logout: true)));
     });
   }
 
@@ -85,60 +87,12 @@ class _FootballPageState extends State<FootballPage> {
             backgroundColor: const Color.fromARGB(255, 130, 16, 8),
             centerTitle: true,
             iconTheme: const IconThemeData(color: Colors.white),
-            bottom: const TabBar(
-              tabs: [
-                Tab(
-                  icon: Column(
-                    children: [
-                      Icon(Icons.car_crash, color: Colors.white),
-                      Text('Matches', style: TextStyle(color: Colors.white)),
-                    ],
-                  ),
-                ),
-                Tab(
-                  icon: Column(
-                    children: [
-                      Icon(Icons.sports_soccer_outlined, color: Colors.white),
-                      Text('Calendar', style: TextStyle(color: Colors.white)),
-                    ],
-                  ),
-                ),
-                Tab(
-                  icon: Column(
-                    children: [
-                      Icon(Icons.calendar_month, color: Colors.white),
-                      Text('Rankings', style: TextStyle(color: Colors.white)),
-                    ],
-                  ),
-                ),
-                Tab(
-                  icon: Column(
-                    children: [
-                      Icon(Icons.sports_soccer_outlined, color: Colors.white),
-                      Text('Top scorers',
-                          style: TextStyle(color: Colors.white)),
-                    ],
-                  ),
-                ),
-              ],
-            ),
           ),
-          body: TabBarView(
-            children: [
-              // Contenuto per il Tab 1
-              TabMatchPage(),
-              //Icon(Icons.directions_car, size: 150, color: Colors.red),
-              // Contenuto per il Tab 2
-              TabCalendarPage(),
-              //Icon(Icons.directions_transit, size: 150, color: Colors.brown),
-              // Contenuto per il Tab 3
-              //TabCalendarPage(),
-              TabRanking(),
-
-              //Icon(Icons.directions_bike, size: 150, color: Colors.teal),
-              // Contenuto per il Tab 4
-              TabScorer(email: widget.document['email'], status: widget.document['status']),
-            ],
+          body: Center(
+            child: Tab(
+              page: _selectedLevel,
+              document: widget.document,
+            )
           ),
           drawer: Drawer(
             width: width > 700
@@ -174,7 +128,7 @@ class _FootballPageState extends State<FootballPage> {
                           future: getUserData(),
                           builder: (context, snapshot) {
                             var userSurname = snapshot.data?[1] ?? '';
-                            return Text('$userSurname',
+                            return Text(userSurname,
                                 style:
                                     TextStyle(fontSize: width > 300 ? 18 : 14));
                           }),
@@ -188,7 +142,7 @@ class _FootballPageState extends State<FootballPage> {
                       future: getUserData(),
                       builder: (context, snapshot) {
                         var userEmail = snapshot.data?[2] ?? '';
-                        return Text('$userEmail',
+                        return Text(userEmail,
                             textAlign: TextAlign.center,
                             style: TextStyle(
                                 fontSize: width > 500
@@ -215,7 +169,7 @@ class _FootballPageState extends State<FootballPage> {
                     } else {
                       Navigator.pop(context);
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
+                        const SnackBar(
                             content: Text('Non sei ancora iscritto al club')),
                       );
                     }
@@ -226,7 +180,7 @@ class _FootballPageState extends State<FootballPage> {
                     height: 0.5,
                     color: Colors.black,
                   ),
-                  items: [
+                  items: const [
                     DropdownMenuItem(
                       value: 'CLUB',
                       child: Text('CLUB'),
@@ -239,10 +193,10 @@ class _FootballPageState extends State<FootballPage> {
                 ),
                 ListTile(
                   leading: const Icon(
-                    Icons.calendar_month_outlined,
+                    Icons.code,
                   ),
-                  title: const Text('Tournaments'),
-                  subtitle: Text('Just do it',
+                  title: const Text('Beginner'),
+                  subtitle: Text('Team',
                       style: TextStyle(
                           fontSize: width > 700
                               ? 12
@@ -254,21 +208,15 @@ class _FootballPageState extends State<FootballPage> {
                                           ? 12
                                           : 10)),
                   onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => PageFolder(
-                                title: 'ASD Tiber Club',
-                                level: 'tournament',
-                                option: 'football')));
+                    Navigator.pushNamed(context, '/acceptance');
                   },
                 ),
                 ListTile(
                   leading: const Icon(
-                    Icons.plus_one_outlined,
+                    Icons.code,
                   ),
-                  title: const Text('Extra'),
-                  subtitle: Text('What are you waiting for?',
+                  title: const Text('Intermediate'),
+                  subtitle: Text('Team',
                       style: TextStyle(
                           fontSize: width > 700
                               ? 12
@@ -280,13 +228,27 @@ class _FootballPageState extends State<FootballPage> {
                                           ? 12
                                           : 10)),
                   onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => PageFolder(
-                                title: 'ASD Tiber Club',
-                                level: 'extra',
-                                option: 'football')));
+                    Navigator.pushNamed(context, '/acceptance');
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(
+                    Icons.code,
+                  ),
+                  title: const Text('Advanced'),
+                  subtitle: Text('Team',
+                      style: TextStyle(
+                          fontSize: width > 700
+                              ? 12
+                              : width > 500
+                                  ? 14
+                                  : width > 400
+                                      ? 11
+                                      : width > 330
+                                          ? 12
+                                          : 10)),
+                  onTap: () {
+                    Navigator.pushNamed(context, '/acceptance');
                   },
                 ),
                 ListTile(
@@ -306,7 +268,10 @@ class _FootballPageState extends State<FootballPage> {
                                           ? 12
                                           : 10)),
                   onTap: () {
-                    Navigator.pushNamed(context, '/settings');
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => SettingsPage(id: widget.document['id'],)));
                   },
                 ),
                 ListTile(
@@ -370,17 +335,17 @@ class _FootballPageState extends State<FootballPage> {
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
-                          title: Text('Logout'),
-                          content: Text('Are you sure you want to logout?'),
+                          title: const Text('Logout'),
+                          content: const Text('Are you sure you want to logout?'),
                           actions: <Widget>[
                             TextButton(
-                              child: Text('Cancel'),
+                              child: const Text('Cancel'),
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
                             ),
                             TextButton(
-                              child: Text('Yes'),
+                              child: const Text('Yes'),
                               onPressed: () async {
                                 await _logout();
                               },
@@ -394,6 +359,92 @@ class _FootballPageState extends State<FootballPage> {
               ],
             ),
           ),
+          bottomNavigationBar: BottomAppBar(
+        color: const Color.fromARGB(255, 130, 16, 8),
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            InkWell(
+              onTap: () {
+                setState(() {
+                  _selectedLevel = 'match';
+                });
+              },
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Icon(Icons.calendar_month_outlined, color: Colors.white),
+                  Text('Matches', style: TextStyle(color: Colors.white)),
+                ],
+              ),
+            ),
+            InkWell(
+               onTap: () {
+              setState(() {
+                _selectedLevel = 'calendar';
+              });
+              },
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Icon(Icons.calendar_month_outlined, color: Colors.white),
+                  Text('Calendar', style: TextStyle(color: Colors.white)),
+                ],
+              ),
+            ),
+            InkWell(
+              onTap: () {
+                setState(() {
+                _selectedLevel = 'ranking';
+              });
+            },
+            child: const Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Icon(Icons.calendar_month_outlined, color: Colors.white),
+                Text('Rankings', style: TextStyle(color: Colors.white)),
+              ],
+            ),
+          ),
+          InkWell(
+              onTap: () {
+                setState(() {
+                _selectedLevel = 'scorer';
+              });
+            },
+            child: const Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Icon(Icons.calendar_month_outlined, color: Colors.white),
+                Text('Top scorers', style: TextStyle(color: Colors.white)),
+              ],
+            ),
+          ),
+          ],
+        ),
+      ),
         ));
+  }
+}
+
+
+class Tab extends StatelessWidget {
+  const Tab({super.key, required this.page, required this.document});
+
+  final Map document;
+  final String page;
+
+  @override
+  Widget build(BuildContext context) {
+    if (page=='match') {
+      return TabMatchPage(document: document);
+    } else if (page=='calendar') {
+      return TabCalendarPage();
+    } else if (page=='ranking') {
+      return const TabRanking();
+    } else {
+      return TabScorer(email: document['email'], status: document['status']);
+    }
   }
 }

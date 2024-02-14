@@ -13,6 +13,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 public void onMessageReceived(RemoteMessage remoteMessage) {
     super.onMessageReceived(remoteMessage);
 
+    System.out.println("From: " + remoteMessage.getFrom());
+    System.out.println("Notification Message Body: " + remoteMessage.getNotification().getBody());
+
     // Crea un ID per la notifica
     int notificationId = new Random().nextInt();
 

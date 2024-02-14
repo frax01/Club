@@ -7,19 +7,55 @@ class Waiting extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(title, style: const TextStyle(color: Colors.white)),
-        backgroundColor: const Color.fromARGB(255, 130, 16, 8),
-        centerTitle: true,
-        //automaticallyImplyLeading: false,
-      ),
-      body: const Center(
-        child: Text(
-          'Attendi di essere accettato',
-          style: TextStyle(fontSize: 18.0),
+    return Stack(
+      children: [
+        Image.asset(
+          "images/Tiber.jpg",
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          fit: BoxFit.cover,
         ),
-      ),
+        Center(
+          child: SizedBox(
+            height: 600,
+            width: 620,
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Card(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15)),
+                elevation: 10.0,
+                shadowColor: Colors.black,
+                surfaceTintColor: Colors.white54,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset("images/logo.png", width: 150),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        const Text(
+                          "Please wait for your account to be approved",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: 24.0, fontWeight: FontWeight.bold),
+                        ),
+                        const Text(
+                            "Your account needs to be approved by a monitor.\nThis might take a few hours.",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 14.0)),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        )
+      ],
     );
   }
 }
