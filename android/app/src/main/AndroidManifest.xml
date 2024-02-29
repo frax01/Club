@@ -28,7 +28,7 @@
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         
         <service
-            android:name="com.mycompany.dima.java.MyFirebaseMessagingService"
+            android:name=".java.MyFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

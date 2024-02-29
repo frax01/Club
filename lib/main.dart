@@ -1,3 +1,4 @@
+import 'package:club/pages/club/club.dart';
 import 'package:club/pages/football/updateFootballEvent/footballModifier.dart';
 import 'package:club/pages/football/tabClass/ranking/rankingEvent.dart';
 import 'package:club/pages/main/signup.dart';
@@ -12,8 +13,8 @@ import 'config.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,7 +31,7 @@ void main() async {
   );
 
   deleteOldDocuments();
-  
+
   firebaseMessaging();
 
   FirebaseMessaging.onBackgroundMessage(_backgroundMessageHandler);
@@ -130,19 +131,23 @@ class MyApp extends StatelessWidget {
       ),
       home: const Login(
         title: 'Phoenix United',
-        logout: false,
       ),
       initialRoute: '/homepage',
       routes: {
         '/homepage': (context) => const HomePage(),
-        '/login': (context) => const Login(title: 'Phoenix United', logout: false),
+        '/login': (context) => const Login(title: 'Phoenix United'),
         '/signup': (context) => const SignUp(title: 'Phoenix United'),
         '/waiting': (context) => const Waiting(title: 'Phoenix United'),
-        '/acceptance': (context) => const AcceptancePage(title: 'Phoenix United'),
-        '/football_modifier': (context) => const FootballModifier(title: 'Phoenix United'),
-        '/matchEvent': (context) => const MatchEventPage(title: 'Phoenix United'),
-        '/calendarEvent': (context) => const CalendarEventPage(title: 'Phoenix United'),
-        '/rankingEvent': (context) => const RankingEventPage(title: 'Phoenix United'),
+        '/acceptance': (context) =>
+            const AcceptancePage(title: 'Phoenix United'),
+        '/football_modifier': (context) =>
+            const FootballModifier(title: 'Phoenix United'),
+        '/matchEvent': (context) =>
+            const MatchEventPage(title: 'Phoenix United'),
+        '/calendarEvent': (context) =>
+            const CalendarEventPage(title: 'Phoenix United'),
+        '/rankingEvent': (context) =>
+            const RankingEventPage(title: 'Phoenix United'),
       },
     );
   }
@@ -156,12 +161,45 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  Future<void> loadData() async {
-    // Simula il caricamento dei dati dal database
-    await Future.delayed(const Duration(seconds: 5));
+  String? email;
 
-    // Una volta che i dati sono stati caricati, naviga alla pagina di login
-    Navigator.pushReplacementNamed(context, '/login');
+  Future<Map<String, dynamic>> retrieveData() async {
+    CollectionReference user = FirebaseFirestore.instance.collection('user');
+    QuerySnapshot querySnapshot1 =
+        await user.where('email', isEqualTo: email).get();
+
+    print("email: $email");
+
+    Map<String, dynamic> document = {
+      'name': querySnapshot1.docs.first['name'],
+      'surname': querySnapshot1.docs.first['surname'],
+      'email': querySnapshot1.docs.first['email'],
+      'role': querySnapshot1.docs.first['role'],
+      'club_class': querySnapshot1.docs.first['club_class'],
+      'soccer_class': querySnapshot1.docs.first['soccer_class'],
+      'status': querySnapshot1.docs.first['status'],
+      'birthdate': querySnapshot1.docs.first['birthdate'],
+      'id': querySnapshot1.docs.first.id,
+    };
+
+    return document;
+  }
+
+  //quando si fa il login con un nuovo utente bisogna mettere quello nella shared preferences
+
+  Future<void> loadData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    email = prefs.getString('email');
+
+    Map<String, dynamic> allPrefs = prefs.getKeys().fold<Map<String, dynamic>>(
+      {},
+      (Map<String, dynamic> acc, String key) {
+        acc[key] = prefs.get(key);
+        return acc;
+      },
+    );
+
+    print("SharedPreferences: $allPrefs");
   }
 
   @override
@@ -172,18 +210,44 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.red,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Image.asset('images/logo.png'),
-            const SizedBox(height: 20.0),
-            const CircularProgressIndicator(),
-          ],
-        ),
-      ),
-    );
+    if (email == null) {
+      return const Login(title: "Asd Tiber Club");
+    } else {
+      print("ciaooo");
+      return FutureBuilder<Map<String, dynamic>>(
+          future: retrieveData(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Scaffold(
+                backgroundColor: Colors.red,
+                body: Center(
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Image.asset('images/logo.png'),
+                        const SizedBox(height: 20.0),
+                        const CircularProgressIndicator(),
+                      ]),
+                ),
+              );
+            } else if (snapshot.hasError) {
+              return const Scaffold(
+                body: Center(
+                  child: Text("Errore durante il recupero dei dati."),
+                ),
+              );
+            } else {
+              Map<String, dynamic> document = snapshot.data ?? {};
+              Future.delayed(Duration.zero, () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            ClubPage(title: "Tiber Club", document: document)));
+              });
+              return Container();
+            }
+          });
+    }
   }
 }

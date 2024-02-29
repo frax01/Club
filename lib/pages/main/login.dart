@@ -6,11 +6,11 @@ import 'package:club/pages/football/football.dart';
 import 'package:club/pages/club/club.dart';
 
 class Login extends StatefulWidget {
-  const Login({Key? key, required this.title, required this.logout})
+  const Login({Key? key, required this.title})
       : super(key: key);
 
   final String title;
-  final bool logout;
+  //final bool logout;
 
   @override
   _LoginState createState() => _LoginState();
@@ -31,20 +31,20 @@ class _LoginState extends State<Login> {
   @override
   void initState() {
     super.initState();
-    if (widget.logout == true) {
-      emailController.text = '';
-      passwordController.text = '';
-      rememberMe = false;
-      //emailController.addListener(_fillPassword);
-    } else {
-      _loadLoginInfo().then((_) {
-        if (rememberMe &&
-            emailController.text.isNotEmpty &&
-            passwordController.text.isNotEmpty) {
-          _handleLogin();
-        }
-      });
-    }
+    //if (widget.logout == true) {
+    //  emailController.text = '';
+    //  passwordController.text = '';
+    //  rememberMe = false;
+    //  //emailController.addListener(_fillPassword);
+    //} else {
+    //  _loadLoginInfo().then((_) {
+    //    if (rememberMe &&
+    //        emailController.text.isNotEmpty &&
+    //        passwordController.text.isNotEmpty) {
+    //      _handleLogin();
+    //    }
+    //  });
+    //}
   }
 
   _loadLoginInfo() async {
@@ -72,6 +72,16 @@ class _LoginState extends State<Login> {
       emailSuggestions.add(emailController.text);
       prefs.setStringList('emailSuggestions', emailSuggestions);
     }
+
+    Map<String, dynamic> allPrefs = prefs.getKeys().fold<Map<String, dynamic>>(
+    {},
+    (Map<String, dynamic> acc, String key) {
+      acc[key] = prefs.get(key);
+      return acc;
+    },
+  );
+
+  print("SharedPreferences: $allPrefs");
   }
 
   _loadLastPage() async {

@@ -38,7 +38,7 @@ class _FootballPageState extends State<FootballPage> {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => const Login(title: 'Tiber Club', logout: true)));
+              builder: (context) => const Login(title: 'Tiber Club')));
     });
   }
 

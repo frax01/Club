@@ -11,10 +11,7 @@ import 'package:club/pages/main/setting.dart';
 import 'package:club/pages/club/box.dart';
 
 class ClubPage extends StatefulWidget {
-  const ClubPage(
-    {super.key, 
-    required this.title,
-    required this.document});
+  const ClubPage({super.key, required this.title, required this.document});
 
   final Map document;
   final String title;
@@ -34,12 +31,26 @@ class _ClubPageState extends State<ClubPage> {
   }
 
   Future<void> _logout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.clear();
+
+  Map<String, dynamic> allPrefs = prefs.getKeys().fold<Map<String, dynamic>>(
+    {},
+    (Map<String, dynamic> acc, String key) {
+      acc[key] = prefs.get(key);
+      return acc;
+    },
+  );
+
+  print("SharedPreferences: $allPrefs");
+
     await FirebaseAuth.instance.signOut();
     setState(() {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => const Login(title: 'Tiber Club', logout: true)));
+              builder: (context) =>
+                  const Login(title: 'Tiber Club')));
     });
   }
 
@@ -58,7 +69,8 @@ class _ClubPageState extends State<ClubPage> {
     return startDate;
   }
 
-  Future<String> _endDate(BuildContext context, String startDate, String endDate) async {
+  Future<String> _endDate(
+      BuildContext context, String startDate, String endDate) async {
     if (startDate == "") {
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Please select the startDate first')));
@@ -72,7 +84,8 @@ class _ClubPageState extends State<ClubPage> {
         context: context,
         initialDate: DateTime.parse(formattedStartDate),
         firstDate: DateTime.parse(formattedStartDate),
-        lastDate: DateTime.parse(formattedStartDate).add(const Duration(days: 365)),
+        lastDate:
+            DateTime.parse(formattedStartDate).add(const Duration(days: 365)),
       );
       if (picked != null && picked != DateTime.now()) {
         setState(() {
@@ -109,7 +122,7 @@ class _ClubPageState extends State<ClubPage> {
     final Reference ref = FirebaseStorage.instance
         .ref()
         .child('users/${DateTime.now().toIso8601String()}');
-        //.child('${section}_image/${DateTime.now().toIso8601String()}');
+    //.child('${section}_image/${DateTime.now().toIso8601String()}');
 
     // Carica l'immagine su Firebase Storage
     final UploadTask uploadTask = ref.putData(await image.readAsBytes());
@@ -129,7 +142,8 @@ class _ClubPageState extends State<ClubPage> {
     return imageUrl;
   }
 
-  Future<void> createEvent(String event, String imagePath, String clubClass, String startDate, String endDate, String description) async {
+  Future<void> createEvent(String event, String imagePath, String clubClass,
+      String startDate, String endDate, String description) async {
     try {
       if (event == "") {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -141,7 +155,8 @@ class _ClubPageState extends State<ClubPage> {
             const SnackBar(content: Text('Please select a class')));
         return;
       }
-      if ((_selectedLevel == 'weekend' || _selectedLevel == 'extra') && startDate == "") {
+      if ((_selectedLevel == 'weekend' || _selectedLevel == 'extra') &&
+          startDate == "") {
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Please select a date')));
         return;
@@ -156,12 +171,15 @@ class _ClubPageState extends State<ClubPage> {
             const SnackBar(content: Text('Please select a description')));
         return;
       }
-      if (imagePath=='') {
-        imagePath='images/$_selectedLevel/default.jpg';
+      if (imagePath == '') {
+        imagePath = 'images/$_selectedLevel/default.jpg';
       }
+      print("section: ${section.toLowerCase()}");
 
       FirebaseFirestore firestore = FirebaseFirestore.instance;
-      await firestore.collection('${section.toLowerCase()}_$_selectedLevel').add({
+      await firestore
+          .collection('${section.toLowerCase()}_$_selectedLevel')
+          .add({
         'title': event,
         'selectedOption': _selectedLevel,
         'imagePath': imagePath,
@@ -211,12 +229,8 @@ class _ClubPageState extends State<ClubPage> {
                         clubClass = value!;
                       });
                     },
-                    items: [
-                      '',
-                      '1° media',
-                      '2° media',
-                      '3° media'
-                    ].map((String option) {
+                    items: ['', '1° media', '2° media', '3° media']
+                        .map((String option) {
                       return DropdownMenuItem<String>(
                         value: option,
                         child: Text(option),
@@ -234,105 +248,111 @@ class _ClubPageState extends State<ClubPage> {
                               imagePath = imageUrl;
                             });
                           },
-                    child: Text(
-                        imageUploaded ? 'Immagine caricata' : 'Carica Immagine'),
+                    child: Text(imageUploaded
+                        ? 'Immagine caricata'
+                        : 'Carica Immagine'),
                   ),
                   const SizedBox(height: 16.0),
                   if (imageUploaded) ...[
-                ElevatedButton(
-                  onPressed: () async {
-                    // Mostra un dialogo di conferma prima di eliminare l'immagine
-                    bool? confirm = await showDialog<bool>(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: const Text('Conferma'),
-                          content: const Text(
-                              'Sei sicuro di voler eliminare l\'immagine?'),
-                          actions: <Widget>[
-                            TextButton(
-                              child: const Text('Annulla'),
-                              onPressed: () {
-                                setState(() {
-                                  Navigator.of(context).pop(false);
-                                });
-                              },
-                            ),
-                            TextButton(
-                              child: const Text('Elimina'),
-                              onPressed: () {
-                                setState(() {
-                                  imageUploaded = false;
-                                  Navigator.of(context).pop(true);
-                                });
-                              },
-                            ),
-                          ],
+                    ElevatedButton(
+                      onPressed: () async {
+                        // Mostra un dialogo di conferma prima di eliminare l'immagine
+                        bool? confirm = await showDialog<bool>(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text('Conferma'),
+                              content: const Text(
+                                  'Sei sicuro di voler eliminare l\'immagine?'),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: const Text('Annulla'),
+                                  onPressed: () {
+                                    setState(() {
+                                      Navigator.of(context).pop(false);
+                                    });
+                                  },
+                                ),
+                                TextButton(
+                                  child: const Text('Elimina'),
+                                  onPressed: () {
+                                    setState(() {
+                                      imageUploaded = false;
+                                      Navigator.of(context).pop(true);
+                                    });
+                                  },
+                                ),
+                              ],
+                            );
+                          },
                         );
+                        if (confirm == true) {
+                          await deleteImage(imagePath);
+                        }
                       },
-                    );
-                    if (confirm == true) {
-                      await deleteImage(imagePath);
-                    }
-                  },
-                  child: const Text('Elimina Immagine'),
-                ),
-              ],
-              const SizedBox(height: 16.0),
-              ...(_selectedLevel == 'weekend' || _selectedLevel == 'extra')
-              ? [
-                  ElevatedButton(
-                    onPressed: () async {
-                      startDate = await _startDate(context, startDate);
+                      child: const Text('Elimina Immagine'),
+                    ),
+                  ],
+                  const SizedBox(height: 16.0),
+                  ...(_selectedLevel == 'weekend' || _selectedLevel == 'extra')
+                      ? [
+                          ElevatedButton(
+                            onPressed: () async {
+                              startDate = await _startDate(context, startDate);
+                            },
+                            child: const Text('Date'),
+                          ),
+                        ]
+                      : (_selectedLevel == 'trip' ||
+                              _selectedLevel == 'tournament')
+                          ? [
+                              ElevatedButton(
+                                onPressed: () async {
+                                  startDate =
+                                      await _startDate(context, startDate);
+                                },
+                                child: const Text('Start date'),
+                              ),
+                              const SizedBox(height: 16.0),
+                              ElevatedButton(
+                                onPressed: () async {
+                                  endDate = await _endDate(
+                                      context, startDate, endDate);
+                                },
+                                child: const Text('End date'),
+                              ),
+                            ]
+                          : [],
+                  const SizedBox(height: 16.0),
+                  TextFormField(
+                    onChanged: (value) {
+                      description = value;
                     },
-                    child: const Text('Date'),
-                  ),
-                ]
-              : (_selectedLevel == 'trip' || _selectedLevel == 'tournament')
-              ? [
-                  ElevatedButton(
-                    onPressed: () async {
-                      startDate = await _startDate(context, startDate);
-                    },
-                    child: const Text('Start date'),
+                    decoration: const InputDecoration(labelText: 'Descrizione'),
+                    maxLines: null,
                   ),
                   const SizedBox(height: 16.0),
-                  ElevatedButton(
-                    onPressed: () async {
-                      endDate = await _endDate(context, startDate, endDate);
-                    },
-                    child: const Text('End date'),
-                  ),
-                ]
-              : [],
-              const SizedBox(height: 16.0),
-              TextFormField(
-                onChanged: (value) {
-                  description = value;
-                },
-                decoration: const InputDecoration(labelText: 'Descrizione'),
-                maxLines: null,
-              ),
-              const SizedBox(height: 16.0),
-              Row(
-                children: [
-                  ElevatedButton(
-                    onPressed: () async {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text('Annulla'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () async {
-                      await createEvent(event, imagePath, clubClass, startDate, endDate, description);
-                    },
-                    child: const Text('Crea'),
-                  ),
+                  Row(
+                    children: [
+                      ElevatedButton(
+                        onPressed: () async {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('Annulla'),
+                      ),
+                      ElevatedButton(
+                        onPressed: () async {
+                          await createEvent(event, imagePath, clubClass,
+                              startDate, endDate, description);
+                        },
+                        child: const Text('Crea'),
+                      ),
+                    ],
+                  )
                 ],
-              )
-            ],
-          ),
-        );},
+              ),
+            );
+          },
         );
       },
     );
@@ -343,6 +363,8 @@ class _ClubPageState extends State<ClubPage> {
     var size = MediaQuery.of(context).size;
     var height = size.height;
     var width = size.width;
+    print("title: ${widget.title}");
+    print("document: ${widget.document}");
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title, style: const TextStyle(color: Colors.white)),
@@ -351,12 +373,11 @@ class _ClubPageState extends State<ClubPage> {
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Center(
-        child: Box(
-          level: _selectedLevel,
-          clubClass: widget.document['club_class'],
-          section: section.toLowerCase(),
-        )
-      ),
+          child: Box(
+        level: _selectedLevel,
+        clubClass: widget.document['club_class'],
+        section: section.toLowerCase(),
+      )),
       drawer: Drawer(
         width: width > 700
             ? width / 3
@@ -382,36 +403,32 @@ class _ClubPageState extends State<ClubPage> {
                   Text('${widget.document['name']} ',
                       style: TextStyle(fontSize: width > 300 ? 18 : 14)),
                   Text('${widget.document['surname']}',
-                    style: TextStyle(fontSize: width > 300 ? 18 : 14))
+                      style: TextStyle(fontSize: width > 300 ? 18 : 14))
                 ],
               ),
             ),
             Padding(
-              padding:
-                  const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
-              child: 
-                Text('${widget.document['club_class']}',
+                padding:
+                    const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
+                child: Text('${widget.document['club_class']}',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         fontSize: width > 500
                             ? 14
                             : width > 300
                                 ? 10
-                                : 8))
-            ),
+                                : 8))),
             Padding(
-              padding:
-                  const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
-              child: 
-                Text('${widget.document['email']}',
+                padding:
+                    const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
+                child: Text('${widget.document['email']}',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         fontSize: width > 500
                             ? 14
                             : width > 300
                                 ? 10
-                                : 8))
-            ),
+                                : 8))),
             DropdownButton(
               value: section,
               onChanged: (value) {
@@ -421,10 +438,13 @@ class _ClubPageState extends State<ClubPage> {
                     if (section == 'FOOTBALL') {
                       _saveLastPage('FootballPage');
                       Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => FootballPage(title: 'Tiber Club', document: widget.document,)));
-                                  }
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => FootballPage(
+                                    title: 'Tiber Club',
+                                    document: widget.document,
+                                  )));
+                    }
                   });
                 } else {
                   Navigator.pop(context);
@@ -469,33 +489,35 @@ class _ClubPageState extends State<ClubPage> {
                                       : 10)),
               onTap: () {
                 Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => SettingsPage(id: widget.document['id'],)));
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => SettingsPage(
+                              id: widget.document['id'],
+                            )));
               },
             ),
             widget.document['status'] == 'Admin'
-            ? ListTile(
-                leading: const Icon(
-                  Icons.code,
-                ),
-                title: const Text('Incoming requests'),
-                subtitle: Text('Accept new users',
-                    style: TextStyle(
-                        fontSize: width > 700
-                            ? 12
-                            : width > 500
-                                ? 14
-                                : width > 400
-                                    ? 11
-                                    : width > 330
-                                        ? 12
-                                        : 10)),
-                onTap: () {
-                  Navigator.pushNamed(context, '/acceptance');
-                },
-              )
-            : Container(),
+                ? ListTile(
+                    leading: const Icon(
+                      Icons.code,
+                    ),
+                    title: const Text('Incoming requests'),
+                    subtitle: Text('Accept new users',
+                        style: TextStyle(
+                            fontSize: width > 700
+                                ? 12
+                                : width > 500
+                                    ? 14
+                                    : width > 400
+                                        ? 11
+                                        : width > 330
+                                            ? 12
+                                            : 10)),
+                    onTap: () {
+                      Navigator.pushNamed(context, '/acceptance');
+                    },
+                  )
+                : Container(),
             ListTile(
               leading: const Icon(
                 Icons.logout,
@@ -542,13 +564,13 @@ class _ClubPageState extends State<ClubPage> {
         ),
       ),
       floatingActionButton: widget.document['status'] == 'Admin'
-      ? FloatingActionButton(
-          onPressed: () {
-            _showAddEvent(_selectedLevel);
-          },
-          child: const Icon(Icons.add),
-        )
-      : null,
+          ? FloatingActionButton(
+              onPressed: () {
+                _showAddEvent(_selectedLevel);
+              },
+              child: const Icon(Icons.add),
+            )
+          : null,
       bottomNavigationBar: BottomAppBar(
         color: const Color.fromARGB(255, 130, 16, 8),
         child: Row(
@@ -570,10 +592,10 @@ class _ClubPageState extends State<ClubPage> {
               ),
             ),
             InkWell(
-               onTap: () {
-              setState(() {
-                _selectedLevel = 'trip';
-              });
+              onTap: () {
+                setState(() {
+                  _selectedLevel = 'trip';
+                });
               },
               child: const Column(
                 mainAxisSize: MainAxisSize.min,
@@ -586,17 +608,17 @@ class _ClubPageState extends State<ClubPage> {
             InkWell(
               onTap: () {
                 setState(() {
-                _selectedLevel = 'extra';
-              });
-            },
-            child: const Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Icon(Icons.calendar_month_outlined, color: Colors.white),
-                Text('Extra', style: TextStyle(color: Colors.white)),
-              ],
+                  _selectedLevel = 'extra';
+                });
+              },
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Icon(Icons.calendar_month_outlined, color: Colors.white),
+                  Text('Extra', style: TextStyle(color: Colors.white)),
+                ],
+              ),
             ),
-          ),
           ],
         ),
       ),

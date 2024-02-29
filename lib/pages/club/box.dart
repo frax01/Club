@@ -5,8 +5,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:intl/intl.dart';
 
 class Box extends StatefulWidget {
-
-  const Box({super.key, 
+  const Box({
+    super.key,
     required this.level,
     required this.clubClass,
     required this.section,
@@ -28,17 +28,20 @@ class _BoxState extends State<Box> {
   String? description;
   bool imageUploaded = true;
 
-  Future<void> _fetchData() async {
-    CollectionReference users = FirebaseFirestore.instance.collection('club_${widget.level}');
-    QuerySnapshot querySnapshot = await users.where('selectedClass', isEqualTo: widget.clubClass).get();
-    print(querySnapshot.docs);
+  Future<List<Map<String, dynamic>>> _fetchData() async {
+    CollectionReference users =
+        FirebaseFirestore.instance.collection('club_${widget.level}');
+    QuerySnapshot querySnapshot =
+        await users.where('selectedClass', isEqualTo: widget.clubClass).get();
+    print("dati: ${querySnapshot.docs}");
     if (querySnapshot.docs.isNotEmpty) {
-      documents = querySnapshot.docs.map((doc) => {
-        'id': doc.id,
-        ...doc.data() as Map<String, dynamic>
-      }).toList();   
+      documents = querySnapshot.docs
+          .map((doc) => {'id': doc.id, ...doc.data() as Map<String, dynamic>})
+          .toList();
+      return documents;
+    } else {
+      return [];
     }
-    return Future.value();
   }
 
   Future<String> _startDate(BuildContext context, String startDate) async {
@@ -56,7 +59,8 @@ class _BoxState extends State<Box> {
     return startDate;
   }
 
-  Future<String> _endDate(BuildContext context, String startDate, String endDate) async {
+  Future<String> _endDate(
+      BuildContext context, String startDate, String endDate) async {
     if (startDate == "") {
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Please select the startDate first')));
@@ -91,7 +95,7 @@ class _BoxState extends State<Box> {
     Map<String, dynamic> data = documentSnapshot.data() as Map<String, dynamic>;
     Map<String, dynamic> editData = {};
     setState(() {
-      editData = { 
+      editData = {
         'id': documentSnapshot.id,
         'title': data['title'],
         'imagePath': data['imagePath'],
@@ -111,7 +115,8 @@ class _BoxState extends State<Box> {
   }
 
   Future<String> deleteImage(String imagePath) async {
-    final Reference ref = FirebaseStorage.instance.ref().child(imagePath); //il problema è che l'immagine che eliminiamo (images/...) non esiste nel firebase, va prima caricata correttamente
+    final Reference ref = FirebaseStorage.instance.ref().child(
+        imagePath); //il problema è che l'immagine che eliminiamo (images/...) non esiste nel firebase, va prima caricata correttamente
     await ref.delete();
     setState(() {
       imageUploaded = false;
@@ -135,44 +140,38 @@ class _BoxState extends State<Box> {
     titleController.text = data['title'];
     descriptionController.text = data['description'];
     return showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              title: Text(level),
-              content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextFormField(
-                controller: titleController,
-                onChanged: (value) {
-                  newTitle = value;
-                },
-                decoration: const InputDecoration(labelText: 'Titolo'),
-              ),
-              const SizedBox(height: 16.0),
-              DropdownButtonFormField<String>(
-                value: data['selectedClass'],
-                onChanged: (value) {
-                  setState(() {
-                    selectedClass = value!;
-                  });
-                },
-                items: [
-                  '',
-                  '1° media',
-                  '2° media',
-                  '3° media'
-                ].map((String option) {
-                  return DropdownMenuItem<String>(
-                    value: option,
-                    child: Text(option),
-                  );
-                }).toList(),
-                hint: const Text('Seleziona un\'opzione'),
-              ),
-              const SizedBox(height: 16.0),
+        context: context,
+        builder: (BuildContext context) {
+          return StatefulBuilder(
+            builder: (context, setState) {
+              return AlertDialog(
+                title: Text(level),
+                content: Column(mainAxisSize: MainAxisSize.min, children: [
+                  TextFormField(
+                    controller: titleController,
+                    onChanged: (value) {
+                      newTitle = value;
+                    },
+                    decoration: const InputDecoration(labelText: 'Titolo'),
+                  ),
+                  const SizedBox(height: 16.0),
+                  DropdownButtonFormField<String>(
+                    value: data['selectedClass'],
+                    onChanged: (value) {
+                      setState(() {
+                        selectedClass = value!;
+                      });
+                    },
+                    items: ['', '1° media', '2° media', '3° media']
+                        .map((String option) {
+                      return DropdownMenuItem<String>(
+                        value: option,
+                        child: Text(option),
+                      );
+                    }).toList(),
+                    hint: const Text('Seleziona un\'opzione'),
+                  ),
+                  const SizedBox(height: 16.0),
                   ElevatedButton(
                     onPressed: imageUploaded
                         ? null
@@ -182,111 +181,122 @@ class _BoxState extends State<Box> {
                               imagePath = imageUrl;
                             });
                           },
-                    child: Text(
-                        imageUploaded ? 'Immagine caricata' : 'Carica Immagine'),
+                    child: Text(imageUploaded
+                        ? 'Immagine caricata'
+                        : 'Carica Immagine'),
                   ),
                   const SizedBox(height: 16.0),
-               //  if (imageUploaded) ...[
-               //ElevatedButton(
-               //  onPressed: () async {
-               //    // Mostra un dialogo di conferma prima di eliminare l'immagine
-               //    bool? confirm = await showDialog<bool>(
-               //      context: context,
-               //      builder: (BuildContext context) {
-               //        return AlertDialog(
-               //          title: Text('Conferma'),
-               //          content: Text(
-               //              'Sei sicuro di voler eliminare l\'immagine?'),
-               //          actions: <Widget>[
-               //            TextButton(
-               //              child: Text('Annulla'),
-               //              onPressed: () {
-               //                setState(() {
-               //                  Navigator.of(context).pop(false);
-               //                });
-               //              },
-               //            ),
-               //            TextButton(
-               //              child: Text('Elimina'),
-               //              onPressed: () {
-               //                setState(() {
-               //                  imageUploaded = false;
-               //                });
-               //                Navigator.of(context).pop(true);
-               //              },
-               //            ),
-               //          ],
-               //        );
-               //      },
-               //    );
-               //    if (confirm == true) {
-               //      await deleteImage(imagePath);
-               //      //print(level);
-               //    }
-               //  },
-               //  child: Text('Elimina Immagine'),
-               //),
-              const SizedBox(height: 16.0),
-              ...(level == 'weekend' || level == 'extra')
-                  ? [
-                      ElevatedButton(
-                        onPressed: () async {
-                          String newDate = startDate = await _startDate(context, data['startDate']);
-                          setState(() {
-                            startDate = newDate;
-                          });
-                        },
-                        child: Text(startDate),
-                      ),
-                    ]
-                  : (level == 'trip' || level == 'tournament')
+                  //  if (imageUploaded) ...[
+                  //ElevatedButton(
+                  //  onPressed: () async {
+                  //    // Mostra un dialogo di conferma prima di eliminare l'immagine
+                  //    bool? confirm = await showDialog<bool>(
+                  //      context: context,
+                  //      builder: (BuildContext context) {
+                  //        return AlertDialog(
+                  //          title: Text('Conferma'),
+                  //          content: Text(
+                  //              'Sei sicuro di voler eliminare l\'immagine?'),
+                  //          actions: <Widget>[
+                  //            TextButton(
+                  //              child: Text('Annulla'),
+                  //              onPressed: () {
+                  //                setState(() {
+                  //                  Navigator.of(context).pop(false);
+                  //                });
+                  //              },
+                  //            ),
+                  //            TextButton(
+                  //              child: Text('Elimina'),
+                  //              onPressed: () {
+                  //                setState(() {
+                  //                  imageUploaded = false;
+                  //                });
+                  //                Navigator.of(context).pop(true);
+                  //              },
+                  //            ),
+                  //          ],
+                  //        );
+                  //      },
+                  //    );
+                  //    if (confirm == true) {
+                  //      await deleteImage(imagePath);
+                  //      //print(level);
+                  //    }
+                  //  },
+                  //  child: Text('Elimina Immagine'),
+                  //),
+                  const SizedBox(height: 16.0),
+                  ...(level == 'weekend' || level == 'extra')
                       ? [
                           ElevatedButton(
                             onPressed: () async {
-                              String newDate = await _startDate(context, data['startDate']);
+                              String newDate = startDate =
+                                  await _startDate(context, data['startDate']);
                               setState(() {
                                 startDate = newDate;
                               });
                             },
                             child: Text(startDate),
                           ),
-                          ElevatedButton(
-                            onPressed: () async {
-                              String newDate = await _endDate(context, data['startDate'], data['endDate']);
-                              setState(() {
-                                endDate = newDate;
-                              });
-                            },
-                            child: Text(endDate),
-                          ),
                         ]
-                      : [],
-              const SizedBox(height: 16.0),
-              TextFormField(
-                controller: descriptionController,
-                onChanged: (value) {
-                  description = value;
-                },
-                decoration: const InputDecoration(labelText: 'Testo'),
-                maxLines: null,
-              ),
-              const SizedBox(height: 16.0),
-              ElevatedButton(
-                onPressed: () async {
-                  await updateClubDetails(data['id'], newTitle, imagePath, selectedClass, startDate, endDate, description);
-                },
-                child: const Text('Crea'),
-              ),
-            ]//]
-          ),
-            );
-          },
-        );
-      }
-    );
+                      : (level == 'trip' || level == 'tournament')
+                          ? [
+                              ElevatedButton(
+                                onPressed: () async {
+                                  String newDate = await _startDate(
+                                      context, data['startDate']);
+                                  setState(() {
+                                    startDate = newDate;
+                                  });
+                                },
+                                child: Text(startDate),
+                              ),
+                              ElevatedButton(
+                                onPressed: () async {
+                                  String newDate = await _endDate(context,
+                                      data['startDate'], data['endDate']);
+                                  setState(() {
+                                    endDate = newDate;
+                                  });
+                                },
+                                child: Text(endDate),
+                              ),
+                            ]
+                          : [],
+                  const SizedBox(height: 16.0),
+                  TextFormField(
+                    controller: descriptionController,
+                    onChanged: (value) {
+                      description = value;
+                    },
+                    decoration: const InputDecoration(labelText: 'Testo'),
+                    maxLines: null,
+                  ),
+                  const SizedBox(height: 16.0),
+                  ElevatedButton(
+                    onPressed: () async {
+                      await updateClubDetails(data['id'], newTitle, imagePath,
+                          selectedClass, startDate, endDate, description);
+                    },
+                    child: const Text('Crea'),
+                  ),
+                ] //]
+                    ),
+              );
+            },
+          );
+        });
   }
 
-  Future<void> updateClubDetails(String id, String newTitle, String imagePath, String selectedClass, String startDate, String endDate, String description) async {
+  Future<void> updateClubDetails(
+      String id,
+      String newTitle,
+      String imagePath,
+      String selectedClass,
+      String startDate,
+      String endDate,
+      String description) async {
     try {
       if (title == "") {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -303,7 +313,9 @@ class _BoxState extends State<Box> {
           .collection('${widget.section}_${widget.level}')
           .doc(id)
           .delete();
-      await FirebaseFirestore.instance.collection('${widget.section}_${widget.level}').add({
+      await FirebaseFirestore.instance
+          .collection('${widget.section}_${widget.level}')
+          .add({
         'title': newTitle,
         'imagePath': imagePath,
         'selectedClass': selectedClass,
@@ -329,7 +341,7 @@ class _BoxState extends State<Box> {
     final Reference ref = FirebaseStorage.instance
         .ref()
         .child('users/${DateTime.now().toIso8601String()}');
-        //.child('${section}_image/${DateTime.now().toIso8601String()}');
+    //.child('${section}_image/${DateTime.now().toIso8601String()}');
 
     final UploadTask uploadTask = ref.putData(await image.readAsBytes());
 
@@ -353,8 +365,11 @@ class _BoxState extends State<Box> {
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator();
+        } else if((snapshot.data as List<Map<String, dynamic>>).isEmpty) {
+          return const Center(child: Text("Non ci sono programmi", style: TextStyle(fontSize: 18.0)));
         } else {
-          documents.sort((a, b) => (a['startDate'] as String).compareTo(b['startDate'] as String));
+          documents.sort((a, b) =>
+              (a['startDate'] as String).compareTo(b['startDate'] as String));
           return ListView.builder(
             itemCount: documents.length,
             itemBuilder: (context, index) {
@@ -379,14 +394,18 @@ class _BoxState extends State<Box> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Title: $title', style: const TextStyle(fontWeight: FontWeight.bold)),
+                          Text('Title: $title',
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold)),
                           Text('StartDate: $startDate'),
                           Text('Club Class: ${widget.clubClass}'),
-                          if(document['endDate']!='') Text('EndDate: ${document['endDate']}'),
+                          if (document['endDate'] != '')
+                            Text('EndDate: ${document['endDate']}'),
                           Image(
-                            image: NetworkImage('images/$level/default.jpg'), //dovrebbe essere '${document['imagePath']}', ma non carica bene...
+                            image: NetworkImage(
+                                'images/$level/default.jpg'), //dovrebbe essere '${document['imagePath']}', ma non carica bene...
                             height: 100,
-                            width:100,
+                            width: 100,
                           ),
                           Text('Description: $description'),
                         ],
@@ -431,7 +450,8 @@ class _BoxState extends State<Box> {
                             );
                             if (shouldDelete == true) {
                               setState(() {
-                                deleteDocument('${widget.section}_${widget.level}', id);
+                                deleteDocument(
+                                    '${widget.section}_${widget.level}', id);
                               });
                             }
                           },
