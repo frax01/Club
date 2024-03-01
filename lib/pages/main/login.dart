@@ -146,17 +146,22 @@ class _LoginState extends State<Login> {
       };
 
       setState(() {
-        if (document['role'] == "") {
-          Navigator.pushNamed(context, '/waiting');
-        } else {
-          if (document['club_class'] == "") {
-            Navigator.pushNamed(context, '/football');
-          } else if (document['soccer_class'] == "") {
-            Navigator.pushNamed(context, '/club');
-          } else {
-            _loadLastPage();
-          }
-        }
+        //if (document['role'] == "") {
+        //  Navigator.pushNamed(context, '/waiting');
+        //} else {
+        //  if (document['club_class'] == "") {
+        //    Navigator.pushNamed(context, '/football');
+        //  } else if (document['soccer_class'] == "") {
+        //    Navigator.pushNamed(context, '/club');
+        //  } else {
+        //    _loadLastPage();
+        //  }
+        //}
+        Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                ClubPage(title: "Tiber Club", document: document)));
       });
       if (rememberMe) {
         _saveLoginInfo();

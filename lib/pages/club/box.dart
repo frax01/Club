@@ -21,7 +21,7 @@ class Box extends StatefulWidget {
 }
 
 class _BoxState extends State<Box> {
-  List<Map<String, dynamic>> documents = [];
+  List<Map<String, dynamic>> allDocuments = [];
   String? title;
   String? startDate;
   String? imagePath;
@@ -29,19 +29,31 @@ class _BoxState extends State<Box> {
   bool imageUploaded = true;
 
   Future<List<Map<String, dynamic>>> _fetchData() async {
-    CollectionReference users =
-        FirebaseFirestore.instance.collection('club_${widget.level}');
-    QuerySnapshot querySnapshot =
-        await users.where('selectedClass', isEqualTo: widget.clubClass).get();
-    print("dati: ${querySnapshot.docs}");
-    if (querySnapshot.docs.isNotEmpty) {
-      documents = querySnapshot.docs
-          .map((doc) => {'id': doc.id, ...doc.data() as Map<String, dynamic>})
-          .toList();
-      return documents;
-    } else {
-      return [];
+    allDocuments = [];
+    List<String> clubCollections = ['club_weekend', 'club_trip', 'club_extra'];
+
+    for (String collectionName in clubCollections) {
+      CollectionReference collection =
+          FirebaseFirestore.instance.collection(collectionName);
+
+      QuerySnapshot querySnapshot = await collection
+          .where('selectedClass', isEqualTo: widget.clubClass)
+          .get();
+
+      print("dati da $collectionName: ${querySnapshot.docs}");
+
+      if (querySnapshot.docs.isNotEmpty) {
+        List<Map<String, dynamic>> documents = querySnapshot.docs
+            .map((doc) => {'id': doc.id, ...doc.data() as Map<String, dynamic>})
+            .toList();
+
+        allDocuments.addAll(documents);
+      }
     }
+
+    print(allDocuments);
+
+    return allDocuments;
   }
 
   Future<String> _startDate(BuildContext context, String startDate) async {
@@ -365,15 +377,17 @@ class _BoxState extends State<Box> {
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator();
-        } else if((snapshot.data as List<Map<String, dynamic>>).isEmpty) {
-          return const Center(child: Text("Non ci sono programmi", style: TextStyle(fontSize: 18.0)));
+        } else if ((snapshot.data as List<Map<String, dynamic>>).isEmpty) {
+          return const Center(
+              child: Text("Non ci sono programmi",
+                  style: TextStyle(fontSize: 18.0)));
         } else {
-          documents.sort((a, b) =>
+          allDocuments.sort((a, b) =>
               (a['startDate'] as String).compareTo(b['startDate'] as String));
           return ListView.builder(
-            itemCount: documents.length,
+            itemCount: allDocuments.length,
             itemBuilder: (context, index) {
-              var document = documents[index];
+              var document = allDocuments[index];
               var id = document['id'];
               var title = document['title'];
               var level = document['selectedOption'];

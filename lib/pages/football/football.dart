@@ -271,7 +271,7 @@ class _FootballPageState extends State<FootballPage> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => SettingsPage(id: widget.document['id'],)));
+                            builder: (context) => SettingsPage(id: widget.document['id'], document: widget.document,)));
                   },
                 ),
                 ListTile(

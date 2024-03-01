@@ -211,7 +211,18 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     if (email == null) {
-      return const Login(title: "Asd Tiber Club");
+      return const ClubPage(title: "Tiber Club", document: {
+        'name': 'fra',
+        'surname': 'marti',
+        'email': 'framarti@gmail.com',
+        'role': 'Boy',
+        'club_class': '2° media',
+        'soccer_class': 'intermediate',
+        'status': 'Admin',
+        'birthdate': 2024 - 01 - 16,
+        'id': 'wJu0WDEgg75gYg91Ejl8'
+      });
+      //return const Login(title: "Asd Tiber Club");
     } else {
       print("ciaooo");
       return FutureBuilder<Map<String, dynamic>>(

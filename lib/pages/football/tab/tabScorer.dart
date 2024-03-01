@@ -226,9 +226,6 @@ class _TabScorerState extends State<TabScorer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Scorers'),
-      ),
       body: StreamBuilder<QuerySnapshot>(
         stream: _scorersStream,
         builder: (context, snapshot) {
